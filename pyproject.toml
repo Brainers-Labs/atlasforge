@@ -1,0 +1,127 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "atlasforge"
+dynamic = ["version"]
+description = "Run, evaluate, compare and fine-tune the official N-ATLaS models (Hausa, Yoruba, Igbo, Nigerian English)."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{ name = "Brainers Labs" }]
+keywords = ["n-atlas", "nigeria", "hausa", "yoruba", "igbo", "llm", "asr", "evaluation", "fine-tuning"]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Typing :: Typed",
+]
+# The core install must stay light: no torch, no transformers. Heavy stacks live in extras.
+dependencies = [
+  "typer>=0.12",
+  "rich>=13.7",
+]
+
+[project.optional-dependencies]
+local = [
+  "torch>=2.2",
+  "transformers>=4.44",
+  "accelerate>=0.33",
+  "safetensors>=0.4",
+  "huggingface-hub>=0.24",
+  "bitsandbytes>=0.43; sys_platform != 'darwin'",
+]
+asr = [
+  "torch>=2.2",
+  "transformers>=4.44",
+  "huggingface-hub>=0.24",
+  "librosa>=0.10",
+  "soundfile>=0.12",
+]
+finetune = [
+  "atlasforge[local]",
+  "peft>=0.12",
+  "trl>=0.9",
+  "datasets>=2.20",
+]
+dev = [
+  "pytest>=8.2",
+  "pytest-cov>=5.0",
+  "ruff>=0.9",
+  "mypy>=1.11",
+  "pip-audit>=2.7",
+  "pre-commit>=3.8",
+]
+
+[project.scripts]
+atlasforge = "atlasforge.cli:main"
+
+# NOTE: confirm the GitHub organisation/name before publishing.
+[project.urls]
+Homepage = "https://github.com/brainerslabs/atlasforge"
+Issues = "https://github.com/brainerslabs/atlasforge/issues"
+
+[tool.hatch.version]
+path = "src/atlasforge/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlasforge"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "tests", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.toml"]
+
+# ---------------------------------------------------------------- tooling
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W", "F", "I", "N", "UP", "B", "A", "C4", "SIM", "PT", "RUF",
+  "S", "PERF", "PL", "TC", "ANN", "ARG", "RET", "PIE", "T20", "ISC",
+]
+ignore = [
+  "E501",    # line length is owned by the formatter
+  "PLR2004", # magic values in comparisons are fine when obvious
+  "PLR0913", # keyword-only config-style signatures are intentional
+  "ANN401",  # Any is occasionally the honest type
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests deliberately contain non-ASCII look-alike characters (curly quotes, U+2028) and fake secrets.
+"tests/**" = ["S101", "S105", "S603", "S404", "ANN", "PLR2004", "ARG", "T20", "RUF001"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_unreachable = true
+files = ["src", "tests"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+  "live: needs GPU, gated weights and HF_TOKEN; run with ATLASFORGE_LIVE=1",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["atlasforge"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = ["if TYPE_CHECKING:", "\\.\\.\\."]
