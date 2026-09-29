@@ -63,8 +63,22 @@ class Dataset:
         return len(self.examples)
 
 
-def load_dataset(path: str | Path, task: Task) -> Dataset:
-    """Read and validate ``path`` for ``task``. Raises :class:`DatasetError` with line numbers."""
+@dataclass(frozen=True, slots=True, kw_only=True)
+class ParsedFile:
+    """Result of a lenient parse: every good example, and every problem found."""
+
+    path: Path
+    sha256: str
+    n_lines: int  # non-blank lines
+    examples: tuple[tuple[int, Example], ...]  # (1-based line number, example)
+    errors: tuple[DatasetError, ...]
+
+
+def parse_file(path: str | Path, task: Task) -> ParsedFile:
+    """Parse ``path`` for ``task``, collecting all line errors instead of stopping at the first.
+
+    File-level problems (unknown task, unreadable file, bad encoding) still raise.
+    """
     if task not in TASKS:
         raise ConfigError(f"Unknown task {task!r}.", hint=f"Use one of: {', '.join(TASKS)}.")
     file = Path(path)
@@ -82,33 +96,56 @@ def load_dataset(path: str | Path, task: Task) -> Dataset:
             hint="Re-save the file as UTF-8.",
         ) from exc
 
-    examples: list[Example] = []
+    examples: list[tuple[int, Example]] = []
+    errors: list[DatasetError] = []
     seen: dict[str, int] = {}
+    n_lines = 0
     # Split on \n only: str.splitlines() would also split on U+2028/U+2029 inside JSON strings.
     for number, line in enumerate(text.split("\n"), start=1):
         if not line.strip():
             continue
+        n_lines += 1
         try:
-            obj = json.loads(line)
+            example = _parse(json.loads(line), number, task, file.parent)
         except json.JSONDecodeError as exc:
-            raise DatasetError(f"invalid JSON ({exc.msg})", line=number) from exc
-        example = _parse(obj, number, task, file.parent)
+            errors.append(DatasetError(f"invalid JSON ({exc.msg})", line=number))
+            continue
+        except DatasetError as exc:
+            errors.append(exc)
+            continue
         if example.id in seen:
-            raise DatasetError(
-                f"duplicate id {example.id!r} (first seen on line {seen[example.id]})",
-                line=number,
-                hint="Give each example a unique 'id'.",
+            errors.append(
+                DatasetError(
+                    f"duplicate id {example.id!r} (first seen on line {seen[example.id]})",
+                    line=number,
+                    hint="Give each example a unique 'id'.",
+                )
             )
+            continue
         seen[example.id] = number
-        examples.append(example)
+        examples.append((number, example))
 
-    if not examples:
-        raise DatasetError(f"{file} contains no examples.")
-    return Dataset(
-        task=task,
+    return ParsedFile(
         path=file,
         sha256=hashlib.sha256(raw).hexdigest(),
+        n_lines=n_lines,
         examples=tuple(examples),
+        errors=tuple(errors),
+    )
+
+
+def load_dataset(path: str | Path, task: Task) -> Dataset:
+    """Read and validate ``path`` for ``task``. Raises :class:`DatasetError` with line numbers."""
+    parsed = parse_file(path, task)
+    if parsed.errors:
+        raise parsed.errors[0]
+    if not parsed.examples:
+        raise DatasetError(f"{parsed.path} contains no examples.")
+    return Dataset(
+        task=task,
+        path=parsed.path,
+        sha256=parsed.sha256,
+        examples=tuple(example for _, example in parsed.examples),
     )
 
 
