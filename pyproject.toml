@@ -28,6 +28,7 @@ classifiers = [
 dependencies = [
   "typer>=0.12",
   "rich>=13.7",
+  "numpy>=1.26",     # vectorised bootstrap
   "jiwer>=3.0",      # WER / CER
   "sacrebleu>=2.4",  # chrF / chrF++
 ]

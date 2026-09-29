@@ -134,6 +134,21 @@ def run(
     )
 
 
+def read_manifest(out_dir: str | Path) -> dict[str, Any]:
+    """Load ``run.json`` from a run directory."""
+    path = Path(out_dir) / MANIFEST_NAME
+    if not path.is_file():
+        raise ConfigError(
+            f"{Path(out_dir)} is not a run directory (no {MANIFEST_NAME}).",
+            hint="Produce one with `atlasforge eval`.",
+        )
+    try:
+        manifest: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ConfigError(f"Cannot read {path}: {exc}") from exc
+    return manifest
+
+
 def read_results(path: str | Path) -> dict[str, Record]:
     """Load results keyed by id; the latest record for an id wins.
 
