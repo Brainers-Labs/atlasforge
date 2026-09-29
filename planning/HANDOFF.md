@@ -1,4 +1,4 @@
-# AtlasForge - Handoff (29 Sep 2026)
+# AtlasForge - Handoff (updated 29 Sep 2026)
 
 ## What this is
 Brainers Labs' NAIC 2026 Problem 01 entry. Open-source Python toolkit + CLI to **run, evaluate, compare and fine-tune the official N-ATLaS models** (`NCAIR1/*` on Hugging Face), with tone-aware and tone-insensitive scoring for Hausa/Yoruba/Igbo/Nigerian English.
@@ -8,37 +8,53 @@ Deadline: **12 Oct 2026, 11:59 PM WAT** (internal submit 11 Oct). Track: Develop
 ## Why this shape (short)
 - N-ATLaS has **no public API**: gated open weights on HF. NAIC gives API credentials only to shortlisted teams. Licence: Awarri custom (1,000 active-user cap, attribution, "Powered by Awarri" on derivatives, commercial use needs agreement).
 - Another NAIC team already ships "N-ATLAS Kit" (`natlas` on PyPI, GitHub Kambah123/N-ATLAS-Kit): SDKs, vLLM+FastAPI gateway, playground. It has **no** eval, compare or fine-tune tooling. So we renamed to AtlasForge and own that gap. We interoperate through an OpenAI-compatible backend, we do not build an SDK/gateway/playground.
-- No LLM-as-judge and no "hallucination rate" (a non-N-ATLaS judge risks disqualification). Deterministic failure flags instead.
+- No LLM-as-judge and no "hallucination rate" (a non-N-ATLaS judge risks disqualification).
 
 ## Where everything is
-Everything now lives in ONE git repo (this folder's parent).
-- `planning/` - 23 planning docs (was `docs/`; that name is reserved for user docs). Start with `planning/INDEX.md`, then `11_14_DAY_EXECUTION_PLAN.md` (day-by-day, milestones M1-M6), `15_DECISION_LOG.md` (D001-D026), `21_NATLAS_DISCOVERY.md` (verified model facts + a blank verification log to fill on a GPU). Inside those docs, `docs/NN_...` paths mean `planning/NN_...`.
-- `src/atlasforge/`, `tests/` - the product (src layout, ruff/mypy strict, pytest, CI, pre-commit+gitleaks).
+ONE git repo: https://github.com/im-aderm/atlasforge (private).
+- `planning/` - planning docs. Start with `INDEX.md`, then `11_14_DAY_EXECUTION_PLAN.md`, `15_DECISION_LOG.md`, `21_NATLAS_DISCOVERY.md` (verified model facts + a blank verification log to fill on a machine with the models). Inside those docs, `docs/NN_...` paths mean `planning/NN_...`.
+- `src/atlasforge/`, `tests/` - the product.
 
-## Code state (updated 29 Sep): VERIFIED on Windows, Python 3.12
-`pytest` 207 passed, 96% coverage; `ruff check`, `ruff format --check` and `mypy` (strict) all clean. Not yet run on Linux/macOS or Python 3.10/3.13 (CI matrix will do it once pushed).
-Written: `errors.py`, `types.py`, `security.py`, `backends/base.py` (Protocol), `eval/normalize.py`, `eval/dataset.py`, `eval/runner.py`, `doctor.py`, `cli.py` (`doctor`, `--version`), and 8 test files under `tests/unit/`.
-Not written yet: metrics (EM, accuracy, chrF, WER/CER), scoring/report, `compare`, backends (`local`, `openai`), ASR, `dataset validate`, fine-tune recipe.
+## Code state (29 Sep): 558 tests, 98% coverage; ruff + mypy strict clean
+Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and Windows on Python 3.10 and 3.13 (it caught one 3.10-only numpy typing issue, fixed).
 
-## First thing to do on the new machine
+**Works and is tested (no model needed):**
+- `eval/`: strict JSONL loader, resumable runner (manifest guard, crash-safe, circuit breaker, bounded threading), metrics (EM, accuracy, macro-F1, chrF/chrF++, WER, CER), scoring under tone-aware + tone-insensitive views (failures count as wrong), reports, `validate` (duplicates, leakage, Unicode, diacritics, class balance), `normalize`.
+- `compare/`: paired bootstrap, exact McNemar, slice analysis (n>=30 rule), Markdown/JSON report.
+- `backends/openai.py`: OpenAI-compatible HTTP backend, tested end-to-end against a real (fake-model) HTTP server.
+- `asr/`: ffmpeg decode (incl. real opus/ogg), 30 s windowing, seam-aware merge, `LongAudioBackend`.
+- CLI: `doctor`, `run`, `transcribe`, `eval`, `report`, `compare`, `dataset validate`.
+
+**Written but NEVER run against real weights (do this on the Mac first):**
+- `backends/local.py` (transformers). Only tested with stand-in torch/transformers modules.
+- The official ASR models (loading them, real WER).
+- Open questions for `planning/21`: chat template present? real context length? `return_timestamps` behaviour? VRAM/speed?
+
+**Not written yet:** fine-tune recipes (`finetune/`), `atlasforge card` (licence-aware model card), `bench afrobench` wrapper, HTML report, Colab notebooks, docs site, `scripts/live_smoke.py`, Hausa quickstart.
+
+## First thing to do on the new machine (Mac M1 16 GB)
 ```bash
-git clone <repo-url> && cd atlasforge
-python -m venv .venv          # Python 3.10-3.13
-# activate: .venv\Scripts\activate (Windows) or . .venv/bin/activate
+git clone https://github.com/im-aderm/atlasforge && cd atlasforge
+python3 -m venv .venv && . .venv/bin/activate      # Python 3.10-3.13
 pip install -e ".[dev]"
+brew install ffmpeg
 pytest && ruff check . && ruff format --check . && mypy
+atlasforge doctor
 ```
-Also install ffmpeg (needed for ASR audio): `winget install Gyan.FFmpeg` / `brew install ffmpeg` / `apt install ffmpeg`.
+Then, to get real evidence:
+1. Accept the licence on all 5 NCAIR1 repos (Hugging Face), `export HF_TOKEN=...`.
+2. **ASR (fits in memory, CPU/MPS):** `pip install -e ".[asr]"`, then try `atlasforge transcribe some.ogg --lang ha --backend local`. Record the result in `planning/21`.
+3. **LLM on the Mac:** fp16 (16 GB) will not fit; 4-bit via bitsandbytes needs CUDA. Serve a quantised model with llama.cpp or Ollama (INFERRED to work for a Llama-3-8B fine-tune, untested) and point `--backend openai --base-url http://127.0.0.1:PORT/v1` at it. Never publish quantised N-ATLaS weights (licence).
+4. Run `atlasforge eval` on a real dataset and `compare` two runs. Fill in the verification log in `planning/21`.
 
 ## Blockers and TODOs
-1. LICENSE (Apache-2.0) is now in the repo. Still placeholders: security email in `SECURITY.md`; GitHub org in `pyproject.toml`; confirm `atlasforge` is free on PyPI (could not check).
-2. Day-1 actions only humans can do, none done yet: secure a >=24 GB GPU with a spend cap; every member accepts the licence on all 5 NCAIR1 HF repos; email NAIC the open questions (team-size 2-5 vs 1-6, tester evidence format, whether HF-weights integration satisfies verification, public repo required?); post the beta-tester call (target 5 recruits, need >=2 complete); assign stream owners A/B/C.
-3. Then Stream B: run all 5 models and fill the log in `docs/21_NATLAS_DISCOVERY.md` (chat template, real context length, VRAM fp16 vs 4-bit, vLLM serve, ASR `return_timestamps`, commit SHAs).
-4. D026: find a small, clean-licence domain dataset for the flagship compare + fine-tune demo. Do not invent data.
+1. Placeholders: security email in `SECURITY.md`; GitHub org in `pyproject.toml`; confirm `atlasforge` is free on PyPI (could not check).
+2. Human-only Day-1 actions, none done: secure a GPU with a spend cap (needed for the fine-tune demo and the shared beta endpoint); every member accepts the licence on all 5 NCAIR1 repos; email NAIC the open questions (team-size 2-5 vs 1-6, tester evidence format, whether HF-weights integration satisfies verification, public repo required?); post the beta-tester call (target 5 recruits, need >=2 complete); assign stream owners.
+3. D026: find a small, clean-licence domain dataset for the flagship compare + fine-tune demo. Do not invent data.
+4. Beta testers need something to run: they need either a GPU box/endpoint or the Mac-style llama.cpp path documented in a quickstart.
 
 ## Status vs plan
-Phase 1 (Foundation), Day 1-2, milestone M1 (Tue 29 Sep): NOT met. Needs GPU + models running, doc 21 unknowns resolved, green CI, >=5 testers contacted.
-Next code (Day 3-4): metrics + scoring + report, then `openai`/`local` backends.
+Phase 1 milestone M1 (29 Sep) is NOT met on the model side (no GPU, no model run yet) but the code side is well ahead of plan: the D3-D8 code (eval, metrics, compare, openai backend, ASR audio, validate, CLI) exists and is tested. Remaining code for v0.1: fine-tune recipe, model cards, docs site.
 
 ## Rules to keep
 Only NCAIR1 models in core paths. Never invent model behaviour (label VERIFIED/INFERRED/UNKNOWN). Never redistribute weights. No secrets/prompts/audio in logs. Core install must not import torch. Never fabricate validation.
