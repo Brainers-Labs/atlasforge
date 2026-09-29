@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from atlasforge.errors import BackendTimeout, ConfigError, DatasetError
+from atlasforge.errors import BackendTimeout, ConfigError, DatasetError, RunAborted
 from atlasforge.eval.dataset import Dataset, load_dataset
 from atlasforge.eval.runner import (
     MANIFEST_NAME,
@@ -252,3 +252,102 @@ class TestAsr:
             run(backend, ds, tmp_path / "o")
         assert info.value.hint is not None
         assert backend.calls == []
+
+
+class TestCircuitBreaker:
+    @staticmethod
+    def down(prompts: Sequence[str]) -> dict[str, BaseException]:
+        return {p: BackendTimeout("down") for p in prompts}
+
+    def test_stops_after_n_consecutive_failures_and_keeps_what_it_wrote(
+        self, tmp_path: Path
+    ) -> None:
+        prompts = [f"p{i}" for i in range(30)]
+        backend = FakeBackend(fail=self.down(prompts))
+        with pytest.raises(RunAborted, match="5 failures in a row") as info:
+            run(
+                backend,
+                make_dataset(tmp_path, prompts),
+                tmp_path / "o",
+                config=RunConfig(max_consecutive_failures=5),
+            )
+        assert len(backend.calls) == 5  # it stopped hammering the backend
+        assert len((tmp_path / "o" / RESULTS_NAME).read_text(encoding="utf-8").splitlines()) == 5
+        assert "resume" in (info.value.hint or "")
+
+    def test_message_names_the_last_error_without_any_prompt_text(self, tmp_path: Path) -> None:
+        prompts = ["secret prompt one", "secret prompt two"]
+        backend = FakeBackend(fail=self.down(prompts))
+        with pytest.raises(RunAborted) as info:
+            run(
+                backend,
+                make_dataset(tmp_path, prompts),
+                tmp_path / "o",
+                config=RunConfig(max_consecutive_failures=2),
+            )
+        assert "BackendTimeout: down" in str(info.value)
+        assert "secret" not in info.value.format()
+
+    def test_a_success_resets_the_streak(self, tmp_path: Path) -> None:
+        prompts = [f"p{i}" for i in range(20)]
+        backend = FakeBackend(fail=self.down(prompts[::2]))  # fail, ok, fail, ok, ...
+        summary = run(
+            backend,
+            make_dataset(tmp_path, prompts),
+            tmp_path / "o",
+            config=RunConfig(max_consecutive_failures=2),
+        )
+        assert (summary.ok, summary.failed) == (10, 10)
+
+    def test_zero_disables_the_breaker(self, tmp_path: Path) -> None:
+        prompts = [f"p{i}" for i in range(30)]
+        summary = run(
+            FakeBackend(fail=self.down(prompts)),
+            make_dataset(tmp_path, prompts),
+            tmp_path / "o",
+            config=RunConfig(max_consecutive_failures=0),
+        )
+        assert summary.failed == 30
+
+    def test_default_limit_is_twenty(self, tmp_path: Path) -> None:
+        prompts = [f"p{i}" for i in range(40)]
+        backend = FakeBackend(fail=self.down(prompts))
+        with pytest.raises(RunAborted, match="20 failures in a row"):
+            run(backend, make_dataset(tmp_path, prompts), tmp_path / "o")
+        assert len(backend.calls) == 20
+
+    def test_an_aborted_run_resumes_when_the_backend_recovers(self, tmp_path: Path) -> None:
+        prompts = [f"p{i}" for i in range(12)]
+        dataset = make_dataset(tmp_path, prompts)
+        with pytest.raises(RunAborted):
+            run(
+                FakeBackend(fail=self.down(prompts)),
+                dataset,
+                tmp_path / "o",
+                config=RunConfig(max_consecutive_failures=4),
+            )
+        healed = FakeBackend()
+        summary = run(healed, dataset, tmp_path / "o", config=RunConfig(max_consecutive_failures=4))
+        assert (summary.ok, summary.failed) == (12, 0)
+        assert sorted(healed.calls) == sorted(
+            prompts
+        )  # the 4 failed ones were retried, the rest run
+
+    def test_threaded_runs_abort_too(self, tmp_path: Path) -> None:
+        prompts = [f"p{i}" for i in range(40)]
+        backend = FakeBackend(fail=self.down(prompts))
+        with pytest.raises(RunAborted):
+            run(
+                backend,
+                make_dataset(tmp_path, prompts),
+                tmp_path / "o",
+                config=RunConfig(concurrency=4, max_consecutive_failures=5),
+            )
+        lines = (tmp_path / "o" / RESULTS_NAME).read_text(encoding="utf-8").splitlines()
+        assert len(lines) == 5
+        # at most 2 * concurrency ahead, plus one replacement per commit: a hard upper bound
+        assert len(backend.calls) <= 2 * 4 + 5
+
+    def test_negative_limit_is_rejected(self) -> None:
+        with pytest.raises(ConfigError):
+            RunConfig(max_consecutive_failures=-1)

@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Only the foundation exists so far: `atlasforge doctor`, the error/type model, the backend contract and Nigerian-language text normalisation. Evaluation, comparison, ASR and fine-tuning are being built now. Nothing here is claimed to work until it is listed under "Works today".
+> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested (558 tests). Two parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend and the ASR models. They are marked below. Nothing is claimed to work until it is listed here.
 
 ## The question AtlasForge answers
 
@@ -13,16 +13,32 @@ N-ATLaS is published as gated open weights on Hugging Face, so developers get th
 ## Works today
 
 ```bash
-pip install atlasforge          # once released; for now: pip install -e ".[dev]"
-atlasforge doctor               # Python, GPU/VRAM, disk, ffmpeg, HF token, optional extras
-atlasforge doctor --json
+atlasforge doctor                                   # Python, GPU/VRAM, disk, ffmpeg, HF token, extras
+atlasforge run "Ina kwana?" --base-url http://127.0.0.1:8000/v1
+atlasforge dataset validate data.jsonl --task generation [--against test.jsonl]
+atlasforge eval data.jsonl --out runs/base --base-url http://127.0.0.1:8000/v1 --model NCAIR1/N-ATLaS
+atlasforge eval data.jsonl --out runs/tuned --base-url http://127.0.0.1:8001/v1 --model my-finetune
+atlasforge compare data.jsonl --base runs/base --candidate runs/tuned --out cmp --slice domain
+atlasforge report runs/base --dataset data.jsonl    # re-score with no model
+atlasforge transcribe note.ogg --lang ha --base-url ...
 ```
 
-Library: `atlasforge.eval.normalize` (tone-aware and tone-insensitive normalisation that keeps Yoruba/Igbo underdots and Hausa hooked letters).
+- **`eval`**: JSONL in, resumable run out, `report.md` + `report.json`. Every text metric is reported under both a **tone-aware** and a **tone-insensitive** view (Yoruba/Igbo underdots and Hausa hooked letters are never stripped). Failed calls count as wrong.
+- **`compare`**: paired bootstrap confidence intervals, an exact McNemar test for right/wrong metrics, per-slice results (language, length, has-number, or any `meta` field). A change is only called *improved* or *regressed* when the whole interval is on one side of zero, and slices under 30 examples are reported as *insufficient data*.
+- **`dataset validate`**: malformed lines (all of them, with line numbers), duplicates, conflicting labels, train/test leakage, broken Unicode, stripped diacritics, class imbalance.
+- **Backends**: `openai` works with any OpenAI-compatible server (vLLM, llama.cpp, Ollama, HF Endpoints, community gateways). It retries 429/5xx and connection errors, and never puts response bodies in error messages.
+- **Safety nets**: `eval` stops after 20 consecutive failures instead of hammering a dead server, and keeps everything finished so it can resume.
+- **ASR helpers**: any audio format via ffmpeg (including WhatsApp `.ogg`/opus), automatic splitting of audio over the models' 30-second limit, transcript merging.
 
-## Planned for v0.1
+## Not yet run against real weights
 
-`run`, `transcribe`, `eval`, `compare` (base vs fine-tuned with confidence intervals and per-slice regressions), `dataset validate`, one QLoRA fine-tuning recipe, licence-aware model cards.
+- `--backend local` (transformers): wiring is tested with stand-in modules only.
+- Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
+- Fine-tuning recipes and `card`: not written yet.
+
+## Metrics
+
+exact match, accuracy, macro-F1, chrF / chrF++, WER, CER, latency percentiles. Datasets are JSONL, one example per line: `id`, `input` (or `messages`), `reference`, `lang`, `meta`; ASR uses `audio` instead of `input`. Unknown keys are rejected, so typos fail loudly.
 
 ## Models and licence
 
@@ -33,8 +49,7 @@ AtlasForge **never redistributes** N-ATLaS weights. You download them from Huggi
 ```bash
 python -m venv .venv && . .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
-pytest
-ruff check . && ruff format --check . && mypy
+pytest && ruff check . && ruff format --check . && mypy
 ```
 
-The default test suite needs no GPU, credentials or gated weights.
+The default test suite needs no GPU, credentials or gated weights. Extras: `[local]` (transformers backend), `[asr]`, `[finetune]`. ffmpeg is needed for audio.

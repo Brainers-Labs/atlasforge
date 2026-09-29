@@ -40,3 +40,14 @@ def test_doctor_table_shows_extras_hint_without_markup_errors() -> None:
 def test_importing_cli_does_not_import_torch() -> None:
     code = "import sys, atlasforge.cli; sys.exit(1 if 'torch' in sys.modules else 0)"
     assert subprocess.run([sys.executable, "-c", code], check=False).returncode == 0
+
+
+def test_python_dash_m_entry_point_works() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "atlasforge", "--version"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0
+    assert __version__ in result.stdout

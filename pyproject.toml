@@ -104,6 +104,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+# Typer builds the CLI from function parameters, so commands legitimately take many options.
+"src/atlasforge/cli.py" = ["PLR0917"]
 # Tests deliberately contain non-ASCII look-alike characters (curly quotes, U+2028) and fake secrets.
 "tests/**" = ["S101", "S105", "S603", "S404", "ANN", "PLR2004", "ARG", "T20", "RUF001"]
 

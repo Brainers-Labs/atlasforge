@@ -20,6 +20,7 @@ from atlasforge.asr import (
     transcribe_long,
 )
 from atlasforge.asr.audio import SAMPLE_RATE
+from atlasforge.asr.chunking import LongAudioBackend
 from atlasforge.errors import AudioError, ConfigError, ResourceError
 from atlasforge.types import (
     AudioInput,
@@ -290,3 +291,30 @@ class TestDecodeWithRealFfmpeg:
         assert len(backend.durations) == 3
         assert max(backend.durations) <= 28.0 + 1e-6
         assert result.chunks[-1].end_s == pytest.approx(65.0, abs=0.05)
+
+
+class TestLongAudioBackend:
+    def test_transcribe_splits_long_audio_and_merges(self) -> None:
+        inner = FakeBackend(["ina kwana lafiya", "kwana lafiya yau da", "yau da zuwa gida"])
+        wrapped = LongAudioBackend(inner, decoder=lambda _a: silence(60))
+        result = wrapped.transcribe(b"x", "ha")
+        assert inner.durations == [28.0, 28.0, 8.0]
+        assert result.text == "ina kwana lafiya yau da zuwa gida"
+        assert len(result.chunks) == 3
+
+    def test_window_settings_are_forwarded(self) -> None:
+        inner = FakeBackend(["a", "b", "c"])
+        wrapped = LongAudioBackend(inner, window_s=10, overlap_s=0, decoder=lambda _a: silence(25))
+        assert wrapped.transcribe(b"x", "ig").text == "a b c"
+        assert inner.durations == [10.0, 10.0, 5.0]
+
+    def test_everything_else_is_delegated(self) -> None:
+        wrapped = LongAudioBackend(FakeBackend([]), decoder=lambda _a: silence(1))
+        assert wrapped.info().model == "fake"
+        with pytest.raises(NotImplementedError):
+            wrapped.generate([{"role": "user", "content": "hi"}])
+        wrapped.close()
+
+    def test_invalid_window_settings_fail_at_construction(self) -> None:
+        with pytest.raises(ConfigError):
+            LongAudioBackend(FakeBackend([]), window_s=45)

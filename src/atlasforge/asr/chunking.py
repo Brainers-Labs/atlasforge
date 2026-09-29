@@ -27,7 +27,14 @@ if TYPE_CHECKING:
     from collections.abc import Callable, Sequence
 
     from atlasforge.backends.base import Backend
-    from atlasforge.types import AudioInput, Lang
+    from atlasforge.types import (
+        AudioInput,
+        BackendInfo,
+        Generation,
+        GenParams,
+        Lang,
+        Message,
+    )
 
 MODEL_LIMIT_S: Final = 30.0
 DEFAULT_WINDOW_S: Final = 28.0
@@ -137,10 +144,52 @@ def transcribe_long(
     )
 
 
+class LongAudioBackend:
+    """Wrap any backend so ``transcribe`` accepts audio of any length.
+
+    Everything else is delegated unchanged. Used by ``eval`` for ASR datasets, whose clips
+    can exceed the models' 30-second limit.
+    """
+
+    def __init__(
+        self,
+        inner: Backend,
+        *,
+        window_s: float = DEFAULT_WINDOW_S,
+        overlap_s: float = DEFAULT_OVERLAP_S,
+        decoder: Callable[[AudioInput], bytes] = decode_audio,
+    ) -> None:
+        plan_windows(1, window_s=window_s, overlap_s=overlap_s)  # validate settings up front
+        self._inner = inner
+        self._window_s = window_s
+        self._overlap_s = overlap_s
+        self._decoder = decoder
+
+    def generate(self, messages: Sequence[Message], params: GenParams | None = None) -> Generation:
+        return self._inner.generate(messages, params)
+
+    def transcribe(self, audio: AudioInput, lang: Lang) -> Transcript:
+        return transcribe_long(
+            self._inner,
+            audio,
+            lang,
+            window_s=self._window_s,
+            overlap_s=self._overlap_s,
+            decoder=self._decoder,
+        )
+
+    def info(self) -> BackendInfo:
+        return self._inner.info()
+
+    def close(self) -> None:
+        self._inner.close()
+
+
 __all__ = [
     "DEFAULT_OVERLAP_S",
     "DEFAULT_WINDOW_S",
     "MODEL_LIMIT_S",
+    "LongAudioBackend",
     "duration_s",
     "merge_texts",
     "plan_windows",

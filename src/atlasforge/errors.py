@@ -53,6 +53,10 @@ class DatasetError(AtlasForgeError):
         self.line = line
 
 
+class RunAborted(AtlasForgeError):  # noqa: N818 - reads as a state, like KeyboardInterrupt
+    """An evaluation run stopped early because too many examples failed in a row."""
+
+
 class BackendError(AtlasForgeError):
     """A backend failed to produce a result."""
 

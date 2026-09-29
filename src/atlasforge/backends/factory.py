@@ -21,6 +21,7 @@ def build_backend(
     api_key_env: str | None = "ATLASFORGE_API_KEY",
     asr_model: str | None = None,
     timeout: float = 120.0,
+    retries: int = 2,
     quantize: str = "none",
     device: str = "auto",
     allow_insecure_http: bool = False,
@@ -40,6 +41,7 @@ def build_backend(
             api_key_env=api_key_env,
             asr_model=asr_model,
             timeout=timeout,
+            max_retries=retries,
             allow_insecure_http=allow_insecure_http,
         )
     if name == "local":

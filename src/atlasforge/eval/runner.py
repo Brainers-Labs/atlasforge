@@ -19,14 +19,14 @@ from __future__ import annotations
 
 import json
 import os
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final, TextIO
 
 from atlasforge import __version__
-from atlasforge.errors import AtlasForgeError, ConfigError, DatasetError
+from atlasforge.errors import AtlasForgeError, ConfigError, DatasetError, RunAborted
 from atlasforge.types import GenParams
 
 if TYPE_CHECKING:
@@ -50,10 +50,15 @@ class RunConfig:
     lang: Lang | None = None
     concurrency: int = 1
     retry_errors: bool = True
+    # Stop after this many failures in a row (a dead server would otherwise be retried for every
+    # example). 0 disables. Finished results are kept, so the run can be resumed.
+    max_consecutive_failures: int = 20
 
     def __post_init__(self) -> None:
         if self.concurrency < 1:
             raise ConfigError("concurrency must be >= 1.")
+        if self.max_consecutive_failures < 0:
+            raise ConfigError("max_consecutive_failures must be >= 0.")
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -109,13 +114,24 @@ def run(
     finished = {i for i, r in existing.items() if r.ok or not cfg.retry_errors}
     pending = [e for e in dataset.examples if e.id not in finished]
 
+    streak = 0
+    limit = cfg.max_consecutive_failures
+
     with _open_append(results_path) as handle:
 
         def commit(record: Record) -> None:
+            nonlocal streak
             handle.write(json.dumps(asdict(record), ensure_ascii=False) + "\n")
             handle.flush()
             if on_result is not None:
                 on_result(record)
+            streak = 0 if record.ok else streak + 1
+            if limit and streak >= limit:
+                raise RunAborted(
+                    f"Stopped after {streak} failures in a row. Last error: {record.error}",
+                    hint="Fix the cause, then re-run with the same --out to resume; "
+                    "everything already finished is kept.",
+                )
 
         if cfg.concurrency == 1:
             for example in pending:
@@ -201,11 +217,30 @@ def _run_threaded(
     langs: dict[str, Lang],
     commit: Callable[[Record], None],
 ) -> None:
+    """Run with a bounded window of in-flight work.
+
+    Only ``2 * concurrency`` examples are ever submitted ahead of what has been committed.
+    Queueing everything up front would fire every request at a dead server and hold one
+    pending task per example in memory. Results are committed from this thread only.
+    """
     pool = ThreadPoolExecutor(max_workers=cfg.concurrency)
+    queue = iter(pending)
+    in_flight: set[Future[Record]] = set()
+
+    def submit_next() -> None:
+        example = next(queue, None)
+        if example is not None:
+            in_flight.add(pool.submit(_execute, backend, example, cfg, langs.get(example.id)))
+
     try:
-        futures = [pool.submit(_execute, backend, e, cfg, langs.get(e.id)) for e in pending]
-        for future in as_completed(futures):
-            commit(future.result())
+        for _ in range(2 * cfg.concurrency):
+            submit_next()
+        while in_flight:
+            done, _pending = wait(in_flight, return_when=FIRST_COMPLETED)
+            in_flight.difference_update(done)
+            for future in done:
+                commit(future.result())
+                submit_next()
     except BaseException:
         pool.shutdown(wait=False, cancel_futures=True)
         raise
