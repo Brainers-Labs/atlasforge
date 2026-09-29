@@ -84,6 +84,8 @@ include = ["src", "tests", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.to
 line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
+# Design docs contain illustrative snippets, not code we ship.
+extend-exclude = ["planning"]
 
 [tool.ruff.lint]
 select = [
