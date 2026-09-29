@@ -22,6 +22,8 @@ from atlasforge.errors import AudioError, ResourceError
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    import numpy.typing as npt
+
     from atlasforge.types import AudioInput
 
 SAMPLE_RATE: Final = 16_000
@@ -101,6 +103,6 @@ def pcm_to_wav(pcm: bytes) -> bytes:
     return buffer.getvalue()
 
 
-def pcm_to_float32(pcm: bytes) -> np.ndarray:
+def pcm_to_float32(pcm: bytes) -> npt.NDArray[np.float32]:
     """PCM to float32 samples in [-1, 1), the input format of Whisper feature extractors."""
     return np.frombuffer(pcm, dtype="<i2").astype(np.float32) / 32768.0
