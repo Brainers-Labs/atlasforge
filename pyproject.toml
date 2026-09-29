@@ -28,6 +28,8 @@ classifiers = [
 dependencies = [
   "typer>=0.12",
   "rich>=13.7",
+  "jiwer>=3.0",      # WER / CER
+  "sacrebleu>=2.4",  # chrF / chrF++
 ]
 
 [project.optional-dependencies]
@@ -107,7 +109,8 @@ ignore = [
 quote-style = "double"
 
 [tool.mypy]
-python_version = "3.10"
+# No python_version pin: check against the interpreter running mypy (CI covers 3.10 and 3.13).
+# Third-party stubs such as numpy's use newer syntax than our 3.10 floor.
 strict = true
 warn_unreachable = true
 files = ["src", "tests"]
