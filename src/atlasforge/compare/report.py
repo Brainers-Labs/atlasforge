@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Final
+from typing import TYPE_CHECKING
 
 from atlasforge.compare.compare import POOLED_ONLY
+from atlasforge.eval.format import fmt_bound, fmt_delta, fmt_value, is_fraction
 
 if TYPE_CHECKING:
     from atlasforge.compare.compare import ComparisonReport, MetricComparison, RunInfo
     from atlasforge.compare.slices import SliceResult
-
-_FRACTION_METRICS: Final = frozenset({"exact_match", "accuracy", "macro_f1", "wer", "cer"})
 
 
 def to_markdown(report: ComparisonReport) -> str:
@@ -171,22 +170,14 @@ def _method(report: ComparisonReport) -> list[str]:
     ]
 
 
-def _value(name: str, x: float | None) -> str:
-    if x is None:
-        return "-"
-    return f"{x * 100:.1f}%" if name in _FRACTION_METRICS else f"{x:.1f}"
-
-
-def _delta(name: str, x: float | None) -> str:
-    if x is None:
-        return "-"
-    return f"{x * 100:+.1f} pts" if name in _FRACTION_METRICS else f"{x:+.1f}"
+_value = fmt_value
+_delta = fmt_delta
 
 
 def _interval(m: MetricComparison) -> str:
     if m.low is None or m.high is None:
         return "-"
-    if m.name in _FRACTION_METRICS:
+    if is_fraction(m.name):
         return f"[{m.low * 100:+.1f}, {m.high * 100:+.1f}]"
     return f"[{m.low:+.1f}, {m.high:+.1f}]"
 
@@ -212,7 +203,4 @@ def _slice_delta(report: ComparisonReport, s: SliceResult) -> str:
 
 
 def _slice_bound(report: ComparisonReport, x: float | None) -> str:
-    if x is None:
-        return "-"
-    name = _metric_name(report)
-    return f"{x * 100:+.1f}" if name in _FRACTION_METRICS else f"{x:+.1f}"
+    return fmt_bound(_metric_name(report), x)
