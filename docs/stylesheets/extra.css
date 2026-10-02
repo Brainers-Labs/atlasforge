@@ -1,0 +1,44 @@
+/* Small touches on top of Material. Green is deliberate: it echoes the Nigerian flag. */
+:root {
+  --md-primary-fg-color: #008751;
+  --md-accent-fg-color: #00a86b;
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-radius: 0.5rem;
+}
+
+.md-typeset .status-verified,
+.md-typeset .status-unverified {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.md-typeset .status-verified {
+  background: #d9f2e6;
+  color: #00633a;
+}
+
+.md-typeset .status-unverified {
+  background: #fff1d6;
+  color: #8a5a00;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .status-verified {
+  background: #0b3d27;
+  color: #9be3bf;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .status-unverified {
+  background: #4a3a10;
+  color: #ffd98a;
+}
+
+/* Terminal transcripts: a little more breathing room, never wrap the tables. */
+.md-typeset pre > code {
+  font-size: 0.78rem;
+}

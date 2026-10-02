@@ -32,3 +32,6 @@ runs/
 Thumbs.db
 .idea/
 .vscode/
+
+# Built documentation
+site/

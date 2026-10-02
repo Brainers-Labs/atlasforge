@@ -4,6 +4,16 @@ Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yor
 
 > **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
+## Documentation
+
+Full documentation (quickstart, concepts, guides, reference, troubleshooting) lives in [`docs/`](docs/index.md) and builds into a searchable site:
+
+```bash
+pip install -e ".[docs]"
+mkdocs serve        # live preview
+```n
+No model? Start with the offline demo: `atlasforge demo`.
+
 ## The question AtlasForge answers
 
 > *I changed this N-ATLaS model. Did I actually make it better on my task, and where did it get worse?*

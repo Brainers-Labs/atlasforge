@@ -25,6 +25,7 @@ def build_backend(
     quantize: str = "none",
     device: str = "auto",
     adapter: str | None = None,
+    send_repetition_penalty: bool = True,
     allow_insecure_http: bool = False,
 ) -> Backend:
     """Create the named backend. Heavy dependencies are imported only for ``local``."""
@@ -48,6 +49,7 @@ def build_backend(
             asr_model=asr_model,
             timeout=timeout,
             max_retries=retries,
+            send_repetition_penalty=send_repetition_penalty,
             allow_insecure_http=allow_insecure_http,
         )
     if name == "local":

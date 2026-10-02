@@ -24,6 +24,7 @@ from atlasforge.cards import CardInfo, check_card, render_card
 from atlasforge.compare import compare_runs
 from atlasforge.compare import to_markdown as comparison_markdown
 from atlasforge.compare.slices import BUILTIN_FIELDS, MIN_SLICE_N
+from atlasforge.demo import BASE_NAME, DATASET_NAME, TUNED_NAME, build_demo
 from atlasforge.doctor import Check, exit_code, run_checks
 from atlasforge.errors import AtlasForgeError, ConfigError
 from atlasforge.eval.dataset import TASKS, Task, load_dataset
@@ -81,6 +82,13 @@ AdapterOpt = Annotated[
         help="local backend only: a LoRA adapter (path or repo) applied on the base model.",
     ),
 ]
+PenaltyOpt = Annotated[
+    bool,
+    typer.Option(
+        "--send-repetition-penalty/--no-send-repetition-penalty",
+        help="openai backend: send the model-card repetition_penalty. Disable if the server rejects it.",
+    ),
+]
 DeviceOpt = Annotated[
     str, typer.Option("--device", help="local backend only: auto, cpu, cuda, mps.")
 ]
@@ -126,6 +134,7 @@ def _backend(
     quantize: str,
     device: str,
     adapter: str | None = None,
+    send_repetition_penalty: bool = True,
     timeout: float,
     retries: int = 2,
     insecure: bool,
@@ -137,6 +146,7 @@ def _backend(
         quantize=quantize,
         device=device,
         adapter=adapter,
+        send_repetition_penalty=send_repetition_penalty,
         timeout=timeout,
         retries=retries,
         allow_insecure_http=insecure,
@@ -194,6 +204,7 @@ def run(
     model: ModelOpt = DEFAULT_MODEL,
     quantize: QuantizeOpt = "none",
     adapter: AdapterOpt = None,
+    send_repetition_penalty: PenaltyOpt = True,
     device: DeviceOpt = "auto",
     timeout: TimeoutOpt = 120.0,
     retries: RetriesOpt = 2,
@@ -220,6 +231,7 @@ def run(
         model=model,
         quantize=quantize,
         adapter=adapter,
+        send_repetition_penalty=send_repetition_penalty,
         device=device,
         timeout=timeout,
         retries=retries,
@@ -344,6 +356,7 @@ def eval_command(
     model: ModelOpt = DEFAULT_MODEL,
     quantize: QuantizeOpt = "none",
     adapter: AdapterOpt = None,
+    send_repetition_penalty: PenaltyOpt = True,
     device: DeviceOpt = "auto",
     timeout: TimeoutOpt = 120.0,
     retries: RetriesOpt = 2,
@@ -373,6 +386,7 @@ def eval_command(
         model=model,
         quantize=quantize,
         adapter=adapter,
+        send_repetition_penalty=send_repetition_penalty,
         device=device,
         timeout=timeout,
         retries=retries,
@@ -500,6 +514,27 @@ def dataset_validate(
     else:
         print_validation(Console(), result)
     raise typer.Exit(0 if result.ok else 1)
+
+
+# --- demo ---------------------------------------------------------------------------------
+
+
+@app.command()
+def demo(
+    directory: Annotated[Path, typer.Argument(help="Folder to create.")] = Path("atlasforge-demo"),
+) -> None:
+    """Write synthetic demo data and sample runs, to try AtlasForge with no model at all.
+
+    The answers come from fixed rules, not from N-ATLaS or any model.
+    """
+    out = build_demo(directory)
+    data = out / DATASET_NAME
+    base, tuned = out / "runs" / BASE_NAME, out / "runs" / TUNED_NAME
+    typer.echo(f"Wrote synthetic demo data to {out} (NOT real N-ATLaS output).")
+    typer.echo("Try these, in order:")
+    typer.echo(f"  atlasforge dataset validate {data}")
+    typer.echo(f"  atlasforge report {base} --dataset {data}")
+    typer.echo(f"  atlasforge compare {data} --base {base} --candidate {tuned} --slice domain")
 
 
 # --- finetune / card ----------------------------------------------------------------------

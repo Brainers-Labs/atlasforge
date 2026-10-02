@@ -513,3 +513,36 @@ class TestErrorReporting:
         code = self.run_main(monkeypatch, "dataset", "validate", str(tmp_path / "nope.jsonl"))
         assert code == 2
         assert "cannot read" in capsys.readouterr().err
+
+
+class TestRepetitionPenaltyFlag:
+    def test_sent_by_default(self, server: FakeModelServer) -> None:
+        server.answers["m"] = {"hi": "ok"}
+        runner.invoke(app, ["run", "hi", "--base-url", server.base_url, "--model", "m"])
+        assert server.requests[0]["repetition_penalty"] == 1.12
+
+    def test_can_be_switched_off_for_servers_that_reject_it(self, server: FakeModelServer) -> None:
+        server.answers["m"] = {"hi": "ok"}
+        result = runner.invoke(
+            app,
+            [
+                "run",
+                "hi",
+                "--base-url",
+                server.base_url,
+                "--model",
+                "m",
+                "--no-send-repetition-penalty",
+            ],
+        )
+        assert result.exit_code == 0
+        assert "repetition_penalty" not in server.requests[0]
+
+    def test_eval_has_the_flag_too(self, server: FakeModelServer, tmp_path: Path) -> None:
+        setup_models(server)
+        args = [
+            *eval_args(server, write_dataset(tmp_path), tmp_path / "run", "cand-m"),
+            "--no-send-repetition-penalty",
+        ]
+        assert runner.invoke(app, args).exit_code == 0
+        assert all("repetition_penalty" not in r for r in server.requests)
