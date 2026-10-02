@@ -1,9 +1,9 @@
 """Run the official N-ATLaS models locally with Hugging Face ``transformers``.
 
-**Status: written against the published model cards, NOT yet run against real weights.**
-Its wiring is tested with stand-in ``torch``/``transformers`` modules; real behaviour
-(chat template, memory use, speed) must be confirmed on a machine that has the models
-and recorded in ``planning/21_NATLAS_DISCOVERY.md``.
+**Status:** the ASR path has been run against the real official speech models (Mac M1, 30 Sep 2026).
+The LLM path is written against the model card and tested only with stand-in ``torch``/``transformers``
+modules: fp16 needs a GPU, so its real behaviour (memory, speed) is still unverified. Findings are
+recorded in ``planning/21_NATLAS_DISCOVERY.md``.
 
 Needs ``pip install "atlasforge[local]"``. Model files are gated on Hugging Face: accept
 the licence on each model page and provide ``HF_TOKEN``. Weights are never bundled.

@@ -110,7 +110,13 @@ def validate_dataset(
 
 def _line_errors(parsed: ParsedFile) -> list[Issue]:
     issues = [
-        Issue(severity="error", code="line-error", message=e.message, line=e.line, hint=e.hint)
+        Issue(
+            severity="error",
+            code="line-error",
+            message=e.message.removeprefix(f"line {e.line}: "),  # the line is its own field
+            line=e.line,
+            hint=e.hint,
+        )
         for e in parsed.errors[:MAX_LISTED_ERRORS]
     ]
     extra = len(parsed.errors) - MAX_LISTED_ERRORS

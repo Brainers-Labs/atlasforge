@@ -67,6 +67,12 @@ class TestLineErrors:
         assert report.n_lines == 6
         assert not report.ok
 
+    def test_line_number_is_not_repeated_in_the_message(self, tmp_path: Path) -> None:
+        report = validate_dataset(write(tmp_path, [gen(0), "{broken"]), "generation")
+        (error,) = [i for i in report.issues if i.code == "line-error"]
+        assert error.line == 2
+        assert not error.message.startswith("line ")
+
     def test_duplicate_id_reported(self, tmp_path: Path) -> None:
         report = validate_dataset(write(tmp_path, [gen(0), gen(0)]), "generation")
         assert any("duplicate id" in i.message for i in report.errors)

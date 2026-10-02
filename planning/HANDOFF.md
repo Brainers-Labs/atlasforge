@@ -12,7 +12,7 @@ Deadline: **12 Oct 2026, 11:59 PM WAT** (internal submit 11 Oct). Track: Develop
 
 ## Where everything is
 ONE git repo: https://github.com/im-aderm/atlasforge (private).
-- `planning/` - planning docs. Start with `INDEX.md`, then `11_14_DAY_EXECUTION_PLAN.md`, `15_DECISION_LOG.md`, `21_NATLAS_DISCOVERY.md` (verified model facts + a blank verification log to fill on a machine with the models). Inside those docs, `docs/NN_...` paths mean `planning/NN_...`.
+- `planning/` - planning docs. Start with `INDEX.md`, then `11_14_DAY_EXECUTION_PLAN.md`, `15_DECISION_LOG.md`, `21_NATLAS_DISCOVERY.md` (verified model facts + a blank verification log to fill on a machine with the models). Inside those docs, `docs/NN_...` paths mean `planning/NN_...`; the real `docs/` folder is the user-facing documentation site (`pip install -e ".[docs]" && mkdocs serve`, built with `mkdocs build --strict`, deployed by `.github/workflows/docs.yml`).
 - `src/atlasforge/`, `tests/` - the product.
 
 ## Code state (29 Sep): 558 tests, 98% coverage; ruff + mypy strict clean
@@ -36,7 +36,7 @@ Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and
 - A real `atlasforge eval` / `compare` on a real dataset (blocked on D026, no data invented).
 - A formal ASR WER (only single-sample smoke tests so far).
 
-**Not written yet:** fine-tune recipes (`finetune/`), `atlasforge card` (licence-aware model card), `bench afrobench` wrapper, HTML report, Colab notebooks, docs site, `scripts/live_smoke.py`, Hausa quickstart.
+**Not written yet:** fine-tune recipes (`finetune/`), `atlasforge card` (licence-aware model card), `bench afrobench` wrapper, HTML report, Colab notebooks, `scripts/live_smoke.py`, Hausa quickstart.
 
 ## First thing to do on the new machine (Mac M1 16 GB)
 ```bash
@@ -60,7 +60,7 @@ Mac recipe that worked (2 Oct):
 4. Beta testers need something to run: they need either a GPU box/endpoint or the Mac-style llama.cpp path documented in a quickstart.
 
 ## Status vs plan
-Phase 1 milestone M1 (29 Sep) is now PARTLY met on the model side: all 4 ASR models and the LLM (int4 only) run for real on the Mac; fp16/vLLM still need a GPU. The code side is also the code side is well ahead of plan: the D3-D8 code (eval, metrics, compare, openai backend, ASR audio, validate, CLI) exists and is tested. Remaining code for v0.1: fine-tune recipe, model cards, docs site.
+Phase 1 milestone M1 (29 Sep) is now PARTLY met on the model side: all 4 ASR models and the LLM (int4 only) run for real on the Mac; fp16/vLLM still need a GPU. The code side is well ahead of plan: the D3-D8 code (eval, metrics, compare, openai backend, ASR audio, validate, CLI) exists and is tested. Remaining code for v0.1: fine-tune recipe, model cards. The docs site is written (2 Oct) but private-repo GitHub Pages needs a paid plan, and the Hausa quickstart still needs a named human reviewer.
 
 ## Rules to keep
 Only NCAIR1 models in core paths. Never invent model behaviour (label VERIFIED/INFERRED/UNKNOWN). Never redistribute weights. No secrets/prompts/audio in logs. Core install must not import torch. Never fabricate validation.

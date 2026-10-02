@@ -3,7 +3,7 @@
 Single source of truth for model facts. Every row has a status and a source.
 **VERIFIED** = read from an official source or observed in our own run · **INFERRED** = reasonable but unconfirmed · **UNKNOWN** = not yet checked
 
-Last updated: 2 Oct 2026 (ASR verified with real runs on a Mac M1 16 GB, CPU-only. LLM verified via `config.json`/tokenizer and a live int4 generation through Ollama. fp16 and vLLM are still unverified and need a GPU box.)
+Last updated: 2 Oct 2026 (ASR verified with real runs on a Mac M1 16 GB (the Hausa CLI run used Apple MPS; the Yoruba, Igbo, English and timestamp checks ran as direct `transformers` pipelines on CPU). LLM verified via `config.json`/tokenizer and a live int4 generation through Ollama. fp16 and vLLM are still unverified and need a GPU box.)
 
 ## Official sources
 
@@ -72,7 +72,7 @@ AfroBench-LITE study (HF blog, seun-ajayi) using `lm-evaluation-harness`: AfriXN
 
 ## Our verification log
 
-Machine: Mac M1, 16 GB unified memory, macOS 27.0, CPU/MPS only (no NVIDIA GPU). `atlasforge[asr]` installed.
+Machine: Mac M1, 16 GB unified memory, macOS 27.0, Apple MPS or CPU only (no NVIDIA GPU). `atlasforge[asr]` installed.
 
 | Date | Who | Check | Result | Evidence |
 |---|---|---|---|---|

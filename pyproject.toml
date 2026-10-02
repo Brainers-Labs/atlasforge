@@ -63,6 +63,11 @@ finetune = [
   "trl>=0.9",
   "datasets>=2.20",
 ]
+docs = [
+  "mkdocs>=1.6,<2",      # Material and mkdocstrings need the 1.x plugin system
+  "mkdocs-material>=9.5",
+  "mkdocstrings[python]>=0.26",
+]
 dev = [
   "pytest>=8.2",
   "pytest-cov>=5.0",
@@ -95,8 +100,8 @@ include = ["src", "tests", "README.md", "LICENSE", "CHANGELOG.md", "pyproject.to
 line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
-# Design docs contain illustrative snippets, not code we ship.
-extend-exclude = ["planning"]
+# Design docs and the documentation site contain illustrative snippets, not code we ship.
+extend-exclude = ["planning", "docs"]
 
 [tool.ruff.lint]
 select = [

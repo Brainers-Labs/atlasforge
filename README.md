@@ -2,7 +2,9 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested (558 tests). Two parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend and the ASR models. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested (559 tests). The four ASR models and an int4-quantised copy of the LLM (via Ollama) have been run for real on a Mac M1; the LLM at fp16, vLLM and fine-tuning have **not** (they need a GPU). Nothing is claimed to work until it is listed here.
+
+**Full documentation:** build and browse it with `pip install -e ".[docs]" && mkdocs serve` (sources in [`docs/`](docs/index.md)).
 
 ## The question AtlasForge answers
 
@@ -30,11 +32,10 @@ atlasforge transcribe note.ogg --lang ha --base-url ...
 - **Safety nets**: `eval` stops after 20 consecutive failures instead of hammering a dead server, and keeps everything finished so it can resume.
 - **ASR helpers**: any audio format via ffmpeg (including WhatsApp `.ogg`/opus), automatic splitting of audio over the models' 30-second limit, transcript merging.
 
-## Not yet run against real weights
+## Verified against real weights, and what is not
 
-- `--backend local` (transformers): wiring is tested with stand-in modules only.
-- Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
-- Fine-tuning recipes and `card`: not written yet.
+- **Run for real (Mac M1, 16 GB):** all four ASR models through `--backend local` / `transformers`; the LLM as an int4 Ollama import through `atlasforge run`. Evidence is in `planning/21_NATLAS_DISCOVERY.md`.
+- **Not yet run:** the `local` backend for the **LLM** (fp16 needs a GPU of 24 GB or more), vLLM serving, formal WER or any benchmark, and fine-tuning recipes and `card` (not written).
 
 ## Metrics
 

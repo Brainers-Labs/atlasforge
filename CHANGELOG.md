@@ -5,6 +5,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 ## [Unreleased]
 
 ### Added
+- Documentation site (MkDocs Material): getting started, concepts, guides, CLI/dataset/metrics/output references, generated Python API reference, model facts, licence, troubleshooting, security, FAQ. GitHub Pages workflow builds with `--strict`. `docs` extra.
+- Verification of the four ASR models and an int4 LLM serve on real weights (see `planning/21`).
 - Project skeleton: src layout, ruff, mypy (strict), pytest, CI matrix, pre-commit with gitleaks.
 - `atlasforge doctor` (and `--json`).
 - Error hierarchy with actionable hints, shared types, `mask_secret`.
@@ -20,3 +22,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 - CLI: `run`, `transcribe`, `eval`, `report`, `compare`, `dataset validate`; `python -m atlasforge`.
 - Circuit breaker: `eval` aborts after N consecutive failures (default 20) and stays resumable; bounded in-flight window for threaded runs.
 - Resumable evaluation runner: manifest guard against mixing runs, per-example error isolation, crash-safe results file, optional threaded concurrency.
+
+### Fixed
+- `dataset validate` printed the line number twice for line errors (`line 2: line 2: ...`); `Issue.message` no longer repeats it.
+- `asr` and `local` extras pin `scipy<1.15` on macOS, where the default wheel fails to load on recent releases.
+- End-to-end concurrency test no longer flakes on macOS (larger listen backlog on the fake server).
