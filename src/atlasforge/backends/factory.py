@@ -24,9 +24,15 @@ def build_backend(
     retries: int = 2,
     quantize: str = "none",
     device: str = "auto",
+    adapter: str | None = None,
     allow_insecure_http: bool = False,
 ) -> Backend:
     """Create the named backend. Heavy dependencies are imported only for ``local``."""
+    if adapter and name != "local":  # checked first so it can never be silently ignored
+        raise ConfigError(
+            "--adapter only works with the local backend.",
+            hint="With a server, load the adapter there and pass its served name as --model.",
+        )
     if name == "openai":
         if not base_url:
             raise ConfigError(
@@ -48,6 +54,7 @@ def build_backend(
         from atlasforge.backends.local import LocalBackend  # noqa: PLC0415 - keep import light
 
         return LocalBackend(
+            adapter=adapter,
             model=model,
             quantize=quantize,  # type: ignore[arg-type]  # validated in LocalBackend
             device=device,

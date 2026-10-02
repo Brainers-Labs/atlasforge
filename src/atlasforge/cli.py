@@ -20,6 +20,7 @@ from atlasforge import __version__
 from atlasforge.asr.chunking import LongAudioBackend, transcribe_long
 from atlasforge.backends.base import Backend
 from atlasforge.backends.factory import DEFAULT_MODEL, build_backend
+from atlasforge.cards import CardInfo, check_card, render_card
 from atlasforge.compare import compare_runs
 from atlasforge.compare import to_markdown as comparison_markdown
 from atlasforge.compare.slices import BUILTIN_FIELDS, MIN_SLICE_N
@@ -36,6 +37,7 @@ from atlasforge.eval.runner import (
 from atlasforge.eval.runner import run as run_dataset
 from atlasforge.eval.score import score_run, write_report_json
 from atlasforge.eval.validate import validate_dataset
+from atlasforge.finetune import describe, load_config, prepare_data, train
 from atlasforge.render import print_comparison, print_score, print_validation
 from atlasforge.types import GenParams, Message, parse_lang
 
@@ -71,6 +73,13 @@ BaseUrlOpt = Annotated[
 ModelOpt = Annotated[str, typer.Option("--model", help="Model name or Hugging Face repo id.")]
 QuantizeOpt = Annotated[
     str, typer.Option("--quantize", help="local backend only: none, 4bit or 8bit (NVIDIA GPU).")
+]
+AdapterOpt = Annotated[
+    str | None,
+    typer.Option(
+        "--adapter",
+        help="local backend only: a LoRA adapter (path or repo) applied on the base model.",
+    ),
 ]
 DeviceOpt = Annotated[
     str, typer.Option("--device", help="local backend only: auto, cpu, cuda, mps.")
@@ -116,6 +125,7 @@ def _backend(
     model: str,
     quantize: str,
     device: str,
+    adapter: str | None = None,
     timeout: float,
     retries: int = 2,
     insecure: bool,
@@ -126,6 +136,7 @@ def _backend(
         model=model,
         quantize=quantize,
         device=device,
+        adapter=adapter,
         timeout=timeout,
         retries=retries,
         allow_insecure_http=insecure,
@@ -182,6 +193,7 @@ def run(
     base_url: BaseUrlOpt = None,
     model: ModelOpt = DEFAULT_MODEL,
     quantize: QuantizeOpt = "none",
+    adapter: AdapterOpt = None,
     device: DeviceOpt = "auto",
     timeout: TimeoutOpt = 120.0,
     retries: RetriesOpt = 2,
@@ -207,6 +219,7 @@ def run(
         base_url=base_url,
         model=model,
         quantize=quantize,
+        adapter=adapter,
         device=device,
         timeout=timeout,
         retries=retries,
@@ -330,6 +343,7 @@ def eval_command(
     base_url: BaseUrlOpt = None,
     model: ModelOpt = DEFAULT_MODEL,
     quantize: QuantizeOpt = "none",
+    adapter: AdapterOpt = None,
     device: DeviceOpt = "auto",
     timeout: TimeoutOpt = 120.0,
     retries: RetriesOpt = 2,
@@ -358,6 +372,7 @@ def eval_command(
         base_url=base_url,
         model=model,
         quantize=quantize,
+        adapter=adapter,
         device=device,
         timeout=timeout,
         retries=retries,
@@ -485,6 +500,111 @@ def dataset_validate(
     else:
         print_validation(Console(), result)
     raise typer.Exit(0 if result.ok else 1)
+
+
+# --- finetune / card ----------------------------------------------------------------------
+
+
+@app.command()
+def finetune(
+    config: Annotated[Path, typer.Argument(help="Fine-tuning config (.yaml or .json).")],
+    dry_run: Annotated[
+        bool, typer.Option("--dry-run", help="Validate the data and show the plan; train nothing.")
+    ] = False,
+) -> None:
+    """Fine-tune N-ATLaS with QLoRA and save a LoRA adapter (needs an NVIDIA GPU).
+
+    --dry-run needs no GPU: it checks the data (including train/test leakage) and prints the plan.
+    """
+    settings = load_config(config)
+    if dry_run:
+        typer.echo(describe(settings, prepare_data(settings)))
+        typer.echo("Dry run: nothing was trained.")
+        raise typer.Exit(0)
+    result = train(settings)
+    typer.echo(f"Adapter saved to {result.output_dir} ({result.n_train_examples} examples).")
+    typer.echo("Next:")
+    typer.echo(
+        f"  atlasforge eval DATA --backend local --adapter {result.output_dir} --out runs/tuned"
+    )
+    typer.echo("  atlasforge compare DATA --base runs/base --candidate runs/tuned")
+    typer.echo(
+        f"  atlasforge card --training-run {Path(result.output_dir) / 'training_run.json'} ..."
+    )
+
+
+def _text_or_file(value: str) -> str:
+    """``@path`` reads the text from a file; anything else is used as given."""
+    if not value.startswith("@"):
+        return value
+    path = Path(value[1:])
+    try:
+        return path.read_text(encoding="utf-8")
+    except OSError as exc:
+        raise ConfigError(f"Cannot read {path}: {exc.strerror or exc}") from exc
+
+
+def _read_json(path: Path | None) -> dict[str, Any] | None:
+    if path is None:
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ConfigError(f"Cannot read {path} as JSON: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ConfigError(f"{path} must contain a JSON object.")
+    return data
+
+
+@app.command()
+def card(
+    name: Annotated[
+        str, typer.Option("--name", help="Model name. 'Powered by Awarri' is added if missing.")
+    ],
+    description: Annotated[str, typer.Option("--description", help="What the adapter does.")],
+    training_data: Annotated[
+        str,
+        typer.Option(
+            "--training-data",
+            help="Where the data came from AND its licence. Start with @ to read a file.",
+        ),
+    ],
+    lang: Annotated[
+        list[str] | None, typer.Option("--lang", "-l", help="ha, yo, ig, en. Repeatable.")
+    ] = None,
+    domain: Annotated[str | None, typer.Option(help="e.g. agriculture")] = None,
+    author: Annotated[str | None, typer.Option(help="Who made this.")] = None,
+    adapter_repo: Annotated[
+        str | None, typer.Option(help="Hugging Face repo of the adapter.")
+    ] = None,
+    intended_use: Annotated[str | None, typer.Option(help="What it is meant for.")] = None,
+    comparison: Annotated[
+        Path | None, typer.Option(help="comparison.json from `atlasforge compare`.")
+    ] = None,
+    training_run: Annotated[
+        Path | None, typer.Option(help="training_run.json from `atlasforge finetune`.")
+    ] = None,
+    out: Annotated[Path, typer.Option("--out", "-o", help="Where to write the card.")] = Path(
+        "MODEL_CARD.md"
+    ),
+) -> None:
+    """Write a licence-aware model card (attribution, 'Powered by Awarri', user cap) for an adapter."""
+    info = CardInfo(
+        name=name,
+        description=_text_or_file(description),
+        training_data=_text_or_file(training_data),
+        languages=tuple(parse_lang(item) for item in (lang or [])),
+        domain=domain,
+        author=author,
+        adapter_repo=adapter_repo,
+        intended_use=intended_use,
+        comparison=_read_json(comparison),
+        training_run=_read_json(training_run),
+    )
+    out.write_text(render_card(info), encoding="utf-8")
+    for warning in check_card(info):
+        _err(f"warning: {warning}")
+    typer.echo(f"Wrote {out}")
 
 
 def main() -> None:

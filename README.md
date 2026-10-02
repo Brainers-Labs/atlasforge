@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested (558 tests). Two parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend and the ASR models. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
 ## The question AtlasForge answers
 
@@ -28,13 +28,15 @@ atlasforge transcribe note.ogg --lang ha --base-url ...
 - **`dataset validate`**: malformed lines (all of them, with line numbers), duplicates, conflicting labels, train/test leakage, broken Unicode, stripped diacritics, class imbalance.
 - **Backends**: `openai` works with any OpenAI-compatible server (vLLM, llama.cpp, Ollama, HF Endpoints, community gateways). It retries 429/5xx and connection errors, and never puts response bodies in error messages.
 - **Safety nets**: `eval` stops after 20 consecutive failures instead of hammering a dead server, and keeps everything finished so it can resume.
+- **`finetune --dry-run`** (no GPU): validates the training data, refuses train/test leakage and tiny datasets, and prints the plan. **`card`** writes a model card with the licence obligations (attribution, "Powered by Awarri", the 1,000-user cap), the evaluation numbers and any regressions.
 - **ASR helpers**: any audio format via ffmpeg (including WhatsApp `.ogg`/opus), automatic splitting of audio over the models' 30-second limit, transcript merging.
 
 ## Not yet run against real weights
 
 - `--backend local` (transformers): wiring is tested with stand-in modules only.
 - Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
-- Fine-tuning recipes and `card`: not written yet.
+- `atlasforge finetune` (QLoRA via PEFT/TRL): data checks and `--dry-run` are tested; the training run itself needs an NVIDIA GPU and has never been executed.
+- `--backend local --adapter DIR`: evaluating a fine-tuned adapter; wiring tested with stand-ins only.
 
 ## Metrics
 

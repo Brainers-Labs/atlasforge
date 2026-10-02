@@ -55,6 +55,7 @@ finetune = [
   "peft>=0.12",
   "trl>=0.9",
   "datasets>=2.20",
+  "pyyaml>=6.0",
 ]
 dev = [
   "pytest>=8.2",
@@ -63,6 +64,8 @@ dev = [
   "mypy>=1.11",
   "pip-audit>=2.7",
   "pre-commit>=3.8",
+  "pyyaml>=6.0",        # reads YAML fine-tune configs in tests
+  "types-PyYAML>=6.0",
 ]
 
 [project.scripts]

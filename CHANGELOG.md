@@ -18,5 +18,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 - ASR: ffmpeg decoding to 16 kHz mono, windowing past the 30 s limit, seam-aware transcript merging, `LongAudioBackend`.
 - `dataset validate`: duplicates, conflicting labels, leakage, Unicode health, diacritic statistics, class balance.
 - CLI: `run`, `transcribe`, `eval`, `report`, `compare`, `dataset validate`; `python -m atlasforge`.
+- `finetune`: QLoRA recipe (config, data checks, `--dry-run`, leakage/truncation guards, TRL argument-name detection) and `training_run.json`; not yet run on a GPU.
+- `card`: licence-aware model cards from `comparison.json` and `training_run.json`.
+- `--adapter` on the local backend (and `run`/`eval`) to evaluate LoRA adapters; the adapter is part of the model identity.
 - Circuit breaker: `eval` aborts after N consecutive failures (default 20) and stays resumable; bounded in-flight window for threaded runs.
 - Resumable evaluation runner: manifest guard against mixing runs, per-example error isolation, crash-safe results file, optional threaded concurrency.

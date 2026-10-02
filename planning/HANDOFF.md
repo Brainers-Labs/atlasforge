@@ -30,7 +30,9 @@ Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and
 - The official ASR models (loading them, real WER).
 - Open questions for `planning/21`: chat template present? real context length? `return_timestamps` behaviour? VRAM/speed?
 
-**Not written yet:** fine-tune recipes (`finetune/`), `atlasforge card` (licence-aware model card), `bench afrobench` wrapper, HTML report, Colab notebooks, docs site, `scripts/live_smoke.py`, Hausa quickstart.
+**Added 2 Oct (tested with stand-ins, 679 tests total):** `finetune/` (QLoRA config, data checks, `--dry-run`, TRL argument-name detection, `training_run.json`), `cards/` + `atlasforge card` (licence-aware model card from `comparison.json` / `training_run.json`), and `--adapter` on the local backend. **The training run itself has never executed: it needs an NVIDIA GPU.**
+
+**Not written yet:** `bench afrobench` wrapper, HTML report, Colab notebooks, the user docs site (deferred by the team: "we will document later"), `scripts/live_smoke.py`, Hausa quickstart, `examples/` and benchmark packs.
 
 ## First thing to do on the new machine (Mac M1 16 GB)
 ```bash
