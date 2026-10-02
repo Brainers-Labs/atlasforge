@@ -32,6 +32,10 @@ class FakeModelServer(ThreadingHTTPServer):
     """``answers[model][prompt]`` decides each reply; unknown prompts get ``"x"``."""
 
     daemon_threads = True
+    # The runner deliberately bursts up to 2x concurrency connections at once (see
+    # _run_threaded). socketserver's default backlog of 5 is too small for that and
+    # causes spurious ECONNREFUSED under high --concurrency, independent of any real bug.
+    request_queue_size = 64
 
     def __init__(self) -> None:
         super().__init__(("127.0.0.1", 0), _Handler)

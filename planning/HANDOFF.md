@@ -1,4 +1,4 @@
-# AtlasForge - Handoff (updated 29 Sep 2026)
+# AtlasForge - Handoff (updated 2 Oct 2026)
 
 ## What this is
 Brainers Labs' NAIC 2026 Problem 01 entry. Open-source Python toolkit + CLI to **run, evaluate, compare and fine-tune the official N-ATLaS models** (`NCAIR1/*` on Hugging Face), with tone-aware and tone-insensitive scoring for Hausa/Yoruba/Igbo/Nigerian English.
@@ -25,10 +25,16 @@ Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and
 - `asr/`: ffmpeg decode (incl. real opus/ogg), 30 s windowing, seam-aware merge, `LongAudioBackend`.
 - CLI: `doctor`, `run`, `transcribe`, `eval`, `report`, `compare`, `dataset validate`.
 
-**Written but NEVER run against real weights (do this on the Mac first):**
-- `backends/local.py` (transformers). Only tested with stand-in torch/transformers modules.
-- The official ASR models (loading them, real WER).
-- Open questions for `planning/21`: chat template present? real context length? `return_timestamps` behaviour? VRAM/speed?
+**Verified against real weights on the Mac M1 16 GB (2 Oct; evidence in `planning/21` verification log):**
+- All 4 ASR models load and transcribe real FLEURS clips through `atlasforge transcribe --backend local` (Hausa, Yoruba, Igbo; English model loads/runs but was only tested on US-accent audio). `return_timestamps` works (`True` = coarse segments, `"word"` = per-word).
+- The LLM generates in en/ha/yo/ig through `atlasforge run --backend openai` against an int4 Ollama import (local only, never publish). Quality of that int4 serve is NOT evidence of official quality.
+- Facts that contradict the model card: real context length is 131072 (card says 8,092); repo `generation_config.json` has temperature 0.6 and no repetition_penalty (card recommends 0.1 / 1.12). Ollama's safetensors import drops the chat template; we re-add it (see the log row).
+
+**Still never run:**
+- `backends/local.py` for the **LLM** (fp16 does not fit in 16 GB; needs a >=24 GB GPU). Only the ASR path of `local.py` has run for real.
+- vLLM serving, fp16/4-bit VRAM and speed numbers (needs the GPU box).
+- A real `atlasforge eval` / `compare` on a real dataset (blocked on D026, no data invented).
+- A formal ASR WER (only single-sample smoke tests so far).
 
 **Not written yet:** fine-tune recipes (`finetune/`), `atlasforge card` (licence-aware model card), `bench afrobench` wrapper, HTML report, Colab notebooks, docs site, `scripts/live_smoke.py`, Hausa quickstart.
 
@@ -41,11 +47,11 @@ brew install ffmpeg
 pytest && ruff check . && ruff format --check . && mypy
 atlasforge doctor
 ```
-Then, to get real evidence:
-1. Accept the licence on all 5 NCAIR1 repos (Hugging Face), `export HF_TOKEN=...`.
-2. **ASR (fits in memory, CPU/MPS):** `pip install -e ".[asr]"`, then try `atlasforge transcribe some.ogg --lang ha --backend local`. Record the result in `planning/21`.
-3. **LLM on the Mac:** fp16 (16 GB) will not fit; 4-bit via bitsandbytes needs CUDA. Serve a quantised model with llama.cpp or Ollama (INFERRED to work for a Llama-3-8B fine-tune, untested) and point `--backend openai --base-url http://127.0.0.1:PORT/v1` at it. Never publish quantised N-ATLaS weights (licence).
-4. Run `atlasforge eval` on a real dataset and `compare` two runs. Fill in the verification log in `planning/21`.
+Mac recipe that worked (2 Oct):
+1. Accept the licence on all 5 NCAIR1 repos, then `huggingface_hub.login(token=...)`. Steps 2-3 are done; they are kept as the tester recipe.
+2. ASR: `pip install -e ".[asr]"` then `atlasforge transcribe clip.wav --lang ha --backend local --model NCAIR1/Hausa-ASR`. On recent macOS the scipy wheel can fail to load; the extras now pin `scipy<1.15` on darwin.
+3. LLM: `HF_HUB_DISABLE_XET=1` for the 16 GB download (Xet CDN failed twice), then `ollama create <name> -f Modelfile --quantize int4` with `FROM <snapshot dir>` and re-add the Llama-3.1 `TEMPLATE` (the import drops it), then `--backend openai --base-url http://127.0.0.1:11434/v1 --model <name>`. Never publish quantised N-ATLaS weights (licence).
+4. Still to do: run `atlasforge eval` on a real dataset and `compare` two runs (needs D026).
 
 ## Blockers and TODOs
 1. Placeholders: security email in `SECURITY.md`; GitHub org in `pyproject.toml`; confirm `atlasforge` is free on PyPI (could not check).
@@ -54,7 +60,7 @@ Then, to get real evidence:
 4. Beta testers need something to run: they need either a GPU box/endpoint or the Mac-style llama.cpp path documented in a quickstart.
 
 ## Status vs plan
-Phase 1 milestone M1 (29 Sep) is NOT met on the model side (no GPU, no model run yet) but the code side is well ahead of plan: the D3-D8 code (eval, metrics, compare, openai backend, ASR audio, validate, CLI) exists and is tested. Remaining code for v0.1: fine-tune recipe, model cards, docs site.
+Phase 1 milestone M1 (29 Sep) is now PARTLY met on the model side: all 4 ASR models and the LLM (int4 only) run for real on the Mac; fp16/vLLM still need a GPU. The code side is also the code side is well ahead of plan: the D3-D8 code (eval, metrics, compare, openai backend, ASR audio, validate, CLI) exists and is tested. Remaining code for v0.1: fine-tune recipe, model cards, docs site.
 
 ## Rules to keep
 Only NCAIR1 models in core paths. Never invent model behaviour (label VERIFIED/INFERRED/UNKNOWN). Never redistribute weights. No secrets/prompts/audio in logs. Core install must not import torch. Never fabricate validation.
