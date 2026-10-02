@@ -32,7 +32,13 @@ Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and
 
 **Added 2 Oct (tested with stand-ins, 679 tests total):** `finetune/` (QLoRA config, data checks, `--dry-run`, TRL argument-name detection, `training_run.json`), `cards/` + `atlasforge card` (licence-aware model card from `comparison.json` / `training_run.json`), and `--adapter` on the local backend. **The training run itself has never executed: it needs an NVIDIA GPU.**
 
-**Not written yet:** `bench afrobench` wrapper, HTML report, Colab notebooks, the user docs site (deferred by the team: "we will document later"), `scripts/live_smoke.py`, Hausa quickstart, `examples/` and benchmark packs.
+**Added later on 2 Oct (742 tests, 99% coverage, 9 CI jobs green):**
+- **User documentation site** in `docs/` (MkDocs Material). Reference pages and every terminal transcript are generated from the code at build time (`docs_macros.py`); a strict build is a CI job; tests check that every documented command uses real flags. View it: `pip install -e ".[docs]"` then `mkdocs serve` **from inside this repo folder** (`atlasforge/`, where `pyproject.toml` is).
+- `atlasforge demo`: synthetic dataset plus two pre-computed runs, so the quickstart works with no model, token, GPU or API.
+- `--no-send-repetition-penalty` CLI flag.
+- `planning/23_GAP_ANALYSIS.md`: audited gap register with a prioritised plan. **Read it first** for what is left.
+
+**Not written yet (see planning/23):** `evaluate()` high-level API, failure-mode flags, HTML report / web viewer, ASR error analysis, custom metrics, packaging check in CI, `doctor` gated-access check, AfroBench wrapper, `atlasforge.toml`, Colab notebooks, `scripts/live_smoke.py`, Hausa quickstart (needs a native-speaker reviewer), real benchmark packs, `CODE_OF_CONDUCT`, issue/PR templates, release workflow. Docs are not hosted anywhere yet (enable GitHub Pages if wanted).
 
 ## First thing to do on the new machine (Mac M1 16 GB)
 ```bash
