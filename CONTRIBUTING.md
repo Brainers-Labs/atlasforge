@@ -20,6 +20,11 @@ pre-commit install
 ruff check . && ruff format --check . && mypy && pytest
 ```
 
+Run those with nothing overridden, and on Windows without `PYTHONIOENCODING` set. That variable
+changes what a child process's output decodes as, so it can make the suite pass locally while the
+Windows runner — which does not set it — fails on an encoding mismatch that has nothing to do with
+the code under test.
+
 ## Ground rules
 
 - Only official `NCAIR1/*` models in core paths. Never another foundation model.

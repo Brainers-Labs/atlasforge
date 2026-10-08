@@ -520,11 +520,15 @@ class TestTheScript:
         assert proc.returncode == 0, proc.stderr
 
     def test_help_works_without_a_gpu_which_is_how_a_reader_learns_the_flags(self) -> None:
+        # No `encoding=`, deliberately: the child writes with the platform default, so the
+        # parent has to read with it too. Pinning UTF-8 here decodes cp1252 on Windows, the
+        # reader thread dies with UnicodeDecodeError, `stdout` arrives as None and the
+        # assertion below is a TypeError rather than a comparison. It passes on Linux either
+        # way, which is why only the Windows runner caught it.
         result = subprocess.run(
             [sys.executable, str(ROOT / "scripts" / "live_smoke.py"), "--help"],
             capture_output=True,
             text=True,
-            encoding="utf-8",
             timeout=120,
             check=False,
         )
