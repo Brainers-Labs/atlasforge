@@ -1,6 +1,6 @@
 # AtlasForge — what it does, and where it stands
 
-*8 October 2026 · version `0.1.0a1` (pre-alpha, tagged; not on PyPI yet) · distribution `brainers-atlasforge`*
+*8 October 2026 · version `0.1.0a2` (pre-alpha, published to PyPI as `brainers-atlasforge`)*
 
 ## The problem
 

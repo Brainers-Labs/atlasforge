@@ -2,18 +2,18 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0a1`, tagged; not on PyPI yet).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a2`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
 ## Documentation
 
-Full documentation (quickstart, concepts, guides, reference, troubleshooting) lives in [`docs/`](docs/index.md) and builds into a searchable site:
+Full documentation (quickstart, concepts, guides, reference, troubleshooting) lives in [`docs/`](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/index.md) and builds into a searchable site:
 
 ```bash
 pip install -e ".[docs]"
 mkdocs serve        # live preview
 ```
 
-No model? Start with the offline demo: `atlasforge demo`. A Jupyter/Colab walkthrough of the whole workflow on that demo data is in [`notebooks/`](notebooks/README.md), and the output it produces — a report and a comparison in Markdown, JSON and HTML — is committed in [`examples/reports/`](examples/README.md).
+No model? Start with the offline demo: `atlasforge demo`. A Jupyter/Colab walkthrough of the whole workflow on that demo data is in [`notebooks/`](https://github.com/Brainers-Labs/atlasforge/blob/main/notebooks/README.md), and the output it produces — a report and a comparison in Markdown, JSON and HTML — is committed in [`examples/reports/`](https://github.com/Brainers-Labs/atlasforge/blob/main/examples/README.md).
 
 ## The question AtlasForge answers
 
@@ -23,7 +23,16 @@ N-ATLaS is published as gated open weights on Hugging Face, so developers get th
 
 ## Install
 
-Not on PyPI yet, so install it from a clone. Python 3.10 to 3.13.
+Python 3.10 to 3.13.
+
+```bash
+pip install --pre brainers-atlasforge
+atlasforge --version
+```
+
+The distribution is `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project. It is a pre-release, so `--pre` is required; without it pip will not see it. The import name and the command are both `atlasforge`.
+
+To work on AtlasForge itself, or to run the tip of `main` rather than a release:
 
 ```bash
 git clone https://github.com/Brainers-Labs/atlasforge
@@ -31,12 +40,9 @@ cd atlasforge
 python -m venv .venv
 . .venv/bin/activate                 # Windows PowerShell: .venv\Scripts\Activate.ps1
 pip install -e .
-atlasforge --version
 ```
 
-That base install pulls in no PyTorch and no other machine-learning framework. Extras add one job at a time — `pip install -e ".[local]"` to run the weights in-process, `.[asr]` for speech, `.[finetune]` for QLoRA. [Installation](docs/get-started/installation.md) lists them all, and the [Quickstart](docs/get-started/quickstart.md) reaches a real comparison in about two minutes with no model at all.
-
-When it does reach PyPI the distribution will be `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project.
+That base install pulls in no PyTorch and no other machine-learning framework. Extras add one job at a time — `pip install "brainers-atlasforge[local]"` to run the weights in-process, `[asr]` for speech, `[finetune]` for QLoRA. [Installation](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/get-started/installation.md) lists them all, and the [Quickstart](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/get-started/quickstart.md) reaches a real comparison in about two minutes with no model at all.
 
 ## Works today
 
@@ -67,7 +73,7 @@ atlasforge transcribe note.ogg --lang ha --base-url ...
 - `atlasforge finetune` (QLoRA via PEFT/TRL): data checks and `--dry-run` are tested; the training run itself needs an NVIDIA GPU and has never been executed.
 - `--backend local --adapter DIR`: evaluating a fine-tuned adapter; wiring tested with stand-ins only.
 
-Nothing above has been checked from a machine that has the weights. `scripts/live_smoke.py` is the run that does it, and it writes down what it saw — including the checks it could not perform. **It has not been run either.** The [project status](docs/help/status.md) page is the record.
+Nothing above has been checked from a machine that has the weights. `scripts/live_smoke.py` is the run that does it, and it writes down what it saw — including the checks it could not perform. **It has not been run either.** The [project status](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/help/status.md) page is the record.
 
 ## Metrics
 

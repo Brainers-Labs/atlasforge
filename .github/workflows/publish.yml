@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       ref:
-        description: Tag to publish (for example v0.1.0a1)
+        description: Tag to publish (for example v0.1.0a2)
         required: true
         type: string
 

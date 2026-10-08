@@ -9,9 +9,22 @@
 | ffmpeg | Only for speech: it decodes `.ogg`, `.m4a`, `.mp3` and `.wav` |
 | A GPU | **Not** needed for evaluation, comparison or the demo. Needed for the 8B model locally and for fine-tuning. See [Choose your setup](choose-your-setup.md). |
 
+## Install
+
+The distribution is `brainers-atlasforge`, and it is a pre-release, so `--pre` is required — without
+it pip will not see it:
+
+```bash
+pip install --pre brainers-atlasforge
+atlasforge --version
+```
+
+The import name and the command are both `atlasforge`. The distribution name differs because the
+plain name on PyPI belongs to an unrelated bioinformatics project.
+
 ## Install from source
 
-AtlasForge is not on PyPI yet. Install it from a clone of the repository:
+To work on AtlasForge itself, or to run the tip of `main` rather than a release, install from a clone:
 
 ```bash
 git clone https://github.com/Brainers-Labs/atlasforge
@@ -63,18 +76,21 @@ The base install is deliberately light: it pulls in no PyTorch and no Transforme
 
 | Install | Adds | Use it for |
 |---|---|---|
-| `pip install -e .` | Typer, Rich, httpx, NumPy, jiwer, sacrebleu | Everything that talks to a server, plus scoring, comparing and the demo |
-| `pip install -e ".[local]"` | PyTorch, Transformers, Accelerate, bitsandbytes | Running the models in-process (`--backend local`) |
-| `pip install -e ".[asr]"` | PyTorch, Transformers, librosa, soundfile | The official speech models |
-| `pip install -e ".[finetune]"` | the local extras, plus PEFT, TRL, datasets, PyYAML | `atlasforge finetune` |
-| `pip install -e ".[bench]"` | lm-evaluation-harness, PyTorch, Transformers, Accelerate | `atlasforge bench afrobench` — the published AfroBench-LITE suite |
-| `pip install -e ".[docs]"` | MkDocs Material and plugins | Building this documentation |
-| `pip install -e ".[dev]"` | test, lint, type-check tools, and the docs extra | Contributing |
+| `pip install "brainers-atlasforge"` | Typer, Rich, httpx, NumPy, jiwer, sacrebleu | Everything that talks to a server, plus scoring, comparing and the demo |
+| `pip install "brainers-atlasforge[local]"` | PyTorch, Transformers, Accelerate, bitsandbytes | Running the models in-process (`--backend local`) |
+| `pip install "brainers-atlasforge[asr]"` | PyTorch, Transformers, librosa, soundfile | The official speech models |
+| `pip install "brainers-atlasforge[finetune]"` | the local extras, plus PEFT, TRL, datasets, PyYAML | `atlasforge finetune` |
+| `pip install "brainers-atlasforge[bench]"` | lm-evaluation-harness, PyTorch, Transformers, Accelerate | `atlasforge bench afrobench` — the published AfroBench-LITE suite |
+| `pip install "brainers-atlasforge[docs]"` | MkDocs Material and plugins | Building this documentation |
+| `pip install "brainers-atlasforge[dev]"` | test, lint, type-check tools, and the docs extra | Contributing |
+
+Add `--pre` to any of these: the released version is a pre-release. In a clone the same extras are
+written `pip install -e ".[local]"`, `-e ".[asr]"` and so on.
 
 !!! note "Quote the brackets in zsh"
-    In zsh (the macOS default) write `pip install -e ".[local]"` with the quotes, or the shell tries to expand the brackets.
+    In zsh (the macOS default) write `pip install "brainers-atlasforge[local]"` with the quotes, or the shell tries to expand the brackets.
 
-!!! warning "The PyPI name will be `brainers-atlasforge`, not `atlasforge`"
+!!! warning "The PyPI name is `brainers-atlasforge`, not `atlasforge`"
     `atlasforge` on PyPI is an unrelated bioinformatics project, so the published distribution is
     **`brainers-atlasforge`** — but the import name and the command are both still `atlasforge`,
     and so is every example on this site. See [Releasing](../project/releasing.md).

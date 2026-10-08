@@ -10,8 +10,8 @@ For maintainers. A release is a **tag**; pushing it does the rest.
 4. Commit, then tag and push:
 
    ```bash
-   git tag -a v0.1.0a1 -m "AtlasForge 0.1.0a1"
-   git push origin v0.1.0a1
+   git tag -a v0.1.0a2 -m "AtlasForge 0.1.0a2"
+   git push origin v0.1.0a2
    ```
 
 The [Release workflow](https://github.com/Brainers-Labs/atlasforge/blob/main/.github/workflows/release.yml)
@@ -37,7 +37,7 @@ The distribution name is org-scoped for one reason: the plain name is taken. PyP
 someone else's package. Splitting the distribution name from the import name is ordinary —
 Pillow and PIL do the same thing.
 
-Pre-release versions (`0.1.0a1`) need `--pre`; without it pip will not see them.
+Pre-release versions (`0.1.0a2`) need `--pre`; without it pip will not see them.
 
 ## Publishing to PyPI
 
@@ -58,6 +58,24 @@ stored in the repository or in CI. That needs a one-time setting on PyPI before 
 
 Until that exists the workflow fails at the last step with PyPI's own message. That is on
 purpose: publishing cannot be undone, and a silently-skipped publish is worse than a loud one.
+
+The steps, in order.
+
+1. Create the `pypi` environment under **Settings → Environments**. The workflow declares it, and it
+   is where a required reviewer would go if an upload should ever need one.
+2. Create the pending publisher on PyPI with the five values above. Enter the owner exactly as
+   GitHub spells it: PyPI matches the `repository_owner` claim GitHub sends, which changes if the
+   repository is transferred, so a moved repository is set up fresh rather than edited in place.
+3. **Actions → Publish to PyPI → Run workflow**, with the tag (`v0.1.0a2`) as the input.
+4. Watch the run. It checks out that tag, builds it, refuses to continue unless an artefact carries
+   the version, and only then asks PyPI for a token — so a wrong ref fails before the upload rather
+   than after it.
+
+Two things to know before the first upload. **The version is permanent**: PyPI will not accept the
+same version twice, and a version's metadata cannot be edited afterwards, so a tag that predates a
+fix cannot be re-uploaded — the fix needs a new version number. And **a pre-release needs `--pre`**;
+a plain `pip install brainers-atlasforge` will report that no matching distribution exists, which
+reads like a failed publish.
 
 ## What a release must not say
 

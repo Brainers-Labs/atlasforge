@@ -166,11 +166,16 @@ def test_the_last_section_points_at_the_real_models() -> None:
     assert "colab" in body
 
 
-def test_it_does_not_promise_a_pypi_install_that_does_not_exist_yet() -> None:
-    """The package is not on PyPI until v0.1.0 is released; the install line must reflect that."""
+def test_the_install_line_installs_the_published_distribution() -> None:
+    """The package is on PyPI now, so the notebook installs it from there rather than from a clone.
+
+    A ``git+https`` line has to name a branch, which drifts from the released version without
+    anything noticing — the failure this test was written for when there was no release to install.
+    ``--pre`` is the other half: without it pip does not see a pre-release at all.
+    """
     install = source(next(cell for cell in cells("code") if cell["id"] == "install"))
-    assert "git+https://github.com/Brainers-Labs/atlasforge" in install
-    assert "once v0.1.0 is on pypi" in install.lower()
+    assert "--pre brainers-atlasforge" in install
+    assert "git+" not in install
 
 
 def test_the_readme_next_to_it_explains_the_skip_marker() -> None:

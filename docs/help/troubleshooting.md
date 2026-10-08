@@ -20,10 +20,10 @@ An `atlasforge.toml` is being picked up from the current directory or one above 
 Speech needs ffmpeg to decode audio. Install it (`brew install ffmpeg`, `winget install Gyan.FFmpeg`, or `sudo apt install ffmpeg`) and **open a new terminal**, because `PATH` is read when a terminal starts.
 
 ### `zsh: no matches found: atlasforge[local]`
-zsh expands square brackets. Quote the argument: `pip install -e ".[local]"`.
+zsh expands square brackets. Quote the argument: `pip install "brainers-atlasforge[local]"`.
 
 ### `The local backend needs 'torch', which is not installed.`
-You used `--backend local` without the extra. Run `pip install -e ".[local]"` (or `[asr]` for speech, `[finetune]` for training).
+You used `--backend local` without the extra. Run `pip install "brainers-atlasforge[local]"` (or `[asr]` for speech, `[finetune]` for training). In a clone the same extras are `pip install -e ".[local]"`.
 
 ### PowerShell: a multi-line command breaks
 In PowerShell, continue a line with a backtick `` ` ``, not a backslash. The guides show one-line commands where possible.
