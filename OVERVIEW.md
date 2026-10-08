@@ -141,8 +141,10 @@ repositories. No further code closes it.
 - A Hausa quickstart needs a named native-speaker reviewer.
 - The benchmark-pack licence question is a share-alike decision inside an Apache-2.0 repository,
   deliberately not guessed.
-- The notebook has not been opened in Colab. The documentation is not hosted. No release tag exists,
-  because the tag waits on the first item.
+- The notebook has not been opened in Colab. The documentation is hosted at
+  https://brainers-labs.github.io/atlasforge/. A release tag exists — `v0.1.0a2`, published to PyPI
+  as `brainers-atlasforge` — but it is a pre-alpha, and it does not close the first item above: a
+  release says the code installs, not that it has been run against the real weights.
 
 ## Licence
 
