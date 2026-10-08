@@ -18,7 +18,6 @@ git clone https://github.com/im-aderm/atlasforge
 cd atlasforge
 python -m venv .venv
 ```
-
 === "macOS / Linux"
 
     ```bash
@@ -31,6 +30,24 @@ python -m venv .venv
     ```powershell
     .venv\Scripts\Activate.ps1
     pip install -e .
+    ```
+
+!!! warning "If PowerShell refuses to run the activation script"
+    A default Windows PowerShell blocks `.ps1` files, and says so: *"Activate.ps1 cannot be
+    loaded because running scripts is disabled on this system."* That is Windows' default
+    policy, not a fault in the virtual environment. Allow it for this session only:
+
+    ```powershell
+    Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+    .venv\Scripts\Activate.ps1
+    ```
+
+    Or skip activation altogether and call the environment's interpreter directly. Every
+    command works the same way, and nothing needs to be unblocked:
+
+    ```powershell
+    .venv\Scripts\python.exe -m pip install -e .
+    .venv\Scripts\atlasforge.exe --version
     ```
 
 Check it works:
@@ -50,11 +67,17 @@ The base install is deliberately light: it pulls in no PyTorch and no Transforme
 | `pip install -e ".[local]"` | PyTorch, Transformers, Accelerate, bitsandbytes | Running the models in-process (`--backend local`) |
 | `pip install -e ".[asr]"` | PyTorch, Transformers, librosa, soundfile | The official speech models |
 | `pip install -e ".[finetune]"` | the local extras, plus PEFT, TRL, datasets, PyYAML | `atlasforge finetune` |
+| `pip install -e ".[bench]"` | lm-evaluation-harness, PyTorch, Transformers, Accelerate | `atlasforge bench afrobench` — the published AfroBench-LITE suite |
 | `pip install -e ".[docs]"` | MkDocs Material and plugins | Building this documentation |
 | `pip install -e ".[dev]"` | test, lint, type-check tools, and the docs extra | Contributing |
 
 !!! note "Quote the brackets in zsh"
     In zsh (the macOS default) write `pip install -e ".[local]"` with the quotes, or the shell tries to expand the brackets.
+
+!!! warning "The PyPI name will be `brainers-atlasforge`, not `atlasforge`"
+    `atlasforge` on PyPI is an unrelated bioinformatics project, so the published distribution is
+    **`brainers-atlasforge`** — but the import name and the command are both still `atlasforge`,
+    and so is every example on this site. See [Releasing](../project/releasing.md).
 
 ## Install ffmpeg
 
@@ -101,7 +124,7 @@ python -m atlasforge --help
 ## Uninstall
 
 ```bash
-pip uninstall atlasforge
+pip uninstall brainers-atlasforge
 ```
 
 Your datasets, run directories and reports are ordinary files in your own folders; AtlasForge never stores anything elsewhere.

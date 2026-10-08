@@ -26,7 +26,7 @@ You need Python 3.10 to 3.13. From a clone of the repository:
     atlasforge --version
     ```
 
-The base install is small: it does not pull in PyTorch or any other machine-learning framework. See [Installation](installation.md) for the optional extras.
+The base install is small: it does not pull in PyTorch or any other machine-learning framework. See [Installation](installation.md) for the optional extras. On Windows, if PowerShell refuses to run `Activate.ps1`, that page has the fix.
 
 ## 2. Create the demo data
 
@@ -93,7 +93,7 @@ This is the heart of AtlasForge, so it is worth reading slowly.
 
 **Too few to judge.** The 12 Yoruba examples are under the 30-example minimum, so they are reported as *insufficient data* instead of as a result.
 
-Open the full Markdown report that was just written to `comparison/comparison.md`. This is exactly what you would paste into a submission or a README:
+Open the full Markdown report that was just written to `comparison/comparison.md`. This is exactly what you would paste into a submission or a README. The same report is also at `comparison/comparison.html`, as one self-contained page — open it in a browser and the same numbers are there as bars:
 
 ??? example "The generated comparison report"
     {{ sample_report("comparison") }}

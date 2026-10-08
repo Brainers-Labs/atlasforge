@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a1`, unreleased).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
 ## Documentation
 
@@ -11,14 +11,32 @@ Full documentation (quickstart, concepts, guides, reference, troubleshooting) li
 ```bash
 pip install -e ".[docs]"
 mkdocs serve        # live preview
-```n
-No model? Start with the offline demo: `atlasforge demo`.
+```
+
+No model? Start with the offline demo: `atlasforge demo`. A Jupyter/Colab walkthrough of the whole workflow on that demo data is in [`notebooks/`](notebooks/README.md), and the output it produces — a report and a comparison in Markdown, JSON and HTML — is committed in [`examples/reports/`](examples/README.md).
 
 ## The question AtlasForge answers
 
 > *I changed this N-ATLaS model. Did I actually make it better on my task, and where did it get worse?*
 
 N-ATLaS is published as gated open weights on Hugging Face, so developers get the models but no tooling to measure them on their own data. AtlasForge is that tooling.
+
+## Install
+
+Not on PyPI yet, so install it from a clone. Python 3.10 to 3.13.
+
+```bash
+git clone https://github.com/im-aderm/atlasforge
+cd atlasforge
+python -m venv .venv
+. .venv/bin/activate                 # Windows PowerShell: .venv\Scripts\Activate.ps1
+pip install -e .
+atlasforge --version
+```
+
+That base install pulls in no PyTorch and no other machine-learning framework. Extras add one job at a time — `pip install -e ".[local]"` to run the weights in-process, `.[asr]` for speech, `.[finetune]` for QLoRA. [Installation](docs/get-started/installation.md) lists them all, and the [Quickstart](docs/get-started/quickstart.md) reaches a real comparison in about two minutes with no model at all.
+
+When it does reach PyPI the distribution will be `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project.
 
 ## Works today
 
@@ -33,8 +51,9 @@ atlasforge report runs/base --dataset data.jsonl    # re-score with no model
 atlasforge transcribe note.ogg --lang ha --base-url ...
 ```
 
-- **`eval`**: JSONL in, resumable run out, `report.md` + `report.json`. Every text metric is reported under both a **tone-aware** and a **tone-insensitive** view (Yoruba/Igbo underdots and Hausa hooked letters are never stripped). Failed calls count as wrong.
-- **`compare`**: paired bootstrap confidence intervals, an exact McNemar test for right/wrong metrics, per-slice results (language, length, has-number, or any `meta` field). A change is only called *improved* or *regressed* when the whole interval is on one side of zero, and slices under 30 examples are reported as *insufficient data*.
+- **`eval`**: JSONL in, resumable run out, `report.md` + `report.json` + `report.html` (one self-contained page: no JavaScript, no network, no server). Every text metric is reported under both a **tone-aware** and a **tone-insensitive** view (Yoruba/Igbo underdots and Hausa hooked letters are never stripped). Failed calls count as wrong.
+
+- **`compare`**: paired bootstrap confidence intervals, an exact McNemar test for right/wrong metrics, per-slice results (language, length, has-number, or any `meta` field), and the same three report shapes as `eval`. A change is only called *improved* or *regressed* when the whole interval is on one side of zero, and slices under 30 examples are reported as *insufficient data*.
 - **`dataset validate`**: malformed lines (all of them, with line numbers), duplicates, conflicting labels, train/test leakage, broken Unicode, stripped diacritics, class imbalance.
 - **Backends**: `openai` works with any OpenAI-compatible server (vLLM, llama.cpp, Ollama, HF Endpoints, community gateways). It retries 429/5xx and connection errors, and never puts response bodies in error messages.
 - **Safety nets**: `eval` stops after 20 consecutive failures instead of hammering a dead server, and keeps everything finished so it can resume.
@@ -47,6 +66,8 @@ atlasforge transcribe note.ogg --lang ha --base-url ...
 - Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
 - `atlasforge finetune` (QLoRA via PEFT/TRL): data checks and `--dry-run` are tested; the training run itself needs an NVIDIA GPU and has never been executed.
 - `--backend local --adapter DIR`: evaluating a fine-tuned adapter; wiring tested with stand-ins only.
+
+Nothing above has been checked from a machine that has the weights. `scripts/live_smoke.py` is the run that does it, and it writes down what it saw — including the checks it could not perform. **It has not been run either.** The [project status](docs/help/status.md) page is the record.
 
 ## Metrics
 
