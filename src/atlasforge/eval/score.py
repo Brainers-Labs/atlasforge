@@ -173,7 +173,7 @@ def score_run(
         metrics=tuple(summaries),
         per_example=per_example,
         latency_ms={
-            "mean": sum(latencies) / len(latencies) if latencies else None,
+            "mean": m.mean(latencies) if latencies else None,
             "p50": m.percentile(latencies, 50),
             "p95": m.percentile(latencies, 95),
             "max": max(latencies) if latencies else None,
@@ -348,7 +348,7 @@ def _score_view(
                 name=metric.name,
                 view=view,
                 n=len(refs),
-                mean=sum(values) / len(values) if values else None,
+                mean=m.mean(values) if values else None,
                 corpus=pooled(preds, refs, labels) if pooled and refs else None,
                 higher_is_better=metric.higher_is_better,
             )

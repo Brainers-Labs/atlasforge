@@ -16,6 +16,7 @@ from atlasforge.compare.slices import (
 from atlasforge.compare.stats import McNemarResult, is_binary, mcnemar_exact, paired_bootstrap
 from atlasforge.errors import ConfigError
 from atlasforge.eval.flags import FLAG_NAMES
+from atlasforge.eval.metrics import mean
 from atlasforge.eval.runner import RESULTS_NAME, read_manifest, read_results
 from atlasforge.eval.score import ScoreReport, score_run
 
@@ -300,8 +301,8 @@ def _compare_metric(
         view=view,
         higher_is_better=higher_is_better,
         n=n,
-        base_mean=sum(base_values) / n,
-        candidate_mean=sum(candidate_values) / n,
+        base_mean=mean(base_values),
+        candidate_mean=mean(candidate_values),
         delta=boot.mean,
         low=boot.low,
         high=boot.high,

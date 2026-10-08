@@ -7,6 +7,7 @@ are fractions (0-1, error rates can exceed 1); chrF is 0-100 as in sacrebleu.
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING, Final
 
 import jiwer
@@ -110,7 +111,24 @@ def macro_f1(preds: Sequence[str | None], refs: Sequence[str]) -> float:
         fn = sum(p != cls and r == cls for p, r in zip(preds, refs, strict=True))
         denominator = 2 * tp + fp + fn
         scores.append(2 * tp / denominator if denominator else 0.0)
-    return sum(scores) / len(scores)
+    return mean(scores)
+
+
+def mean(values: Sequence[float]) -> float:
+    """Arithmetic mean of ``values``, which must not be empty.
+
+    ``math.fsum``, not the builtin ``sum``, and deliberately. CPython 3.12 gave ``sum``
+    Neumaier compensated summation for floats (gh-100425), so the same list of values adds
+    up to a different last digit there than it does on 3.11 and earlier. A mean computed
+    here reaches a report, and the committed example reports are compared byte for byte, so
+    the arithmetic has to agree across the whole 3.10-3.13 CI matrix rather than describe
+    the interpreter that happened to run it. ``fsum`` is exactly rounded — it returns the
+    correctly rounded sum of the values, whatever their order — which makes that agreement
+    a property of this code instead of two versions coinciding.
+    """
+    if not values:
+        raise ValueError("no values to average")
+    return math.fsum(values) / len(values)
 
 
 def percentile(values: Sequence[float], q: float) -> float | None:

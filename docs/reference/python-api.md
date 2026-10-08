@@ -187,6 +187,7 @@ These take text as given: they do not normalise. For the two tone views, normali
         - corpus_cer
         - extract_label
         - macro_f1
+        - mean
         - percentile
 
 How a figure is *written* is separate from how it is computed, so that every report renders the same

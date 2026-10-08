@@ -1,3 +1,5 @@
+import math
+
 import pytest
 
 from atlasforge.eval import metrics as m
@@ -166,6 +168,32 @@ class TestMacroF1:
 
     def test_all_wrong(self) -> None:
         assert m.macro_f1(["b", "a"], ["a", "b"]) == 0.0
+
+
+class TestMean:
+    def test_hand_computed(self) -> None:
+        assert m.mean([1.0, 2.0, 6.0]) == 3.0
+
+    def test_is_exactly_rounded_rather_than_merely_accurate(self) -> None:
+        """The fixture is chosen so that the builtin ``sum`` cannot pass.
+
+        ``1e16`` absorbs both small values, so accumulating left to right loses them and
+        returns ``1e16``; ``math.fsum`` returns the correctly rounded sum. That makes the
+        fixture discriminate on every interpreter in the matrix — 3.10 and 3.11 accumulate
+        naively, and 3.12's compensated ``sum`` is still wrong here — which is the point: a
+        mean that reaches a report must not describe the version that computed it.
+        """
+        values = [1.0, 1e16, 1e-16]
+        assert sum(values) != math.fsum(values), "fixture no longer discriminates"
+        assert m.mean(values) == math.fsum(values) / 3
+
+    def test_the_order_of_the_values_does_not_matter(self) -> None:
+        values = [1.0, 1e16, 1e-16]
+        assert m.mean(values) == m.mean(list(reversed(values)))
+
+    def test_empty_is_an_error(self) -> None:
+        with pytest.raises(ValueError, match="no values to average"):
+            m.mean([])
 
 
 class TestPercentile:
