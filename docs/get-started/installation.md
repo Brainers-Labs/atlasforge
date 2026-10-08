@@ -11,8 +11,10 @@
 
 ## Install
 
-The distribution is `brainers-atlasforge`, and it is a pre-release, so `--pre` is required — without
-it pip will not see it:
+The distribution is `brainers-atlasforge`, and the current version is a pre-release. `--pre` is
+shown below but is not required while the alpha is the only version published — pip falls back to
+pre-releases when a project has no stable release to prefer, so the plain command installs it too.
+It becomes necessary once a stable version exists, because pip will then choose that one:
 
 ```bash
 pip install --pre brainers-atlasforge
@@ -84,8 +86,8 @@ The base install is deliberately light: it pulls in no PyTorch and no Transforme
 | `pip install "brainers-atlasforge[docs]"` | MkDocs Material and plugins | Building this documentation |
 | `pip install "brainers-atlasforge[dev]"` | test, lint, type-check tools, and the docs extra | Contributing |
 
-Add `--pre` to any of these: the released version is a pre-release. In a clone the same extras are
-written `pip install -e ".[local]"`, `-e ".[asr]"` and so on.
+In a clone the same extras are written `pip install -e ".[local]"`, `-e ".[asr]"` and so on.
+`--pre` may be added to any of these; it is not required yet, for the reason given above.
 
 !!! note "Quote the brackets in zsh"
     In zsh (the macOS default) write `pip install "brainers-atlasforge[local]"` with the quotes, or the shell tries to expand the brackets.

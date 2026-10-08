@@ -30,7 +30,7 @@ pip install --pre brainers-atlasforge
 atlasforge --version
 ```
 
-The distribution is `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project. It is a pre-release, so `--pre` is required; without it pip will not see it. The import name and the command are both `atlasforge`.
+The distribution is `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project. The import name and the command are both `atlasforge`. `--pre` is written above but is not required while the alpha is the only version published: pip falls back to pre-releases when a project has no stable release to prefer, so the plain command installs it too. It becomes load-bearing as soon as a stable version exists, because pip will then choose that one.
 
 To work on AtlasForge itself, or to run the tip of `main` rather than a release:
 

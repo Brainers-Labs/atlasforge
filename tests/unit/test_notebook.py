@@ -171,7 +171,8 @@ def test_the_install_line_installs_the_published_distribution() -> None:
 
     A ``git+https`` line has to name a branch, which drifts from the released version without
     anything noticing — the failure this test was written for when there was no release to install.
-    ``--pre`` is the other half: without it pip does not see a pre-release at all.
+    ``--pre`` stays in the line even though pip does not need it while the alpha is the only
+    published version — a stable release is what will make it necessary.
     """
     install = source(next(cell for cell in cells("code") if cell["id"] == "install"))
     assert "--pre brainers-atlasforge" in install

@@ -37,7 +37,9 @@ The distribution name is org-scoped for one reason: the plain name is taken. PyP
 someone else's package. Splitting the distribution name from the import name is ordinary —
 Pillow and PIL do the same thing.
 
-Pre-release versions (`0.1.0a2`) need `--pre`; without it pip will not see them.
+Pre-release versions (`0.1.0a2`) do not need `--pre` while they are the only versions published:
+pip falls back to pre-releases when a project has no stable release to prefer. Once one exists,
+`--pre` is how a reader asks for an alpha instead of it.
 
 ## Publishing to PyPI
 
@@ -73,9 +75,9 @@ The steps, in order.
 
 Two things to know before the first upload. **The version is permanent**: PyPI will not accept the
 same version twice, and a version's metadata cannot be edited afterwards, so a tag that predates a
-fix cannot be re-uploaded — the fix needs a new version number. And **a pre-release needs `--pre`**;
-a plain `pip install brainers-atlasforge` will report that no matching distribution exists, which
-reads like a failed publish.
+fix cannot be re-uploaded — the fix needs a new version number. The same holds for the **long
+description**: the project page is rendered from the README as it stood in that release's metadata,
+so a wording change in the repository does not reach PyPI until a new version carries it.
 
 ## What a release must not say
 
