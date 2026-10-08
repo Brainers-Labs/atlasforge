@@ -13,13 +13,16 @@ so renaming it again cannot leave a stale string behind in the source, the docs 
 from __future__ import annotations
 
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
-try:  # Python 3.11+
+# A version guard, not `try`/`except ImportError`: mypy narrows on `sys.version_info`, so a 3.10
+# target checks the `tomli` branch instead of reporting `tomllib` as missing.
+if sys.version_info >= (3, 11):  # Python 3.11+
     import tomllib
-except ModuleNotFoundError:  # pragma: no cover - Python 3.10 only
-    import tomli as tomllib  # type: ignore[no-redef]
+else:  # pragma: no cover - Python 3.10 only
+    import tomli as tomllib
 
 import pytest
 

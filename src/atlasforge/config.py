@@ -28,6 +28,7 @@ of a checked-in file.
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
@@ -37,10 +38,14 @@ from atlasforge.errors import ConfigError
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-try:  # Python 3.11+
+# A version guard rather than a `try`/`except ImportError`: mypy narrows on
+# `sys.version_info`, so under a 3.10 target it checks the `tomli` branch and never looks for a
+# `tomllib` that 3.10's typeshed does not have. The `try` form made `mypy --python-version 3.10`
+# fail with `import-not-found` on every 3.10 CI runner.
+if sys.version_info >= (3, 11):  # Python 3.11+
     import tomllib
-except ModuleNotFoundError:  # pragma: no cover - Python 3.10 only
-    import tomli as tomllib  # type: ignore[no-redef]
+else:  # pragma: no cover - Python 3.10 only
+    import tomli as tomllib
 
 #: The file a project's settings live in.
 FILE_NAME: Final = "atlasforge.toml"
