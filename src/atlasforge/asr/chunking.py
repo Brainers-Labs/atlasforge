@@ -114,7 +114,13 @@ def frame_levels(
     if frames == 0:
         return np.empty(0, dtype=np.float32)
     rms = np.sqrt(np.mean(samples[: frames * frame].reshape(frames, frame) ** 2, axis=1))
-    return np.maximum(20.0 * np.log10(np.maximum(rms, 1e-6)), _FLOOR_DB).astype(np.float32)
+    # The level, then floored and narrowed. The intermediate is named and annotated rather than
+    # written into one expression on purpose: numpy 2.2's stubs -- the newest a 3.10 runner can
+    # install -- fail to match the outer ``np.maximum`` when its first argument is an
+    # unannotated nested call, so mypy falls back to ``Any`` and then fails ``warn_return_any``.
+    # With the annotation the overload resolves identically on numpy 2.2 and 2.5.
+    level_db: npt.NDArray[np.float64] = 20.0 * np.log10(np.maximum(rms, 1e-6))
+    return np.maximum(level_db, _FLOOR_DB).astype(np.float32)
 
 
 def plan_windows_silence_aware(

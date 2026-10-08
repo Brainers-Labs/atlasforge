@@ -4,6 +4,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 
 ## [Unreleased]
 
+### Changed
+- The README, this changelog and `OVERVIEW.md` no longer describe `0.1.0a1` as *unreleased*. It is a tag with a published GitHub release; what those lines were standing in for is that it is not on PyPI, which is still true and is now what they say.
+
+### Fixed
+- `mypy` failed on both Python 3.10 runners in `asr/chunking.py`, and the cause was not Python 3.10. numpy dropped 3.10 in 2.3, so the 3.10 cells resolve numpy 2.2 while the 3.13 cells resolve 2.5, and 2.2's stubs do not match the outer `np.maximum` when its first argument is an unannotated nested call: mypy falls back to `Any`, `astype(np.float32)` then returns `Any`, and `warn_return_any` — part of `strict` — rejects the return. The frame-level dB intermediate is now named and annotated `npt.NDArray[np.float64]`, which resolves the overload identically on numpy 2.2 and 2.5 — the same remedy `pcm_to_float32` already needed. The earlier local check had called this clean, but only under `--follow-imports=skip`, which suppresses missing-module errors: that flag was hiding the answer rather than giving one.
+- `config.py` and `tests/unit/test_packaging.py` imported `tomllib` as `try`/`except ModuleNotFoundError`. That is correct at runtime, but mypy resolves imports statically, so on a 3.10 target — whose typeshed has no `tomllib` — every 3.10 runner failed with `import-not-found` as soon as those files were committed. Both now use a `sys.version_info >= (3, 11)` guard, which is what mypy narrows on. Runtime behaviour is unchanged; `tomli` was already a dependency for `python_version < '3.11'`.
+- The release workflow published `v0.1.0a1` as an ordinary release, so an alpha appeared as *Latest* on the repository — a maturity claim the version deliberately does not make. `gh release create` marks a release full unless told otherwise, so the workflow now reads `packaging.version.Version(...).is_prerelease` and passes `--prerelease` for a PEP 440 pre-release (`a1`, `b2`, `rc1`, `.dev1`). The release already published keeps its marking until it is edited.
+
 ## [0.1.0a1] - 2026-10-08
 
 ### Added
@@ -47,7 +55,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 
 ### Changed
 - **The distribution name is `brainers-atlasforge`, not `atlasforge`.** PyPI's `atlasforge` is an unrelated bioinformatics project, so `pip install atlasforge` would have installed someone else's package. The import name, the `atlasforge` command and every example are unchanged — the same split as Pillow and PIL. The extras that referred to the project by name (`atlasforge[local]`, `atlasforge[docs]`) were updated with it.
-- Version is `0.1.0a1` (unreleased).
+- Version is `0.1.0a1`.
 
 ### Fixed
 - Install hints in error messages still named the old distribution. The rename updated the packaging metadata and the documentation, but not the five hints in `src/` — so a missing extra told you to run `pip install "atlasforge[local]"`, which is not a typo: it reaches the unrelated project that owns that name, and then fails on an extra it does not have. A test now reads the name from `pyproject.toml` and fails if any install command in the source or the docs names a different one.

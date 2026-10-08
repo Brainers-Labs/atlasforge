@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0a1`, unreleased).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a1`, tagged; not on PyPI yet).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
 ## Documentation
 
