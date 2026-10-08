@@ -14,7 +14,7 @@
 AtlasForge is not on PyPI yet. Install it from a clone of the repository:
 
 ```bash
-git clone https://github.com/im-aderm/atlasforge
+git clone https://github.com/Brainers-Labs/atlasforge
 cd atlasforge
 python -m venv .venv
 ```

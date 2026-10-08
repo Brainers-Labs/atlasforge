@@ -61,7 +61,7 @@ representing the project in public spaces.
 Report abusive, harassing or otherwise unacceptable behaviour privately using
 GitHub's [report abuse](https://github.com/contact/report-abuse) form, or by
 opening a confidential security advisory as described in the
-[security policy](https://github.com/im-aderm/atlasforge/blob/main/SECURITY.md).
+[security policy](https://github.com/Brainers-Labs/atlasforge/blob/main/SECURITY.md).
 All complaints will be reviewed and investigated promptly and fairly, and the
 privacy and security of the reporter will be respected.
 

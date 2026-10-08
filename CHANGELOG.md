@@ -8,6 +8,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 - `atlasforge.eval.metrics.mean`, an exactly rounded arithmetic mean, so that an average written into a report does not depend on the Python version that computed it. The reason is the fix below.
 
 ### Changed
+- The repository moved from `im-aderm/atlasforge` to the **`Brainers-Labs`** organization, which is the name the packaging metadata has carried as the author since the first commit. Every URL that names the project moved with it: `Homepage` and `Issues` in the metadata, the documentation site's `site_url`, `repo_url` and `repo_name`, the clone commands in the README, the installation guide and the handoff notes, the security-advisory and issue-template links, the Colab badge, and the notebook's install line — the last of these together with the test that reads it, since a notebook and its assertion drifting apart is exactly what that test exists to catch. GitHub redirects the old addresses, so no existing clone, fork or bookmark breaks.
 - The README, this changelog and `OVERVIEW.md` no longer describe `0.1.0a1` as *unreleased*. It is a tag with a published GitHub release; what those lines were standing in for is that it is not on PyPI, which is still true and is now what they say.
 
 ### Fixed

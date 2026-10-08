@@ -1,8 +1,8 @@
 site_name: AtlasForge
 site_description: Run, evaluate, compare and fine-tune the official N-ATLaS models (Hausa, Yoruba, Igbo, Nigerian English).
-site_url: https://im-aderm.github.io/atlasforge/
-repo_url: https://github.com/im-aderm/atlasforge
-repo_name: im-aderm/atlasforge
+site_url: https://brainers-labs.github.io/atlasforge/
+repo_url: https://github.com/Brainers-Labs/atlasforge
+repo_name: Brainers-Labs/atlasforge
 edit_uri: edit/main/docs/
 docs_dir: docs
 strict: true

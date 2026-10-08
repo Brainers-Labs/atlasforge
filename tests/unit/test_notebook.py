@@ -169,7 +169,7 @@ def test_the_last_section_points_at_the_real_models() -> None:
 def test_it_does_not_promise_a_pypi_install_that_does_not_exist_yet() -> None:
     """The package is not on PyPI until v0.1.0 is released; the install line must reflect that."""
     install = source(next(cell for cell in cells("code") if cell["id"] == "install"))
-    assert "git+https://github.com/im-aderm/atlasforge" in install
+    assert "git+https://github.com/Brainers-Labs/atlasforge" in install
     assert "once v0.1.0 is on pypi" in install.lower()
 
 

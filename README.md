@@ -26,7 +26,7 @@ N-ATLaS is published as gated open weights on Hugging Face, so developers get th
 Not on PyPI yet, so install it from a clone. Python 3.10 to 3.13.
 
 ```bash
-git clone https://github.com/im-aderm/atlasforge
+git clone https://github.com/Brainers-Labs/atlasforge
 cd atlasforge
 python -m venv .venv
 . .venv/bin/activate                 # Windows PowerShell: .venv\Scripts\Activate.ps1

@@ -11,7 +11,7 @@ Deadline: **12 Oct 2026, 11:59 PM WAT** (internal submit 11 Oct). Track: Develop
 - No LLM-as-judge and no "hallucination rate" (a non-N-ATLaS judge risks disqualification).
 
 ## Where everything is
-ONE git repo: https://github.com/im-aderm/atlasforge (private).
+ONE git repo: https://github.com/Brainers-Labs/atlasforge (public).
 - `planning/` - planning docs. Start with `INDEX.md`, then `11_14_DAY_EXECUTION_PLAN.md`, `15_DECISION_LOG.md`, `21_NATLAS_DISCOVERY.md` (verified model facts + a blank verification log to fill on a machine with the models). Inside those docs, `docs/NN_...` paths mean `planning/NN_...`.
 - `src/atlasforge/`, `tests/` - the product.
 
@@ -87,7 +87,7 @@ Built and tested on Windows / Python 3.12; the CI matrix covers Linux, macOS and
 
 ## First thing to do on the new machine (Mac M1 16 GB)
 ```bash
-git clone https://github.com/im-aderm/atlasforge && cd atlasforge
+git clone https://github.com/Brainers-Labs/atlasforge && cd atlasforge
 python3 -m venv .venv && . .venv/bin/activate      # Python 3.10-3.13
 pip install -e ".[dev]"
 brew install ffmpeg

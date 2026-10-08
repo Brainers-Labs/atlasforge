@@ -14,7 +14,7 @@ For maintainers. A release is a **tag**; pushing it does the rest.
    git push origin v0.1.0a1
    ```
 
-The [Release workflow](https://github.com/im-aderm/atlasforge/blob/main/.github/workflows/release.yml)
+The [Release workflow](https://github.com/Brainers-Labs/atlasforge/blob/main/.github/workflows/release.yml)
 then checks that the tag, the package version and the changelog agree, builds the sdist and the
 wheel, installs the wheel into a fresh virtual environment and runs it, writes `SHA256SUMS.txt`,
 and attaches all of it to a GitHub release.
@@ -42,7 +42,7 @@ Pre-release versions (`0.1.0a1`) need `--pre`; without it pip will not see them.
 ## Publishing to PyPI
 
 Separate, and manual, on purpose: **no tag push uploads to the index.** Run the
-[Publish workflow](https://github.com/im-aderm/atlasforge/blob/main/.github/workflows/publish.yml)
+[Publish workflow](https://github.com/Brainers-Labs/atlasforge/blob/main/.github/workflows/publish.yml)
 from the Actions tab with the tag as its input.
 
 It uses PyPI [trusted publishing](https://docs.pypi.org/trusted-publishers/), so no API token is
@@ -51,7 +51,7 @@ stored in the repository or in CI. That needs a one-time setting on PyPI before 
 | Field | Value |
 |---|---|
 | PyPI project | `brainers-atlasforge` (as a *pending* publisher) |
-| Owner | `im-aderm` |
+| Owner | `Brainers-Labs` |
 | Repository | `atlasforge` |
 | Workflow | `publish.yml` |
 | Environment | `pypi` |

@@ -1,7 +1,7 @@
 # Contributing
 
 Please read the
-[Code of Conduct](https://github.com/im-aderm/atlasforge/blob/main/CODE_OF_CONDUCT.md);
+[Code of Conduct](https://github.com/Brainers-Labs/atlasforge/blob/main/CODE_OF_CONDUCT.md);
 by taking part you agree to uphold it.
 
 The rest of this page is also part of the documentation site, so every command below is

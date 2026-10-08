@@ -3,7 +3,7 @@ name: Publish to PyPI
 # Manual only, and it needs one setting in the repository before it can work:
 #
 #   PyPI → Your projects → brainers-atlasforge → Publishing → Add a new pending publisher
-#     Owner: im-aderm   Repository: atlasforge   Workflow: publish.yml   Environment: pypi
+#     Owner: Brainers-Labs   Repository: atlasforge   Workflow: publish.yml   Environment: pypi
 #
 # Until that exists, this workflow fails at the last step with PyPI's own message. That is
 # intended: publishing is the one action here that cannot be undone.

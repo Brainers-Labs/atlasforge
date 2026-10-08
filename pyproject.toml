@@ -94,8 +94,8 @@ dev = [
 atlasforge = "atlasforge.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/im-aderm/atlasforge"
-Issues = "https://github.com/im-aderm/atlasforge/issues"
+Homepage = "https://github.com/Brainers-Labs/atlasforge"
+Issues = "https://github.com/Brainers-Labs/atlasforge/issues"
 
 [tool.hatch.version]
 path = "src/atlasforge/__init__.py"

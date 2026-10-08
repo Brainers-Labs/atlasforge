@@ -4,7 +4,7 @@
 demo data: score a run, compare two, read the HTML report. No model, no token, no GPU, so it runs on
 a free Colab runtime.
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/im-aderm/atlasforge/blob/main/notebooks/atlasforge-quickstart.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brainers-Labs/atlasforge/blob/main/notebooks/atlasforge-quickstart.ipynb)
 
 ## Keeping a notebook honest
 
