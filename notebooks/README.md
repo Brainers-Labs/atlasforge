@@ -6,6 +6,10 @@ a free Colab runtime.
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Brainers-Labs/atlasforge/blob/main/notebooks/atlasforge-quickstart.ipynb)
 
+For everything around it — installing in a cell, keeping an `HF_TOKEN` out of the file, what a free
+runtime can and cannot run, and fine-tuning on a GPU runtime — see
+[Use it in Colab or a notebook](https://brainers-labs.github.io/atlasforge/guides/colab-and-notebooks/).
+
 ## Keeping a notebook honest
 
 Nothing imports a notebook, so nothing notices when it goes stale. Two conventions make these

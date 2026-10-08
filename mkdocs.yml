@@ -108,6 +108,7 @@ nav:
       - Run directories: concepts/run-directories.md
   - Guides:
       - guides/index.md
+      - Use it in Colab or a notebook: guides/colab-and-notebooks.md
       - Evaluate a model: guides/evaluate-a-model.md
       - Compare two models: guides/compare-two-models.md
       - Validate your data: guides/validate-your-data.md

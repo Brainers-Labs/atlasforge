@@ -28,6 +28,8 @@ You need Python 3.10 to 3.13. From a clone of the repository:
 
 The base install is small: it does not pull in PyTorch or any other machine-learning framework. See [Installation](installation.md) for the optional extras. On Windows, if PowerShell refuses to run `Activate.ps1`, that page has the fix.
 
+**In a notebook or Colab?** [Use it in Colab or a notebook](../guides/colab-and-notebooks.md) has the same walkthrough written for a cell — the install magic, where your files go, and what a free runtime can and cannot do.
+
 ## 2. Create the demo data
 
 ```bash

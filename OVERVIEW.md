@@ -85,7 +85,7 @@ about two minutes. A notebook runs the same workflow on the same data.
   `write_reports()`. Importing `atlasforge` is cheap and pulls in **no** machine-learning framework.
 - **Configuration** — an optional `atlasforge.toml`; precedence is flag → environment → file →
   default. Seven keys, and an unknown key is an error.
-- **Documentation** — 41 pages. The CLI reference, the metrics, flags, config and error tables and
+- **Documentation** — 42 pages. The CLI reference, the metrics, flags, config and error tables and
   every terminal transcript are **generated from the code**, and the test suite fails if a documented
   command or flag does not exist.
 
@@ -107,7 +107,7 @@ it:
 
 ## Current state
 
-**Green:** 1,332 tests, 98.64% statement coverage, `ruff` and strict `mypy` clean, `mkdocs build
+**Green:** 1,361 tests, 98.64% statement coverage, `ruff` and strict `mypy` clean, `mkdocs build
 --strict` passing, on Python 3.10–3.13 across Linux, macOS and Windows. 46 source files (~9,500
 lines), 33 test files (~9,800 lines).
 
