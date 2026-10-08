@@ -64,8 +64,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # An alpha is not "Latest". `gh release create` marks a release full unless told
+          # otherwise, so the version decides: a PEP 440 pre-release (a1, b2, rc1, .dev1) is
+          # flagged, and anything else is left as an ordinary release. `packaging` is already
+          # installed — it is a dependency of `build`, above.
+          if python -c "import os, sys; from packaging.version import Version; sys.exit(0 if Version(os.environ['GITHUB_REF_NAME'].lstrip('v')).is_prerelease else 1)"; then
+            prerelease="--prerelease"
+          else
+            prerelease=""
+          fi
           gh release create "$GITHUB_REF_NAME" \
             --title "$GITHUB_REF_NAME" \
             --verify-tag \
+            $prerelease \
             --generate-notes \
             dist/*
