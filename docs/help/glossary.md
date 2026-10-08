@@ -2,6 +2,8 @@
 
 **Adapter.** A small set of extra weights (here, LoRA) that sits on top of a base model. Fine-tuning with AtlasForge produces an adapter, never a copy of N-ATLaS.
 
+**AfroBench-LITE.** The multilingual benchmark suite a published study used to evaluate N-ATLaS, covering seven task families (inference, reading comprehension, multiple choice, translation, a culturally grounded completion task, intent classification and maths). AtlasForge runs it through `lm-evaluation-harness`; it does not reimplement the tasks or copy the study's figures. See [Benchmark with AfroBench-LITE](../guides/benchmark-with-afrobench.md).
+
 **ASR.** Automatic speech recognition: turning audio into text.
 
 **Backend.** The thing that answers prompts and transcribes audio: an OpenAI-compatible server (`openai`) or the model loaded in-process (`local`).
@@ -19,6 +21,8 @@
 **Confidence interval (CI).** The range a true value plausibly lies in. AtlasForge reports 95% intervals.
 
 **Diacritics.** Marks added to letters: tone marks, dots and hooks. In these languages they can change a word's meaning.
+
+**Few-shot.** Giving a model a few worked examples in the prompt before the example being scored. It changes what a score means, so a benchmark figure is only comparable to another with the same few-shot count — AtlasForge records the count it asked for, and says so when it did not ask for one.
 
 **Fingerprint.** A SHA-256 hash of a file. AtlasForge records the dataset's fingerprint in every run so runs from different data are never compared.
 

@@ -37,7 +37,10 @@ Then confirm it registered:
 atlasforge doctor
 ```
 
-The `hf-token` row should read `OK` and show the token **masked** (`hf_****abcd`). AtlasForge never prints a token in full.
+Two rows matter here:
+
+- `hf-token` should read `OK` and show the token **masked** (`hf_****abcd`). AtlasForge never prints a token in full.
+- `model-access` should read `OK` for all five models. This is the separate question of whether you accepted the licence *on each model page*: a token that is valid still cannot download a model whose licence you have not accepted. If it warns, it names the repositories and links the pages to open; `could not check` means there was no network or no `huggingface_hub`, not that you are denied.
 
 !!! warning "Keep the token out of version control"
     Never commit a token, paste it in an issue, or leave it visible in a screenshot or demo video. If you do, revoke it and create a new one.

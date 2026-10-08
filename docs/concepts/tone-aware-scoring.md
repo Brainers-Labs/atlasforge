@@ -43,7 +43,7 @@ The [quickstart](../get-started/quickstart.md) shows exactly the last pattern.
 ## Where it applies
 
 - **Text metrics** (exact match, accuracy, chrF, WER, CER): both views, always.
-- **Speech (WER, CER):** both views. If a speech model omits tone marks, the gap between the views shows it.
+- **Speech (WER, CER):** both views. If a speech model omits tone marks, the gap between the views shows it, and the [error analysis](../guides/transcribe-speech.md#what-it-heard-instead) counts exactly how many substitutions were tone-only.
 - **Dataset checks:** duplicates and train/test leakage are detected on the *tone-insensitive* form, so a near-copy that differs only in tone marks is still caught.
 - **Merging long transcripts:** the overlap between chunks is matched ignoring tone marks.
 

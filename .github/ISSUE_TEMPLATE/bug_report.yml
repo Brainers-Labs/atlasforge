@@ -1,0 +1,68 @@
+name: Bug report
+description: Something in AtlasForge does not work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please **never paste tokens or prompts** — redact them.
+        For anything that looks like a security issue, use the private channel in SECURITY.md instead.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you ran, what you expected, and what you got instead.
+      placeholder: |
+        I ran `atlasforge eval data.jsonl --out runs/base --base-url ...`
+        and expected a report, but got ...
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command and output
+      description: The full command plus the error text. Redact tokens, keys and any personal data.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`atlasforge doctor --json`"
+      description: Paste the output. It records your Python version, extras, GPU, ffmpeg and token state.
+      render: json
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: AtlasForge version
+      description: "`atlasforge --version`, or the git commit if you are on main."
+    validations:
+      required: true
+  - type: dropdown
+    id: backend
+    attributes:
+      label: Backend
+      options:
+        - openai (an OpenAI-compatible server)
+        - local (transformers)
+        - Not applicable / no model involved
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: Operating system and Python version
+      placeholder: "e.g. Ubuntu 24.04, Python 3.12"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I removed every token, key and piece of personal data from the output above.
+          required: true

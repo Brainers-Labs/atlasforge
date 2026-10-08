@@ -9,9 +9,9 @@ flowchart LR
     M[Model<br/>server or local] --> R
     R --> RD[(Run directory<br/>run.json + results.jsonl)]
     RD --> S[score<br/>both tone views]
-    S --> RP[report.md / report.json]
+    S --> RP[report.md / report.json / report.html]
     RD --> C[compare<br/>base vs candidate]
-    C --> CR[comparison.md / .json]
+    C --> CR[comparison.md / .json / .html]
     CR --> K[model card]
     T[finetune] --> A[(LoRA adapter)]
     A --> M
@@ -23,7 +23,7 @@ flowchart LR
 |---|---|---|---|
 | **Validate** | `dataset validate` | Finds problems in the data before they spoil a result | No |
 | **Run** | `eval` | Sends each example to the model and records the raw answer | **Yes** |
-| **Score** | `eval` (automatic), `report` | Turns raw answers into metrics | No |
+| **Score** | `eval` (automatic), `report` | Turns raw answers into metrics, as JSON, Markdown and a self-contained HTML page | No |
 | **Compare** | `compare` | Pairs two runs example by example and tests the difference | No |
 | **Fine-tune** | `finetune` | Trains a LoRA adapter | Yes (GPU) |
 | **Card** | `card` | Writes a model card from the results | No |
@@ -39,7 +39,7 @@ A *backend* is anything that can answer prompts and transcribe audio. Every comm
 | `openai` | Any OpenAI-compatible server: vLLM, llama.cpp, Ollama, a Hugging Face Endpoint, or a community gateway. The default. |
 | `local` | Loading the models in-process with Transformers. Heavy dependencies, imported only when used. |
 
-Speaking the OpenAI protocol is just a transport choice. The model behind the server must be an official `NCAIR1` model; the run records which model it was.
+Speaking the OpenAI protocol is just a transport choice. The model behind the server must be an official `NCAIR1` model; the run records which model it was. [How AtlasForge integrates N-ATLAS](n-atlas-integration.md) lists the five official repositories and how each is loaded.
 
 ## Design rules
 

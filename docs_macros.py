@@ -22,8 +22,9 @@ import typer.main
 from typer.testing import CliRunner
 
 import atlasforge.errors as errors_module
-from atlasforge import __version__
+from atlasforge import __version__, config
 from atlasforge.cli import app
+from atlasforge.eval.flags import DESCRIPTIONS, FLAG_NAMES
 from atlasforge.eval.normalize import normalize, tone_aware, tone_insensitive
 from atlasforge.eval.score import KNOWN_METRICS, LOWER_IS_BETTER, TASK_DEFAULTS
 from atlasforge.finetune.config import QLoRAConfig
@@ -41,6 +42,14 @@ _METRIC_DOCS = {
         "fraction",
         "Classification only. F1 averaged over the classes in the references. Pooled: no per-example value, so no confidence interval.",
     ),
+    "accuracy_strict": (
+        "fraction",
+        "Classification only. Like `accuracy`, but the whole answer must *be* a label -- `not positive` matches nothing instead of `positive`.",
+    ),
+    "macro_f1_strict": (
+        "fraction",
+        "Classification only. `macro_f1` with the whole-answer matching of `accuracy_strict`. Pooled only.",
+    ),
     "chrf": (
         "0-100",
         "Character n-gram F-score (sacrebleu chrF). Good for generation and translation.",
@@ -51,6 +60,16 @@ _METRIC_DOCS = {
         "Word error rate. Lower is better. Pooled WER divides total word errors by total reference words.",
     ),
     "cer": ("fraction", "Character error rate. Lower is better."),
+}
+
+_CONFIG_DOCS = {
+    "backend": "`openai` for any OpenAI-compatible server, or `local` for transformers.",
+    "base_url": "Default for `--base-url`, e.g. `http://127.0.0.1:8000/v1`.",
+    "model": "Default for `--model`: the NCAIR1 model to run.",
+    "quantize": "`local` backend only: `none`, `4bit` or `8bit`.",
+    "device": "`local` backend only: `auto`, `cpu`, `cuda` or `mps`.",
+    "timeout": "Seconds to wait per request.",
+    "retries": "Retries on 429/5xx/connection errors.",
 }
 
 _SETTING_DOCS = {
@@ -124,6 +143,7 @@ def _demo_transcripts() -> dict[str, str]:
             results["comparison_json"] = Path("comparison", "comparison.json").read_text(
                 encoding="utf-8"
             )
+            results["report_html"] = Path(base, "report.html").read_text(encoding="utf-8")
             results["dataset_head"] = "".join(
                 Path(data).read_text(encoding="utf-8").splitlines(True)[:2]
             )
@@ -281,6 +301,11 @@ def define_env(env: Any) -> None:
             return f"```json\n{_json_excerpt(t['report_json'])}\n```"
         if name == "comparison":
             return f"```json\n{_json_excerpt(t['comparison_json'])}\n```"
+        if name == "report_html":
+            # The head of the real page: the whole file is a stylesheet plus inline SVG, which
+            # would not read as an example, so the docs show the part that states what it is.
+            head = t["report_html"].split("<style>", 1)[0].rstrip()
+            return f"```html\n{head}\n```"
         raise KeyError(name)
 
     @env.macro
@@ -327,6 +352,31 @@ def define_env(env: Any) -> None:
             for task, metrics in TASK_DEFAULTS.items()
         ]
         return "\n".join([*rows, *defaults])
+
+    @env.macro
+    def config_table() -> str:
+        """Every `atlasforge.toml` key, checked against what the loader actually accepts."""
+        if set(config.KEYS) != set(_CONFIG_DOCS):
+            raise RuntimeError(
+                "config docs out of sync: "
+                f"missing={sorted(set(config.KEYS) - set(_CONFIG_DOCS))} "
+                f"extra={sorted(set(_CONFIG_DOCS) - set(config.KEYS))}"
+            )
+        rows = ["| Key | Type | Meaning |", "|---|---|---|"]
+        rows += [
+            f"| `{key}` | {config.type_name(key)} | {_CONFIG_DOCS[key]} |"
+            for key in sorted(config.KEYS)
+        ]
+        return "\n".join(rows)
+
+    @env.macro
+    def flags_table() -> str:
+        """Every failure-mode flag, read from the registry so the list cannot drift."""
+        if set(FLAG_NAMES) != set(DESCRIPTIONS):
+            raise RuntimeError("a failure-mode flag has no description")
+        rows = ["| Flag | What it means |", "|---|---|"]
+        rows += [f"| `{name}` | {DESCRIPTIONS[name]} |" for name in FLAG_NAMES]
+        return "\n".join(rows)
 
     @env.macro
     def fine_tune_settings() -> str:

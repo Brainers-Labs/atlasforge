@@ -261,7 +261,7 @@ class TestLoading:
         monkeypatch.setitem(sys.modules, "torch", None)
         with pytest.raises(ConfigError) as info:
             LocalBackend().generate(MESSAGES)  # type: ignore[arg-type]
-        assert info.value.hint == 'pip install "atlasforge[local]"'
+        assert info.value.hint == 'pip install "brainers-atlasforge[local]"'
 
     def test_invalid_quantize(self) -> None:
         with pytest.raises(ConfigError, match="quantize"):
@@ -491,7 +491,7 @@ class TestAdapter:
         monkeypatch.setitem(sys.modules, "peft", None)
         with pytest.raises(ConfigError) as info:
             LocalBackend(adapter="x").generate(MESSAGES)  # type: ignore[arg-type]
-        assert info.value.hint == 'pip install "atlasforge[local]"'
+        assert info.value.hint == 'pip install "brainers-atlasforge[local]"'
 
     def test_a_bad_adapter_is_mapped_without_echoing_the_error(
         self, fake: Harness, monkeypatch: pytest.MonkeyPatch

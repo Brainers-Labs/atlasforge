@@ -25,7 +25,9 @@ DEFAULT_TARGET_MODULES: Final = (
     "up_proj",
     "down_proj",
 )
-MAX_SEQ_LEN_LIMIT: Final = 8192  # the model card's stated context window
+# The model card states 8,092; 8,192 is the likely true value. We use the round
+# power of two and never exceed it, so a sequence is never silently over-length.
+MAX_SEQ_LEN_LIMIT: Final = 8192
 MIN_SEQ_LEN: Final = 64
 Quantize = Literal["4bit", "none"]
 
@@ -170,7 +172,7 @@ def _load_yaml(text: str, file: Path) -> Any:
     except ImportError as exc:
         raise ConfigError(
             "Reading a YAML config needs PyYAML.",
-            hint='pip install "atlasforge[finetune]", or use a .json config.',
+            hint='pip install "brainers-atlasforge[finetune]", or use a .json config.',
         ) from exc
     try:
         return yaml.safe_load(text)

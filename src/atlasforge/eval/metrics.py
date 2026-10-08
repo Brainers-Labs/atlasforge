@@ -64,13 +64,23 @@ def corpus_cer(preds: Sequence[str], refs: Sequence[str]) -> float | None:
     return _corpus_rate(jiwer.cer, preds, refs)
 
 
-def extract_label(pred: str, labels: Collection[str]) -> str | None:
+def extract_label(pred: str, labels: Collection[str], *, strict: bool = False) -> str | None:
     """Find which label a free-text answer names.
 
-    Returns the label occurring earliest as a whole word sequence (longest wins on
-    a tie), or ``None``. Known limitation: negation ("not positive") is not
-    understood, so keep prompts asking for the label only.
+    The default is *loose*: returns the label occurring earliest as a whole word
+    sequence (longest wins on a tie), or ``None``. Known limitation: negation
+    ("not positive") is not understood, so keep prompts asking for the label only.
+
+    ``strict=True`` requires the whole answer to *be* a label, so an answer that
+    merely mentions one is no longer a match: ``"not positive"`` finds nothing
+    instead of ``"positive"``. Use it when the prompt asks for the label and
+    nothing else, and the model has been known to editorialise. Like loose mode it
+    compares the string as given, so callers wanting tolerant matching should
+    normalise first -- :func:`atlasforge.eval.score.score_run` does.
     """
+    if strict:
+        answer = pred.strip()
+        return answer if answer and answer in labels else None
     padded = f" {pred} "
     best: tuple[int, int, str] | None = None
     for label in labels:

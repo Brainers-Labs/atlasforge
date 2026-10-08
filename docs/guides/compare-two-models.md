@@ -23,7 +23,7 @@ atlasforge compare data.jsonl \
   --out comparison
 ```
 
-`compare` needs no model: it reads the two saved runs. It writes `comparison/comparison.md` and `comparison/comparison.json` and prints a summary.
+`compare` needs no model: it reads the two saved runs. It writes `comparison.md` to read, `comparison.json` for a script, and `comparison.html` — the same page treatment as a run's report, with each metric's change drawn against its confidence interval — then prints a summary.
 
 !!! failure "It refuses runs from different datasets"
     If either run was made from a different dataset file (even a reordered or edited copy), `compare` stops with *"was not produced from this dataset"*. Pairing examples from different data is meaningless.
@@ -36,6 +36,7 @@ Work through the output in this order.
 2. **Both tone views.** If *aware* and *insens.* disagree, the difference is partly about tone marks. See [Tone-aware scoring](../concepts/tone-aware-scoring.md).
 3. **The Regressions list.** This is the point of the tool. An overall gain can hide a slice that got worse.
 4. **"Insufficient data".** Slices under 30 examples are shown but not judged.
+5. **The failure-mode flags.** How often each deterministic rule fired in each run, and the difference — 8 more number mismatches is a different story from 8 more empty answers. See [Failure-mode flags](../concepts/failure-modes.md).
 
 The [statistics page](../concepts/statistics.md) explains the intervals, the significance test and the verdict rule in full.
 
@@ -82,4 +83,4 @@ print(to_markdown(result)[:60])
 
 ## Use it in a submission
 
-`comparison.md` is written to be pasted into a report, a README or a competition submission. It states the dataset fingerprint, the two models, the method, and its own limits. For a published adapter, feed `comparison.json` to the [model card](publish-a-model-card.md).
+`comparison.md` is written to be pasted into a report, a README or a competition submission. It states the dataset fingerprint, the two models, the method, and its own limits. `comparison.html` is the same report as a page to open or send. For a published adapter, feed `comparison.json` to the [model card](publish-a-model-card.md).

@@ -4,13 +4,17 @@ import subprocess
 from pathlib import Path
 
 from atlasforge.doctor import (
+    GATED_MODELS,
+    Access,
     Check,
     check_disk,
     check_extras,
     check_ffmpeg,
+    check_gated_access,
     check_gpu,
     check_hf_token,
     check_python,
+    classify_access_error,
     exit_code,
 )
 
@@ -64,6 +68,70 @@ class TestHfToken:
         assert check_hf_token({"HF_HOME": str(tmp_path)}, Path("/nonexistent")).status == "ok"
 
 
+class TestGatedAccess:
+    def test_covers_every_gated_model(self) -> None:
+        """The LLM and all four ASR checkpoints share one licence screen."""
+        assert set(GATED_MODELS) == {
+            "NCAIR1/N-ATLaS",
+            "NCAIR1/Hausa-ASR",
+            "NCAIR1/Yoruba-ASR",
+            "NCAIR1/Igbo-ASR",
+            "NCAIR1/NigerianAccentedEnglish",
+        }
+
+    def test_all_granted(self) -> None:
+        result = check_gated_access(lambda _: "granted")
+        assert result.status == "ok"
+        assert result.name == "model-access"
+
+    def test_denied_names_the_repo_and_the_licence_page(self) -> None:
+        result = check_gated_access(
+            lambda model: "denied" if model == "NCAIR1/Hausa-ASR" else "granted"
+        )
+        assert result.status == "warn"
+        assert "NCAIR1/Hausa-ASR" in result.detail
+        assert result.hint is not None
+        assert "https://huggingface.co/NCAIR1/Hausa-ASR" in result.hint
+
+    def test_denied_beats_unknown(self) -> None:
+        result = check_gated_access(lambda model: "denied" if "Hausa" in model else "unknown")
+        assert result.status == "warn"
+        assert "licence not accepted" in result.detail
+
+    def test_unknown_is_reported_as_unchecked_not_as_ok(self) -> None:
+        result = check_gated_access(lambda _: "unknown")
+        assert result.status == "warn"
+        assert "could not check" in result.detail
+        assert result.hint is not None
+
+    def test_probe_can_be_narrowed_to_one_model(self) -> None:
+        seen: list[str] = []
+
+        def probe(model: str) -> Access:
+            seen.append(model)
+            return "granted"
+
+        result = check_gated_access(probe, models=("NCAIR1/N-ATLaS",))
+        assert seen == ["NCAIR1/N-ATLaS"]
+        assert result.status == "ok"
+
+
+class TestClassifyAccessError:
+    def test_gated_repo_error_is_denied(self) -> None:
+        assert classify_access_error(type("GatedRepoError", (Exception,), {})("x")) == "denied"
+
+    def test_match_is_on_the_error_class_not_stray_text(self) -> None:
+        """A message that merely mentions gating is not proof the licence was refused."""
+        assert classify_access_error(Exception("GatedRepoError: x")) == "unknown"
+
+    def test_http_401_is_denied(self) -> None:
+        assert classify_access_error(Exception("401 Client Error: Unauthorized")) == "denied"
+
+    def test_offline_error_is_unknown_not_denied(self) -> None:
+        """A network failure says nothing about the licence, so it must not read as denied."""
+        assert classify_access_error(OSError("Connection refused")) == "unknown"
+
+
 class TestExtras:
     def test_all_present(self) -> None:
         assert all(c.status == "ok" for c in check_extras(lambda _: object()))
@@ -73,7 +141,7 @@ class TestExtras:
         assert {c.name for c in checks} == {"extra:local", "extra:asr", "extra:finetune"}
         local = next(c for c in checks if c.name == "extra:local")
         assert local.status == "warn"
-        assert local.hint == 'pip install "atlasforge[local]"'
+        assert local.hint == 'pip install "brainers-atlasforge[local]"'
 
     def test_partial(self) -> None:
         checks = check_extras(lambda name: None if name == "librosa" else object())

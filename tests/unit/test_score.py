@@ -132,6 +132,49 @@ class TestTasks:
         assert report.metric("macro_f1@tone_aware").corpus == pytest.approx((2 / 3 + 4 / 5) / 2)
         assert report.metric("macro_f1@tone_aware").mean is None
 
+    def test_strict_labels_see_an_answer_that_contradicts_itself(self, tmp_path: Path) -> None:
+        """G17: the loose match reads "not positive" as naming positive."""
+        rows = [
+            {"id": "1", "input": "q", "reference": "positive"},
+            {"id": "2", "input": "q", "reference": "positive"},
+        ]
+        ds = dataset(tmp_path, rows, "classification")
+        report = score_run(
+            ds,
+            results(**{"1": "Positive.", "2": "not positive"}),
+            metrics=["accuracy", "accuracy_strict"],
+        )
+        # Loose: "not positive" contains the label the reference asked for, so it is a hit.
+        assert report.metric("accuracy@tone_aware").mean == 1.0
+        # Strict: the whole answer is not a label, so it is a miss.
+        assert report.metric("accuracy_strict@tone_aware").mean == 0.5
+        # The two are separate keys, so nothing can average them together by accident.
+        assert report.metric("accuracy_strict@tone_insensitive").mean == 0.5
+        assert report.metric("accuracy_strict@tone_aware").name == "accuracy_strict"
+
+    def test_strict_macro_f1_is_pooled_only(self, tmp_path: Path) -> None:
+        ds = dataset(
+            tmp_path,
+            [
+                {"id": "1", "input": "q", "reference": "positive"},
+                {"id": "2", "input": "q", "reference": "negative"},
+            ],
+            "classification",
+        )
+        report = score_run(
+            ds,
+            results(**{"1": "positive", "2": "It is negative"}),
+            metrics=["macro_f1_strict"],
+        )
+        summary = report.metric("macro_f1_strict@tone_aware")
+        assert summary.mean is None  # pooled only, as macro_f1
+        assert summary.corpus == pytest.approx(0.5)
+
+    def test_strict_metrics_need_classification_and_say_so(self, tmp_path: Path) -> None:
+        ds = dataset(tmp_path, [{"id": "a", "input": "q", "reference": "x"}])
+        with pytest.raises(ConfigError, match="accuracy_strict needs a classification dataset"):
+            score_run(ds, results(a="x"), metrics=["accuracy_strict"])
+
     def test_asr_wer_cer_pooled(self, tmp_path: Path) -> None:
         (tmp_path / "a.wav").write_bytes(b"RIFF")
         rows = [

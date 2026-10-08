@@ -41,7 +41,7 @@ Fix any errors. Warnings are worth reading too. See [Validate your data](validat
     atlasforge eval data.jsonl --out runs/base
     ```
 
-While it runs you see a progress bar. When it finishes you get a metrics table and two files, `runs/base/report.md` and `runs/base/report.json`.
+While it runs you see a progress bar. When it finishes you get a metrics table and three files in `runs/base`: `report.md` to read, `report.json` for a script, and `report.html` — the same report as one self-contained page you can open in a browser or email.
 
 ## 3. Read the result
 

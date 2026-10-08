@@ -21,7 +21,7 @@ So the "Whisper for N-ATLAS" analogy is now literal. Our job is not a new model.
 ## What AtlasForge adds
 
 1. **Audio in any format**: ffmpeg-based conversion of `.ogg/.opus` (WhatsApp), `.m4a`, `.mp3`, `.wav` → 16 kHz mono float32.
-2. **Long audio**: chunk into ≤30 s windows with overlap and merge the text. v0.1 uses fixed windows. Silence-aware splitting is a stretch goal.
+2. **Long audio**: chunk into ≤30 s windows with overlap and merge the text. v0.1 uses fixed windows by default. Silence-aware splitting was a stretch goal and is now implemented as an opt-in (`--silence-aware`), still off by default because the two have not been compared on real audio.
 3. **Routing**: `--lang` selects the right model. Models are cached after the first load.
 4. **ASR evaluation**: WER / CER, tone-aware and tone-insensitive, per-utterance and corpus-level. This is what Problem 02 teams need for their evidence.
 5. **Voice → LLM example**: transcribe → N-ATLaS prompt (for example translate, summarise, answer), as an example script and not a product.

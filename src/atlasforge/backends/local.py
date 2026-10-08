@@ -5,8 +5,9 @@ Its wiring is tested with stand-in ``torch``/``transformers`` modules; real beha
 (chat template, memory use, speed) must be confirmed on a machine that has the models
 and recorded in ``planning/21_NATLAS_DISCOVERY.md``.
 
-Needs ``pip install "atlasforge[local]"``. Model files are gated on Hugging Face: accept
-the licence on each model page and provide ``HF_TOKEN``. Weights are never bundled.
+Needs ``pip install "brainers-atlasforge[local]"`` (or ``-e ".[local]"`` in a clone). Model
+files are gated on Hugging Face: accept the licence on each model page and provide
+``HF_TOKEN``. Weights are never bundled.
 
 Heavy imports happen lazily, on first use, so importing this module is cheap.
 """
@@ -18,6 +19,7 @@ import time
 from typing import TYPE_CHECKING, Any, Final, Literal
 
 from atlasforge.asr.audio import SAMPLE_RATE, decode_audio, duration_s, pcm_to_float32
+from atlasforge.asr.models import ASR_MODELS
 from atlasforge.backends.factory import DEFAULT_MODEL
 from atlasforge.errors import (
     AudioError,
@@ -33,16 +35,10 @@ if TYPE_CHECKING:
 
     from atlasforge.types import AudioInput, Lang, Message
 
-ASR_MODELS: Final[dict[str, str]] = {
-    "ha": "NCAIR1/Hausa-ASR",
-    "yo": "NCAIR1/Yoruba-ASR",
-    "ig": "NCAIR1/Igbo-ASR",
-    "en": "NCAIR1/NigerianAccentedEnglish",
-}
 ASR_LIMIT_S: Final = 30.0
 
 Quantize = Literal["none", "4bit", "8bit"]
-_EXTRAS_HINT: Final = 'pip install "atlasforge[local]"'
+_EXTRAS_HINT: Final = 'pip install "brainers-atlasforge[local]"'
 _ACCESS_HINT: Final = (
     "Accept the licence on the model's Hugging Face page, then set HF_TOKEN "
     "(or run `huggingface-cli login`). `atlasforge doctor` checks the token."
@@ -71,7 +67,7 @@ class LocalBackend:
         self._quantize = quantize
         self._device = device
         self._dtype = dtype
-        self._asr_repos = {**ASR_MODELS, **(asr_models or {})}
+        self._asr_repos: dict[str, str] = {**ASR_MODELS, **(asr_models or {})}
         self._tokenizer: Any = None
         self._llm: Any = None
         self._pipelines: dict[str, Any] = {}

@@ -23,6 +23,7 @@ hf_token*
 
 # Run outputs and local model data
 runs/
+benches/
 *.safetensors
 *.gguf
 *.bin

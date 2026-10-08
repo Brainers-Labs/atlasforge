@@ -38,7 +38,7 @@ Not necessarily. It means the data cannot distinguish the models with confidence
 You can lower `--min-slice-n`, but a verdict from a handful of examples is mostly noise. Better to collect more examples for that slice.
 
 ### Can I add my own metric?
-Not yet. The set is fixed (see [Metrics](../reference/metrics.md)), though every raw answer is saved in `results.jsonl` so you can score them yourself. Custom metrics are on the roadmap.
+Yes. Pass a `(prediction, reference, example) -> float` callable to `atlasforge.evaluate(..., metrics=[...])`, or name a function on the command line with `--metric module:function`. A custom metric gets per-example values, so it flows into `compare` and the slices; it gets no pooled figure. See [Your own metrics](../reference/metrics.md#your-own-metrics).
 
 ### Can I use other models with it?
 You can point it at any OpenAI-compatible server, so technically yes, for example to compare against another model as a baseline. The tool and its docs are built around the official N-ATLaS models.

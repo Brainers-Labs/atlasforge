@@ -7,7 +7,8 @@ runs/base/
 ├── run.json          what was run: dataset fingerprint, model, revision, settings
 ├── results.jsonl     one line per example: the raw answer, latency, or the error
 ├── report.json       scored metrics (written by eval and report)
-└── report.md         the same, as a readable report
+├── report.md         the same, as a readable report
+└── report.html       the same again, as one self-contained page for a browser
 ```
 
 ## `run.json`: the manifest
@@ -23,6 +24,18 @@ Each line is one example's outcome. Exactly one of `prediction` or `error` is se
 {{ file_example("results") }}
 
 Errors are stored as `ExceptionName: message`. For anything unexpected only the exception **type** is stored, never its text, so a prompt can never leak into your results through an error message.
+
+## The report, three times
+
+Scoring writes the same result in three shapes, so you can pick the one that fits:
+
+| File | For |
+|---|---|
+| `report.json` | A script, or a submission checker. Every number, no prose. |
+| `report.md` | Reading and pasting into a README or a submission. |
+| `report.html` | Looking at, or sending to someone. One self-contained file — no server, no JavaScript, no network. |
+
+They are the same numbers. The two readable ones are rendered from one `ScoreReport`, so they cannot drift apart. `atlasforge report runs/base --dataset data.jsonl` rewrites all three from `results.jsonl`, without calling the model again.
 
 ## Resuming
 
@@ -64,3 +77,5 @@ Fix the server and run the same command again. Nothing is lost.
 ## Comparing runs
 
 `compare` takes two run directories and the dataset they were both made from, and refuses if either run came from a different dataset file. Because runs hold raw answers, you can compare them without any model running.
+
+With `--out`, it writes the comparison in the same three shapes as a run's report: `comparison.json` for a script, `comparison.md` to read, and `comparison.html` — the same page treatment, with each metric's change drawn against its confidence interval.

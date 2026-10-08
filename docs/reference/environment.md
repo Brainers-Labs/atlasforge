@@ -14,7 +14,8 @@ For options that have an environment variable, the command-line flag wins:
 
 1. the flag you type (`--base-url ...`)
 2. the environment variable (`ATLASFORGE_BASE_URL`)
-3. the built-in default
+3. an `atlasforge.toml` in the project ([configuration file](configuration.md))
+4. the built-in default
 
 ## Setting them
 
@@ -36,4 +37,7 @@ These last for the current terminal session only. Never put a token in a file yo
 
 ## What AtlasForge does not read
 
-There is no configuration file and no telemetry setting: nothing is collected, so there is nothing to opt out of.
+There is no telemetry setting, because nothing is collected: there is nothing to opt out of.
+The only file read is an optional [`atlasforge.toml`](configuration.md) in your project, and never
+anything from your home directory or system-wide. Tokens belong in the environment, not in that
+file.

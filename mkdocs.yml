@@ -1,5 +1,6 @@
 site_name: AtlasForge
 site_description: Run, evaluate, compare and fine-tune the official N-ATLaS models (Hausa, Yoruba, Igbo, Nigerian English).
+site_url: https://im-aderm.github.io/atlasforge/
 repo_url: https://github.com/im-aderm/atlasforge
 repo_name: im-aderm/atlasforge
 edit_uri: edit/main/docs/
@@ -22,17 +23,18 @@ theme:
     - content.action.edit
     - toc.follow
   palette:
+    # `primary: black` gives Material a greyscale base to start from. There is deliberately no
+    # `accent:` entry: Material has no greyscale accent, and an unsupported name is ignored in
+    # silence, leaving the default indigo. Every accent value is declared in extra.css instead.
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: green
-      accent: teal
+      primary: black
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: green
-      accent: teal
+      primary: black
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
@@ -98,8 +100,10 @@ nav:
   - Concepts:
       - concepts/index.md
       - How it works: concepts/how-it-works.md
+      - N-ATLAS integration: concepts/n-atlas-integration.md
       - Tone-aware scoring: concepts/tone-aware-scoring.md
       - Statistics: concepts/statistics.md
+      - Failure-mode flags: concepts/failure-modes.md
       - Datasets: concepts/datasets.md
       - Run directories: concepts/run-directories.md
   - Guides:
@@ -109,6 +113,7 @@ nav:
       - Validate your data: guides/validate-your-data.md
       - Transcribe speech: guides/transcribe-speech.md
       - Serve N-ATLaS: guides/serve-n-atlas.md
+      - Benchmark with AfroBench-LITE: guides/benchmark-with-afrobench.md
       - Fine-tune with QLoRA: guides/fine-tune-with-qlora.md
       - Publish a model card: guides/publish-a-model-card.md
   - Reference:
@@ -119,6 +124,7 @@ nav:
       - Fine-tune settings: reference/fine-tune-settings.md
       - File formats: reference/file-formats.md
       - Errors and exit codes: reference/errors.md
+      - Configuration file: reference/configuration.md
       - Environment variables: reference/environment.md
   - Help:
       - Troubleshooting: help/troubleshooting.md
@@ -127,4 +133,7 @@ nav:
       - Glossary: help/glossary.md
   - Project:
       - Contributing: project/contributing.md
+      - Code of Conduct: project/code-of-conduct.md
+      - Security policy: project/security.md
+      - Releasing: project/releasing.md
       - Changelog: project/changelog.md

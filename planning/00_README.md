@@ -28,7 +28,7 @@
 | P0 | CLI | `doctor`, `run`, `transcribe`, `eval`, `compare`, `report` |
 | P1 | Fine-tune starter kit | QLoRA recipe for N-ATLaS, fine-tune recipe for the Whisper-Small ASR models, Colab notebooks |
 | P1 | License-aware model cards | Auto-generate attribution / "Powered by Awarri" / user-cap notices on fine-tuned outputs |
-| P1 | AfroBench-LITE runner | Thin wrapper over `lm-evaluation-harness` to reproduce the published N-ATLaS numbers |
+| P1 | AfroBench-LITE runner | Thin wrapper over `lm-evaluation-harness` to reproduce the published N-ATLaS numbers. Delivered 7 Oct as `atlasforge bench afrobench`: it measures them here rather than copying the study's figures, which stay in [21](21_NATLAS_DISCOVERY.md) |
 | Out | Playground, JS SDK, gateway | Already exist elsewhere, so we interoperate instead |
 
 ## Non-negotiables

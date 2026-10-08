@@ -26,7 +26,7 @@ output_dir: adapters/my-adapter
 | `lora_r`, `lora_alpha`, `num_epochs`, `batch_size`, `grad_accum`, `logging_steps`, `min_examples` | 1 or more |
 | `lora_dropout`, `warmup_ratio` | at least 0 and below 1 |
 | `learning_rate` | greater than 0 |
-| `max_seq_len` | 64 to 8192 (the model's stated context window) |
+| `max_seq_len` | 64 to 8192 (the model's context window; the card states 8,092) |
 | `quantize` | `4bit` or `none` |
 | `target_modules` | a non-empty list of strings |
 

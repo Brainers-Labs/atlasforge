@@ -3,6 +3,7 @@
 These checks need no docs toolchain. The full strict site build runs separately in CI.
 """
 
+import ast
 import importlib.util
 import os
 import re
@@ -14,8 +15,12 @@ from typing import TYPE_CHECKING, Any
 import pytest
 import typer.main
 
+import atlasforge
 from atlasforge.cli import app
+from atlasforge.config import KEYS
 from atlasforge.demo import build_demo
+from atlasforge.eval.flags import FLAG_NAMES
+from atlasforge.livecheck import SECRET_ENV
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -131,6 +136,23 @@ def test_there_are_runnable_snippets() -> None:
     assert len(runnable_snippets()) >= 2
 
 
+def python_blocks() -> list[tuple[Path, str]]:
+    return [(page, body) for page in PAGES for lang, body in blocks(page) if lang == "python"]
+
+
+@pytest.mark.parametrize(
+    ("page", "code"),
+    python_blocks(),
+    ids=lambda v: v.name if isinstance(v, Path) else "snippet",
+)
+def test_every_python_block_is_valid_python(page: Path, code: str) -> None:
+    """An example we cannot run here (it needs a model) must still parse as Python."""
+    try:
+        ast.parse(code)
+    except SyntaxError as exc:
+        pytest.fail(f"{page.relative_to(ROOT)}: {exc}")
+
+
 # ------------------------------------------------------------------------ site structure
 
 
@@ -140,6 +162,18 @@ def test_every_page_is_in_the_navigation_and_every_nav_entry_exists() -> None:
     on_disk = {p.relative_to(DOCS).as_posix() for p in PAGES}
     assert on_disk - in_nav == set(), "pages missing from mkdocs.yml nav"
     assert in_nav - on_disk == set(), "nav entries with no file"
+
+
+def test_every_guide_is_listed_on_the_guides_index() -> None:
+    """The nav has a check; the guides index is the other way in, and it is hand-written.
+
+    A guide reachable only from the sidebar is a guide half the readers never see — and it is the
+    index, not the nav, that says what each one is *for*.
+    """
+    index = (DOCS / "guides" / "index.md").read_text(encoding="utf-8")
+    guides = sorted((DOCS / "guides").glob("*.md"))
+    missing = [p.name for p in guides if p.name != "index.md" and f"({p.name})" not in index]
+    assert missing == [], f"guides missing from the guides index: {missing}"
 
 
 def test_pages_do_not_contain_unescaped_template_syntax() -> None:
@@ -197,6 +231,118 @@ def test_reference_tables_render(macros: dict[str, Any]) -> None:
     assert "| `lora_r` | `16` |" in macros["fine_tune_settings"]()
     assert "`BackendTimeout`" in macros["errors_table"]()
     assert "tone-insensitive" in macros["normalize_demo"]().lower()
+
+
+def test_the_flags_table_covers_every_flag(macros: dict[str, Any]) -> None:
+    """The concepts page cannot quietly omit a flag: the table is the registry."""
+    table = macros["flags_table"]()
+    for name in FLAG_NAMES:
+        assert f"| `{name}` |" in table
+    assert "not language ID" in table
+
+
+def test_the_config_table_covers_every_key(macros: dict[str, Any]) -> None:
+    """The configuration page cannot document a key the loader would reject, or miss one."""
+    table = macros["config_table"]()
+    for key in KEYS:
+        assert f"| `{key}` |" in table
+    assert "whole number" in table
+
+
+def test_the_api_reference_names_every_entry_point() -> None:
+    """A new top-level entry point that nobody documents is a feature with no front door.
+
+    The `::: ` directives are checked by the site build (an unknown module or member fails it), but
+    the *choice* of what to list is manual — this pins the names ``atlasforge.__all__`` promises.
+    """
+    page = (DOCS / "reference" / "python-api.md").read_text(encoding="utf-8")
+    missing = [n for n in atlasforge.__all__ if not n.startswith("_") and n not in page]
+    assert missing == [], f"entry points missing from the Python API reference: {missing}"
+
+
+def test_the_api_reference_lists_documentable_eval_modules() -> None:
+    """The eval subpackage is documented module by module, so a new one should not be missed.
+
+    This is what caught ``metrics`` and ``format`` — the functions behind every score and every
+    rendered figure — being absent while eight of their siblings were listed.
+    """
+    page = (DOCS / "reference" / "python-api.md").read_text(encoding="utf-8")
+    listed = set(re.findall(r"::: (\S+)", page))
+    on_disk = {
+        f"atlasforge.eval.{path.stem}"
+        for path in (ROOT / "src" / "atlasforge" / "eval").glob("*.py")
+        if not path.stem.startswith("_")
+    }
+    assert on_disk - listed == set(), "eval modules with no API reference entry"
+
+
+# ---------------------------------------------------------------- files the tool writes
+
+ARTIFACT = re.compile(r"^[\w.-]+\.(json|jsonl|md|html)$")
+
+#: Modules whose file constants are sample *data* rather than a format AtlasForge defines; the
+#: dataset format itself is documented as `.jsonl`. Named rather than pattern-matched so the
+#: exclusion is visible and stays small.
+NOT_A_FORMAT = {"src/atlasforge/demo.py"}
+
+
+def documented_artifacts() -> dict[str, set[str]]:
+    """Every ``NAME: Final = "...json"``-style constant in ``src/``, by value.
+
+    Read out of the source rather than listed here, so a new file a command writes is picked up
+    without anyone remembering to add it to this test.
+    """
+    found: dict[str, set[str]] = {}
+    root = ROOT / "src"
+    for path in sorted(root.rglob("*.py")):
+        relative = path.relative_to(ROOT).as_posix()
+        if relative in NOT_A_FORMAT:
+            continue
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Assign | ast.AnnAssign) or node.value is None:
+                continue
+            target = node.targets[0] if isinstance(node, ast.Assign) else node.target
+            value = node.value
+            if not isinstance(value, ast.Constant) or not isinstance(value.value, str):
+                continue
+            if not isinstance(target, ast.Name) or not target.id.isupper():
+                continue
+            if ARTIFACT.match(value.value):
+                found.setdefault(value.value.split("/")[-1], set()).add(relative)
+    return found
+
+
+def test_every_file_the_tool_writes_is_documented_in_the_formats_page() -> None:
+    """``bench.json`` and ``bench.md`` were written for a day without appearing here.
+
+    The page is the reference for "what does this thing put on my disk", and it was complete for
+    every command except the newest one — the same shape of gap as an undocumented extra.
+    """
+    page = (DOCS / "reference" / "file-formats.md").read_text(encoding="utf-8")
+    missing = {name: where for name, where in documented_artifacts().items() if name not in page}
+    assert missing == {}, f"files written by the code but absent from file-formats.md: {missing}"
+
+
+def test_the_artifact_scan_finds_the_files_we_know_about() -> None:
+    """A regex that silently matched nothing would make the check above vacuous."""
+    found = documented_artifacts()
+    assert {"report.json", "run.json", "bench.json"} <= set(found)
+    assert "toy_qa.jsonl" not in found, "the demo's data files are not a format"
+
+
+# ---------------------------------------------------------------- environment variables
+
+
+def test_the_credentials_the_tool_reads_are_documented() -> None:
+    """``SECRET_ENV`` is the tool's own list of what must never reach a log; the page must agree.
+
+    The environment page is hand-written, so this pins the part of it that is a promise rather
+    than prose: the names in the redaction list, and the one variable the CLI reads as a default.
+    """
+    page = (DOCS / "reference" / "environment.md").read_text(encoding="utf-8")
+    missing = [name for name in (*SECRET_ENV, "ATLASFORGE_BASE_URL") if f"`{name}`" not in page]
+    assert missing == [], f"variables missing from the environment reference: {missing}"
 
 
 def test_transcripts_are_real_and_os_independent(macros: dict[str, Any]) -> None:

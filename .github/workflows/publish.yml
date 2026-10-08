@@ -1,0 +1,56 @@
+name: Publish to PyPI
+
+# Manual only, and it needs one setting in the repository before it can work:
+#
+#   PyPI → Your projects → brainers-atlasforge → Publishing → Add a new pending publisher
+#     Owner: im-aderm   Repository: atlasforge   Workflow: publish.yml   Environment: pypi
+#
+# Until that exists, this workflow fails at the last step with PyPI's own message. That is
+# intended: publishing is the one action here that cannot be undone.
+#
+# The distribution is `brainers-atlasforge` because the plain name `atlasforge` on PyPI is an
+# unrelated project. The import name and the command are both still `atlasforge`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Tag to publish (for example v0.1.0a1)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    name: build from the tag and upload
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # trusted publishing: no PyPI token is stored anywhere
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: python -m pip install build
+
+      - run: python -m build
+
+      - name: the artefacts must match the tag that was asked for
+        run: |
+          tag="${INPUT_REF#v}"
+          ls dist/
+          if ! ls dist/ | grep -qF "$tag"; then
+            echo "::error::no artefact carries the version $tag"
+            exit 1
+          fi
+        env:
+          INPUT_REF: ${{ inputs.ref }}
+
+      - uses: pypa/gh-action-pypi-publish@release/v1

@@ -10,4 +10,5 @@ Precise, complete and, wherever possible, **generated from the code** so it cann
 | [Fine-tune settings](fine-tune-settings.md) | Every `finetune` setting and its default |
 | [File formats](file-formats.md) | The files AtlasForge reads and writes, with real examples |
 | [Errors and exit codes](errors.md) | The exception hierarchy and what each exit code means |
+| [Configuration file](configuration.md) | The optional `atlasforge.toml` project defaults |
 | [Environment variables](environment.md) | Variables AtlasForge reads |

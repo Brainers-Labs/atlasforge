@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AtlasForge comparison report</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff; --fg: #1b1f24; --muted: #5b6471; --line: #d8dee6; --track: #e9eef4;
+  --bar: #2563eb; --bar-2: #93b4f5; --good: #1a7f37; --bad: #b42318; --flat: #8b95a3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115; --fg: #e7ecf2; --muted: #9aa4b2; --line: #2a3038; --track: #232a33;
+    --bar: #60a5fa; --bar-2: #38507a; --good: #4ade80; --bad: #f87171; --flat: #7b8697;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 24px 16px; background: var(--bg); color: var(--fg);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 920px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 16px; }
+h2 { font-size: 19px; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+p { margin: 8px 0; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 16px; margin: 0 0 8px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+ul { margin: 8px 0; padding-left: 22px; }
+li { margin: 2px 0; }
+.chart { display: block; width: 100%; max-width: 720px; height: auto; margin: 8px 0 2px; }
+.chart text { font: 11px system-ui, sans-serif; fill: var(--fg); }
+.chart .tick { fill: var(--muted); font-size: 10px; }
+.chart .track { fill: var(--track); }
+.chart .bar { fill: var(--bar); }
+.chart .bar-2 { fill: var(--bar-2); }
+.chart .improved { fill: var(--good); }
+.chart .regressed { fill: var(--bad); }
+.chart .flat { fill: var(--flat); }
+.chart .axis { stroke: var(--line); stroke-width: 1; }
+.chart .whisker { stroke: var(--muted); stroke-width: 1; }
+.legend { color: var(--muted); font-size: 13px; }
+.swatch {
+  display: inline-block; width: 10px; height: 10px; margin-right: 4px;
+  border-radius: 2px; vertical-align: baseline;
+}
+.note { color: var(--muted); font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; margin-top: 40px; border-top: 1px solid var(--line); padding-top: 8px; }
+</style>
+</head>
+<body>
+<main>
+<h1>AtlasForge comparison report</h1>
+<dl>
+<dt>Task</dt><dd>generation</dd>
+<dt>Examples</dt><dd>92</dd>
+<dt>Dataset fingerprint (sha256)</dt><dd>7803765cfec0fdab</dd>
+<dt>Primary metric</dt><dd>exact_match@tone_aware</dd>
+</dl>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Run</th>
+<th>Model</th>
+<th>Revision</th>
+<th>Backend</th>
+<th>Failed</th>
+<th>Missing</th>
+<th>Flagged</th>
+</tr></thead>
+<tbody>
+<tr><td>Base</td><td>synthetic-demo/base</td><td>sample-dat</td><td>synthetic</td><td>2</td><td>0</td><td>6</td></tr>
+<tr><td>Candidate</td><td>synthetic-demo/tuned</td><td>sample-dat</td><td>synthetic</td><td>0</td><td>0</td><td>14</td></tr>
+</tbody>
+</table>
+</div>
+<h2>Overall</h2>
+<p>Delta is candidate minus base. The interval covers the mean per-example difference; a change counts as <em>improved</em> or <em>regressed</em> only if the whole interval is on one side of zero.</p>
+<p class="legend"><span class="swatch improved"></span>improved <span class="swatch regressed"></span>regressed <span class="swatch flat"></span>no clear change</p>
+<svg class="chart" viewBox="0 0 720 128" role="img" aria-label="Change per metric, candidate minus base, with 95% intervals">
+<title>Change per metric, candidate minus base, with 95% intervals</title>
+<line x1="423.0" y1="2" x2="423.0" y2="106.0" class="axis"/>
+<text x="200.0" y="17.0" text-anchor="end">exact_match · tone-aware</text>
+<rect x="423.0" y="8.0" width="108.7" height="12" class="improved"/>
+<line x1="443.4" y1="14.0" x2="620.0" y2="14.0" class="whisker"/>
+<line x1="443.4" y1="10" x2="443.4" y2="18" class="whisker"/>
+<line x1="620.0" y1="10" x2="620.0" y2="18" class="whisker"/>
+<text x="642.0" y="17.0" text-anchor="start">+17.4 pts</text>
+<text x="200.0" y="43.0" text-anchor="end">chrf · tone-aware</text>
+<rect x="423.0" y="34.0" width="108.0" height="12" class="improved"/>
+<line x1="457.0" y1="40.0" x2="607.1" y2="40.0" class="whisker"/>
+<line x1="457.0" y1="36" x2="457.0" y2="44" class="whisker"/>
+<line x1="607.1" y1="36" x2="607.1" y2="44" class="whisker"/>
+<text x="642.0" y="43.0" text-anchor="start">+17.3</text>
+<text x="200.0" y="69.0" text-anchor="end">exact_match · tone-insensitive</text>
+<rect x="423.0" y="60.0" width="40.8" height="12" class="flat"/>
+<line x1="389.0" y1="66.0" x2="538.7" y2="66.0" class="whisker"/>
+<line x1="389.0" y1="62" x2="389.0" y2="70" class="whisker"/>
+<line x1="538.7" y1="62" x2="538.7" y2="70" class="whisker"/>
+<text x="642.0" y="69.0" text-anchor="start">+6.5 pts</text>
+<text x="200.0" y="95.0" text-anchor="end">chrf · tone-insensitive</text>
+<rect x="423.0" y="86.0" width="53.1" height="12" class="flat"/>
+<line x1="411.7" y1="92.0" x2="543.6" y2="92.0" class="whisker"/>
+<line x1="411.7" y1="88" x2="411.7" y2="96" class="whisker"/>
+<line x1="543.6" y1="88" x2="543.6" y2="96" class="whisker"/>
+<text x="642.0" y="95.0" text-anchor="start">+8.5</text>
+<line x1="210" y1="106.0" x2="636" y2="106.0" class="axis"/>
+<line x1="210.0" y1="106.0" x2="210.0" y2="110.0" class="axis"/>
+<text x="210.0" y="124.0" text-anchor="middle" class="tick">-31.5</text>
+<line x1="423.0" y1="106.0" x2="423.0" y2="110.0" class="axis"/>
+<text x="423.0" y="124.0" text-anchor="middle" class="tick">0</text>
+<line x1="636.0" y1="106.0" x2="636.0" y2="110.0" class="axis"/>
+<text x="636.0" y="124.0" text-anchor="middle" class="tick">+31.5</text>
+</svg>
+<p class="note">Bars are the change in points (percent for fraction metrics, chrF points for chrF), with the 95% interval drawn as a whisker.</p>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Metric</th>
+<th>View</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>95% CI</th>
+<th>Verdict</th>
+<th>W / T / L</th>
+<th>McNemar p</th>
+</tr></thead>
+<tbody>
+<tr><td>exact_match</td><td>tone-aware</td><td>62.0%</td><td>79.3%</td><td>+17.4 pts</td><td>[+3.3, +31.5]</td><td>improved</td><td>31 / 46 / 15</td><td>0.0259</td></tr>
+<tr><td>chrf</td><td>tone-aware</td><td>67.2</td><td>84.5</td><td>+17.3</td><td>[+5.4, +29.5]</td><td>improved</td><td>31 / 46 / 15</td><td>-</td></tr>
+<tr><td>exact_match</td><td>tone-insensitive</td><td>75.0%</td><td>81.5%</td><td>+6.5 pts</td><td>[-5.4, +18.5]</td><td>no clear change</td><td>21 / 56 / 15</td><td>0.405</td></tr>
+<tr><td>chrf</td><td>tone-insensitive</td><td>77.4</td><td>85.9</td><td>+8.5</td><td>[-1.8, +19.3]</td><td>no clear change</td><td>21 / 56 / 15</td><td>-</td></tr>
+</tbody>
+</table>
+</div>
+<h3>Pooled figures</h3>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Metric</th>
+<th>View</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+</tr></thead>
+<tbody>
+<tr><td>chrf</td><td>tone-aware</td><td>54.0</td><td>90.7</td><td>+36.7</td></tr>
+<tr><td>chrf</td><td>tone-insensitive</td><td>70.5</td><td>92.5</td><td>+22.0</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Computed over the whole corpus, so there is no per-example difference to put an interval on.</p>
+<h2>Regressions</h2>
+<ul>
+<li><strong>has_number = yes</strong> (n=40): -20.0 pts, CI [-37.6, -2.5].</li>
+<li><strong>domain = numeracy</strong> (n=40): -20.0 pts, CI [-37.6, -2.5].</li>
+</ul>
+<h2>Failure-mode flags</h2>
+<p>Deterministic rules over the text, counted per answer — the same rules the single-run report lists. Places to look, not a quality score, and not a hallucination rate.</p>
+<p class="legend"><span class="swatch bar"></span>Base <span class="swatch bar-2"></span>Candidate</p>
+<svg class="chart" viewBox="0 0 720 64" role="img" aria-label="Answers raising each failure-mode flag, base against candidate">
+<title>Answers raising each failure-mode flag, base against candidate</title>
+<text x="200.0" y="22.0" text-anchor="end">number_mismatch</text>
+<rect x="210.0" y="4.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="4.0" width="182.6" height="10" class="bar"/>
+<text x="642.0" y="12.0" text-anchor="start">6</text>
+<rect x="210.0" y="22.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="22.0" width="426.0" height="10" class="bar-2"/>
+<text x="642.0" y="30.0" text-anchor="start">14</text>
+<line x1="210" y1="42.0" x2="636" y2="42.0" class="axis"/>
+<line x1="210.0" y1="42.0" x2="210.0" y2="46.0" class="axis"/>
+<text x="210.0" y="60.0" text-anchor="middle" class="tick">0</text>
+<line x1="423.0" y1="42.0" x2="423.0" y2="46.0" class="axis"/>
+<text x="423.0" y="60.0" text-anchor="middle" class="tick">7</text>
+<line x1="636.0" y1="42.0" x2="636.0" y2="46.0" class="axis"/>
+<text x="636.0" y="60.0" text-anchor="middle" class="tick">14</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Flag</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>What it means</th>
+</tr></thead>
+<tbody>
+<tr><td>number_mismatch</td><td>6</td><td>14</td><td>+8</td><td>the answer&#x27;s numbers differ from the reference&#x27;s</td></tr>
+</tbody>
+</table>
+</div>
+<h2>Slices (exact_match@tone_aware)</h2>
+<h3>lang</h3>
+<svg class="chart" viewBox="0 0 720 50" role="img" aria-label="Change per value of lang, candidate minus base">
+<title>Change per value of lang, candidate minus base</title>
+<line x1="423.0" y1="2" x2="423.0" y2="28.0" class="axis"/>
+<text x="200.0" y="17.0" text-anchor="end">en (n=80)</text>
+<rect x="423.0" y="8.0" width="65.7" height="12" class="flat"/>
+<line x1="368.3" y1="14.0" x2="620.0" y2="14.0" class="whisker"/>
+<line x1="368.3" y1="10" x2="368.3" y2="18" class="whisker"/>
+<line x1="620.0" y1="10" x2="620.0" y2="18" class="whisker"/>
+<text x="642.0" y="17.0" text-anchor="start">+7.5 pts</text>
+<line x1="210" y1="28.0" x2="636" y2="28.0" class="axis"/>
+<line x1="210.0" y1="28.0" x2="210.0" y2="32.0" class="axis"/>
+<text x="210.0" y="46.0" text-anchor="middle" class="tick">-22.5</text>
+<line x1="423.0" y1="28.0" x2="423.0" y2="32.0" class="axis"/>
+<text x="423.0" y="46.0" text-anchor="middle" class="tick">0</text>
+<line x1="636.0" y1="28.0" x2="636.0" y2="32.0" class="axis"/>
+<text x="636.0" y="46.0" text-anchor="middle" class="tick">+22.5</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Value</th>
+<th>n</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>95% CI</th>
+<th>Status</th>
+</tr></thead>
+<tbody>
+<tr><td>en</td><td>80</td><td>71.2%</td><td>78.8%</td><td>+7.5 pts</td><td>[-6.2, +22.5]</td><td>no clear change</td></tr>
+<tr><td>yo</td><td>12</td><td>0.0%</td><td>83.3%</td><td>-</td><td>-</td><td>insufficient data</td></tr>
+</tbody>
+</table>
+</div>
+<h3>length</h3>
+<svg class="chart" viewBox="0 0 720 50" role="img" aria-label="Change per value of length, candidate minus base">
+<title>Change per value of length, candidate minus base</title>
+<line x1="423.0" y1="2" x2="423.0" y2="28.0" class="axis"/>
+<text x="200.0" y="17.0" text-anchor="end">short (&lt;=5 words) (n=92)</text>
+<rect x="423.0" y="8.0" width="108.7" height="12" class="improved"/>
+<line x1="443.4" y1="14.0" x2="620.0" y2="14.0" class="whisker"/>
+<line x1="443.4" y1="10" x2="443.4" y2="18" class="whisker"/>
+<line x1="620.0" y1="10" x2="620.0" y2="18" class="whisker"/>
+<text x="642.0" y="17.0" text-anchor="start">+17.4 pts</text>
+<line x1="210" y1="28.0" x2="636" y2="28.0" class="axis"/>
+<line x1="210.0" y1="28.0" x2="210.0" y2="32.0" class="axis"/>
+<text x="210.0" y="46.0" text-anchor="middle" class="tick">-31.5</text>
+<line x1="423.0" y1="28.0" x2="423.0" y2="32.0" class="axis"/>
+<text x="423.0" y="46.0" text-anchor="middle" class="tick">0</text>
+<line x1="636.0" y1="28.0" x2="636.0" y2="32.0" class="axis"/>
+<text x="636.0" y="46.0" text-anchor="middle" class="tick">+31.5</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Value</th>
+<th>n</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>95% CI</th>
+<th>Status</th>
+</tr></thead>
+<tbody>
+<tr><td>short (&lt;=5 words)</td><td>92</td><td>62.0%</td><td>79.3%</td><td>+17.4 pts</td><td>[+3.3, +31.5]</td><td>improved</td></tr>
+</tbody>
+</table>
+</div>
+<h3>has_number</h3>
+<svg class="chart" viewBox="0 0 720 76" role="img" aria-label="Change per value of has_number, candidate minus base">
+<title>Change per value of has_number, candidate minus base</title>
+<line x1="423.0" y1="2" x2="423.0" y2="54.0" class="axis"/>
+<text x="200.0" y="17.0" text-anchor="end">yes (n=40)</text>
+<rect x="359.0" y="8.0" width="64.0" height="12" class="regressed"/>
+<line x1="302.8" y1="14.0" x2="415.0" y2="14.0" class="whisker"/>
+<line x1="302.8" y1="10" x2="302.8" y2="18" class="whisker"/>
+<line x1="415.0" y1="10" x2="415.0" y2="18" class="whisker"/>
+<text x="642.0" y="17.0" text-anchor="start">-20.0 pts</text>
+<text x="200.0" y="43.0" text-anchor="end">no (n=52)</text>
+<rect x="423.0" y="34.0" width="147.8" height="12" class="improved"/>
+<line x1="515.3" y1="40.0" x2="620.0" y2="40.0" class="whisker"/>
+<line x1="515.3" y1="36" x2="515.3" y2="44" class="whisker"/>
+<line x1="620.0" y1="36" x2="620.0" y2="44" class="whisker"/>
+<text x="642.0" y="43.0" text-anchor="start">+46.2 pts</text>
+<line x1="210" y1="54.0" x2="636" y2="54.0" class="axis"/>
+<line x1="210.0" y1="54.0" x2="210.0" y2="58.0" class="axis"/>
+<text x="210.0" y="72.0" text-anchor="middle" class="tick">-61.5</text>
+<line x1="423.0" y1="54.0" x2="423.0" y2="58.0" class="axis"/>
+<text x="423.0" y="72.0" text-anchor="middle" class="tick">0</text>
+<line x1="636.0" y1="54.0" x2="636.0" y2="58.0" class="axis"/>
+<text x="636.0" y="72.0" text-anchor="middle" class="tick">+61.5</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Value</th>
+<th>n</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>95% CI</th>
+<th>Status</th>
+</tr></thead>
+<tbody>
+<tr><td>yes</td><td>40</td><td>85.0%</td><td>65.0%</td><td>-20.0 pts</td><td>[-37.6, -2.5]</td><td>regressed</td></tr>
+<tr><td>no</td><td>52</td><td>44.2%</td><td>90.4%</td><td>+46.2 pts</td><td>[+28.8, +61.5]</td><td>improved</td></tr>
+</tbody>
+</table>
+</div>
+<h3>domain</h3>
+<svg class="chart" viewBox="0 0 720 76" role="img" aria-label="Change per value of domain, candidate minus base">
+<title>Change per value of domain, candidate minus base</title>
+<line x1="423.0" y1="2" x2="423.0" y2="54.0" class="axis"/>
+<text x="200.0" y="17.0" text-anchor="end">numeracy (n=40)</text>
+<rect x="348.0" y="8.0" width="75.0" height="12" class="regressed"/>
+<line x1="282.1" y1="14.0" x2="413.6" y2="14.0" class="whisker"/>
+<line x1="282.1" y1="10" x2="282.1" y2="18" class="whisker"/>
+<line x1="413.6" y1="10" x2="413.6" y2="18" class="whisker"/>
+<text x="642.0" y="17.0" text-anchor="start">-20.0 pts</text>
+<text x="200.0" y="43.0" text-anchor="end">agri (n=40)</text>
+<rect x="423.0" y="34.0" width="131.3" height="12" class="improved"/>
+<line x1="479.3" y1="40.0" x2="620.0" y2="40.0" class="whisker"/>
+<line x1="479.3" y1="36" x2="479.3" y2="44" class="whisker"/>
+<line x1="620.0" y1="36" x2="620.0" y2="44" class="whisker"/>
+<text x="642.0" y="43.0" text-anchor="start">+35.0 pts</text>
+<line x1="210" y1="54.0" x2="636" y2="54.0" class="axis"/>
+<line x1="210.0" y1="54.0" x2="210.0" y2="58.0" class="axis"/>
+<text x="210.0" y="72.0" text-anchor="middle" class="tick">-52.5</text>
+<line x1="423.0" y1="54.0" x2="423.0" y2="58.0" class="axis"/>
+<text x="423.0" y="72.0" text-anchor="middle" class="tick">0</text>
+<line x1="636.0" y1="54.0" x2="636.0" y2="58.0" class="axis"/>
+<text x="636.0" y="72.0" text-anchor="middle" class="tick">+52.5</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Value</th>
+<th>n</th>
+<th>Base</th>
+<th>Candidate</th>
+<th>Delta</th>
+<th>95% CI</th>
+<th>Status</th>
+</tr></thead>
+<tbody>
+<tr><td>numeracy</td><td>40</td><td>85.0%</td><td>65.0%</td><td>-20.0 pts</td><td>[-37.6, -2.5]</td><td>regressed</td></tr>
+<tr><td>agri</td><td>40</td><td>57.5%</td><td>92.5%</td><td>+35.0 pts</td><td>[+15.0, +52.5]</td><td>improved</td></tr>
+<tr><td>greetings</td><td>12</td><td>0.0%</td><td>83.3%</td><td>-</td><td>-</td><td>insufficient data</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Slices are not adjusted for multiple comparisons: treat a single flagged slice as a lead to investigate, not a proven effect.</p>
+<h2>Method</h2>
+<ul>
+<li><em>Mean</em> averages per-example scores; <em>pooled</em> is computed over the whole corpus (WER, CER, chrF, macro-F1).</li>
+<li>Every text metric is shown under both views: <em>tone-aware</em> keeps tone marks, <em>tone-insensitive</em> strips them. Underdots and Hausa hooked letters are always kept.</li>
+<li>Failed or missing predictions are scored as an empty answer, so they count against the model.</li>
+<li>chrF is on a 0-100 scale. Other metrics are percentages; for WER and CER lower is better.</li>
+<li>Paired bootstrap of per-example differences: 1000 resamples, seed 0, 95% percentile interval. Binary metrics also get an exact McNemar test on the discordant pairs.</li>
+<li>Slices with fewer than 30 examples are reported as insufficient data.</li>
+<li>This shows the candidate scored differently on this dataset. It does not show why.</li>
+</ul>
+<footer>
+Written by AtlasForge 0.1.0a1. Self-contained: no scripts, no network.
+</footer>
+</main>
+</body>
+</html>

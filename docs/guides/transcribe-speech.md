@@ -46,7 +46,19 @@ First install the `asr` extra and [get access to the model](../get-started/acces
 - **Length.** The models accept at most 30 seconds. AtlasForge decodes to 16 kHz mono, cuts longer audio into **28-second windows with a 2-second overlap**, transcribes each, and merges the text by removing words duplicated across each seam.
 
 !!! note "Known limitation of fixed windows"
-    A word cut by a window boundary can be misheard, and merging only removes a duplicate when at least two words match at the seam (keeping a repeat is safer than deleting a real word). The window boundaries in the output are *ours*, not model timestamps. Silence-aware splitting is planned.
+    A word cut by a window boundary can be misheard, and merging only removes a duplicate when at least two words match at the seam (keeping a repeat is safer than deleting a real word). The window boundaries in the output are *ours*, not model timestamps.
+
+### Cutting at a pause instead
+
+`--silence-aware` moves each boundary up to two seconds, either way, to the quietest moment near it — so the cut lands in a breath rather than inside a word:
+
+```bash
+atlasforge transcribe interview.m4a --lang ig --backend local --silence-aware
+```
+
+A boundary only moves if there is a **pause** there (a frame at or below -40 dBFS). A stretch that is merely quieter than its surroundings does not count, so loud audio is not cut arbitrarily. The number of windows, their overlap and the 30-second limit are unchanged: a move that would push a window past the limit is simply not taken, and the boundary stays where the fixed grid put it.
+
+The default is the fixed grid, deliberately. Both split the *same recording* differently, so transcripts and WER from a silence-aware run are not comparable with a fixed-window one — and listening to both is the only way to know which is better on your audio, which is exactly the check that cannot be done until the real models are run. In Python: `atlasforge.evaluate(..., silence_aware=True)`, or `transcribe_long(..., silence_aware=True)`.
 
 ## Several files
 
@@ -65,6 +77,18 @@ atlasforge eval speech.jsonl --task asr --backend local --lang ha --out runs/asr
 ```
 
 You get **WER** (word error rate) and **CER** (character error rate) under both [tone views](../concepts/tone-aware-scoring.md). Pooled WER is total word errors over total reference words, the standard figure. Long clips are split automatically during evaluation.
+
+### What it heard instead
+
+A WER number says how much was wrong, not *what*. Every speech report also carries an **ASR error analysis** built from the same alignment the WER uses — so its counts add up to the rate above it:
+
+- **Most substituted** — the word pairs it confused most often, e.g. `sannú → sannu`, with the example ids to listen to.
+- **Most dropped** and **Most inserted** — the words it lost and the words it invented.
+- **Word error rate by reference length** — pooled WER per length bucket, so you can see whether it falls apart on long utterances.
+
+A substitution is marked **tone-only** when the two words differ *only* in tone marks. For Hausa, Yoruba and Igbo that is the difference between a mis-hearing and a typing convention, and it is why the tone-insensitive view exists: a transcript can be right to a listener and still count as wrong to a strict scorer. Underdots and hooked letters (`ẹ`, `ọ`, `ṣ`, `ɓ`) are never forgiven, so dropping one is a real substitution.
+
+The analysis is arithmetic over transcripts AtlasForge already has. It reads no audio and calls no model, so it costs nothing and needs no GPU.
 
 If speech models are used inside an application, report WER on audio from your real users; the model cards note weaker performance on children's speech, noisy audio, dialects and code-switching.
 

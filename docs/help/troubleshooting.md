@@ -3,9 +3,18 @@
 Find your symptom, usually the exact text AtlasForge printed, and follow the fix. Every error message also includes a `->` hint with the next step. If you are still stuck, see the [FAQ](faq.md) or open an issue.
 
 !!! tip "Start with `atlasforge doctor`"
-    It checks Python, GPU, disk, ffmpeg, your Hugging Face token and the optional extras, and tells you the fix for each warning.
+    It checks Python, GPU, disk, ffmpeg, your Hugging Face token, your access to each gated model, your project's `atlasforge.toml` if it has one, and the optional extras, and tells you the fix for each warning.
 
 ## Installing and environment
+
+### `atlasforge.toml has unknown setting(s): ...`
+A key in your [project file](../reference/configuration.md) is misspelled or is not one AtlasForge
+reads. The error names the valid keys; a misspelled setting is an error rather than a silent no-op.
+Point of confusion: the file says `base_url`, not `base-url`.
+
+### My run used a model or endpoint I did not ask for
+An `atlasforge.toml` is being picked up from the current directory or one above it. Run
+`atlasforge doctor` and read the `config` row: it names the file and the settings it applies.
 
 ### `ffmpeg was not found on PATH.`
 Speech needs ffmpeg to decode audio. Install it (`brew install ffmpeg`, `winget install Gyan.FFmpeg`, or `sudo apt install ffmpeg`) and **open a new terminal**, because `PATH` is read when a terminal starts.
@@ -23,6 +32,12 @@ In PowerShell, continue a line with a backtick `` ` ``, not a backslash. The gui
 
 ### `hf-token ... no token found`
 You have not given the shell a Hugging Face token. See [Access and licences](../get-started/access-and-licences.md). After setting `HF_TOKEN`, run `atlasforge doctor` again.
+
+### `model-access ... licence not accepted on NCAIR1/...`
+Having a token is not the same as having accepted the licence on a given model page — that is a separate click, per model. Open the page `doctor` names, agree to the terms while logged in, and run `doctor` again. Approval can take a little while.
+
+### `model-access ... could not check`
+`doctor` could not reach the Hub, so it is telling you it does not know rather than guessing. Usually there is no network, or `huggingface_hub` is not installed (`pip install "brainers-atlasforge[local]"`). Open the model page yourself to confirm access.
 
 ### `Cannot access NCAIR1/...`
 The model is gated. Accept the licence on that model's Hugging Face page, make sure the token belongs to the same account, and set `HF_TOKEN`. Approval can take a little while.
@@ -143,6 +158,39 @@ An adapter is loaded in-process. With a server, load the adapter there and pass 
 
 ### `Ran out of memory during training.`
 Lower `max_seq_len` or `lora_r`, keep `batch_size` at 1 and raise `grad_accum`, or use a bigger GPU.
+
+## Benchmarks
+
+### `lm-evaluation-harness is not installed, so there are no tasks to run.`
+The `bench` command does not reimplement the AfroBench-LITE tasks, it drives the harness that
+defines them. Install it: `pip install "brainers-atlasforge[bench]"`. See the
+[guide](../guides/benchmark-with-afrobench.md).
+
+### `The installed harness has no task matching the afrobench-lite families.`
+The harness is installed but names its tasks differently from the families in the study. Run
+`atlasforge bench afrobench --list` to see what this installation has, then pass the exact names
+with `--tasks afrixnli_yo --tasks belebele_hau` (repeatable).
+
+### `The harness does not have '...'.`
+A name given to `--tasks` is not one the installed harness offers — usually a language suffix that
+this version spells differently. `atlasforge bench afrobench --list` prints the real ones.
+
+### `The harness exited with status 1.`
+The harness failed before writing results, so nothing was written. Its own output is printed above
+this message and says why: a missing dependency, an out-of-memory kill, or a model it could not
+load (check the gated licence and `HF_TOKEN`). Add `--dry-run` to print the exact command and run it
+yourself with the harness's own verbosity.
+
+### `The harness exited cleanly but wrote no results under ...`
+It ran but put its file somewhere else. Its output names the path it used; this is why the report
+records the file it actually read rather than the one it asked for. A harness run that reports "no
+results" for a task usually means the task was not found — see `--list` above.
+
+### Every benchmark number looks like a percentage, or chrF looks enormous
+The report scales accuracy-like metrics (0-1 fractions) to percentages and leaves chrF and BLEU on
+the harness's own 0-100 scale. Both scales are named under the headline table, and
+`bench.json` holds every figure exactly as the harness reported it, with `harness/results*.json`
+beside it — compare against that file before reporting anything as wrong.
 
 ## Still stuck?
 

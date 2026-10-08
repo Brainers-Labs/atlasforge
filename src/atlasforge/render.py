@@ -1,6 +1,7 @@
 """Terminal rendering (rich). Pure presentation: no logic that belongs in the library.
 
-Every dynamic string goes through ``Text`` so square brackets in data (``atlasforge[local]``,
+Every dynamic string goes through ``Text`` so square brackets in data
+(``brainers-atlasforge[local]``,
 model names, prompts) are never mistaken for rich markup.
 """
 

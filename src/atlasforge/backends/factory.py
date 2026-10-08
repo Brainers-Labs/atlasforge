@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Final
 from atlasforge.errors import ConfigError
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from atlasforge.backends.base import Backend
 
 DEFAULT_MODEL: Final = "NCAIR1/N-ATLaS"
@@ -20,6 +22,7 @@ def build_backend(
     model: str = DEFAULT_MODEL,
     api_key_env: str | None = "ATLASFORGE_API_KEY",
     asr_model: str | None = None,
+    asr_models: Mapping[str, str] | None = None,
     timeout: float = 120.0,
     retries: int = 2,
     quantize: str = "none",
@@ -60,5 +63,6 @@ def build_backend(
             model=model,
             quantize=quantize,  # type: ignore[arg-type]  # validated in LocalBackend
             device=device,
+            asr_models=asr_models,
         )
     raise ConfigError(f"Unknown backend {name!r}.", hint=f"Use one of: {', '.join(BACKEND_NAMES)}.")

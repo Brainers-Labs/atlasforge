@@ -624,7 +624,7 @@ class TestTrainGuards:
         monkeypatch.setitem(sys.modules, "torch", None)
         with pytest.raises(ConfigError) as info:
             train(make_config(tmp_path))
-        assert info.value.hint == 'pip install "atlasforge[finetune]"'
+        assert info.value.hint == 'pip install "brainers-atlasforge[finetune]"'
 
     def test_heavily_truncated_data_is_refused_and_nothing_is_saved(
         self, fake: Harness, tmp_path: Path

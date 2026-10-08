@@ -52,6 +52,7 @@ N-ATLaS is Nigeria's open language and speech model for Hausa, Yoruba, Igbo and 
 | **Check your data** | Duplicates, conflicting labels, train/test leakage, broken Unicode and stripped diacritics. [Guide](guides/validate-your-data.md) |
 | **Speech** | Transcribe any audio format with the official ASR models, including clips longer than their 30-second limit. [Guide](guides/transcribe-speech.md) |
 | **Fine-tune** | QLoRA recipe that refuses leaky data and tiny datasets before it touches a GPU. [Guide](guides/fine-tune-with-qlora.md) |
+| **Benchmark** | Run the published AfroBench-LITE suite through `lm-evaluation-harness`, with its task names taken from the harness itself. [Guide](guides/benchmark-with-afrobench.md) |
 | **Publish** | Model cards with attribution, "Powered by Awarri", the user cap, evaluation numbers and regressions. [Guide](guides/publish-a-model-card.md) |
 
 ## Honest by default

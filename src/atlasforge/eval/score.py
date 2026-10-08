@@ -14,17 +14,20 @@ Per-example values are kept so ``compare`` can run paired statistics later.
 from __future__ import annotations
 
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
 from atlasforge.errors import ConfigError
+from atlasforge.eval import custom, flags
 from atlasforge.eval import metrics as m
+from atlasforge.eval.asr_analysis import AsrAnalysis, analyse
 from atlasforge.eval.normalize import NormalizeConfig, Tones, normalize
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Mapping, Sequence
 
+    from atlasforge.eval.custom import MetricFn
     from atlasforge.eval.dataset import Dataset, Example
     from atlasforge.eval.runner import Record
     from atlasforge.types import Lang
@@ -37,10 +40,34 @@ TASK_DEFAULTS: Final = {
     "asr": ("wer", "cer"),
 }
 KNOWN_METRICS: Final = frozenset(
-    {"exact_match", "chrf", "chrf++", "wer", "cer", "accuracy", "macro_f1"}
+    {
+        "exact_match",
+        "chrf",
+        "chrf++",
+        "wer",
+        "cer",
+        "accuracy",
+        "macro_f1",
+        "accuracy_strict",
+        "macro_f1_strict",
+    }
 )
 LOWER_IS_BETTER: Final = frozenset({"wer", "cer"})
-_CLASSIFICATION_ONLY: Final = frozenset({"accuracy", "macro_f1"})
+_CLASSIFICATION_ONLY: Final = frozenset(
+    {"accuracy", "macro_f1", "accuracy_strict", "macro_f1_strict"}
+)
+
+
+#: A metric as scoring sees it: a name, how to score one example, how to pool them.
+#: ``per_example`` receives the (prediction, reference, label set, example).
+@dataclass(frozen=True, slots=True)
+class Metric:
+    """One metric, either built in or supplied by the caller."""
+
+    name: str
+    per_example: Callable[[str, str, set[str], Example], float] | None
+    corpus: Callable[[list[str], list[str], set[str]], float | None] | None
+    higher_is_better: bool
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -71,6 +98,10 @@ class ScoreReport:
     per_example: dict[str, dict[str, float]]
     latency_ms: dict[str, float | None]
     normalization: dict[str, dict[str, Any]]
+    flags: dict[str, int] = field(default_factory=dict)
+    n_flagged: int = 0
+    per_example_flags: dict[str, list[str]] = field(default_factory=dict)
+    asr: AsrAnalysis | None = None
 
     def metric(self, key: str) -> MetricSummary:
         """Look up a summary by ``name@view``."""
@@ -87,10 +118,15 @@ def score_run(
     dataset: Dataset,
     results: Mapping[str, Record],
     *,
-    metrics: Sequence[str] | None = None,
+    metrics: Sequence[str | MetricFn] | None = None,
 ) -> ScoreReport:
-    """Score ``results`` (from ``read_results``) against ``dataset``."""
-    names = _validate(dataset, metrics)
+    """Score ``results`` (from ``read_results``) against ``dataset``.
+
+    ``metrics`` takes built-in names and/or custom callables, and/or ``module:function``
+    strings naming them; ``None`` means the task's defaults. See
+    :mod:`atlasforge.eval.custom`.
+    """
+    chosen = _resolve(dataset, metrics)
     examples = dataset.examples
 
     predictions: list[str] = []
@@ -116,12 +152,16 @@ def score_run(
             _score_view(
                 view,
                 tones,
-                names=names,
+                metrics=chosen,
                 examples=examples,
                 predictions=predictions,
                 per_example=per_example,
             )
         )
+
+    per_example_flags = (
+        {} if dataset.task == "classification" else _flag_examples(examples, predictions, results)
+    )
 
     return ScoreReport(
         task=dataset.task,
@@ -142,6 +182,12 @@ def score_run(
             view: {"tones": tones, "lowercase": True, "punctuation": "strip"}
             for view, tones in VIEWS.items()
         },
+        flags=flags.summarise(per_example_flags),
+        n_flagged=sum(1 for raised in per_example_flags.values() if raised),
+        per_example_flags={
+            example_id: list(raised) for example_id, raised in per_example_flags.items() if raised
+        },
+        asr=_asr_analysis(dataset, examples, predictions),
     )
 
 
@@ -152,27 +198,110 @@ def write_report_json(report: ScoreReport, path: str | Path) -> None:
     )
 
 
-def _validate(dataset: Dataset, metrics: Sequence[str] | None) -> tuple[str, ...]:
-    names = tuple(metrics) if metrics else TASK_DEFAULTS[dataset.task]
-    unknown = [n for n in names if n not in KNOWN_METRICS]
-    if unknown:
+def _resolve(dataset: Dataset, metrics: Sequence[str | MetricFn] | None) -> tuple[Metric, ...]:
+    """Turn what the caller asked for into runnable metrics, or say what is wrong."""
+    asked: Sequence[str | MetricFn] = tuple(metrics) if metrics else TASK_DEFAULTS[dataset.task]
+    chosen: list[Metric] = []
+    seen: set[str] = set()
+    for item in asked:
+        metric = _custom_metric(item) if callable(item) else _builtin_metric(item)
+        if metric.name in seen:
+            raise ConfigError(
+                f"{metric.name!r} was given more than once.",
+                hint="Two metrics cannot share a name; the report keys would collide.",
+            )
+        seen.add(metric.name)
+        chosen.append(metric)
+    misused = sorted(_CLASSIFICATION_ONLY & {m.name for m in chosen})
+    if dataset.task != "classification" and misused:
+        verb = "needs" if len(misused) == 1 else "need"
         raise ConfigError(
-            f"Unknown metric(s): {', '.join(unknown)}.",
-            hint=f"Available: {', '.join(sorted(KNOWN_METRICS))}.",
-        )
-    if dataset.task != "classification" and _CLASSIFICATION_ONLY & set(names):
-        raise ConfigError(
-            "accuracy and macro_f1 need a classification dataset.",
+            f"{', '.join(misused)} {verb} a classification dataset.",
             hint="Use task 'classification', or pick exact_match / chrf / wer / cer.",
         )
-    return names
+    return tuple(chosen)
+
+
+def _builtin_metric(name: str) -> Metric:
+    if ":" in name:
+        return _custom_metric(custom.resolve(name))
+    if name not in KNOWN_METRICS:
+        raise ConfigError(
+            f"Unknown metric {name!r}.",
+            hint=f"Available: {', '.join(sorted(KNOWN_METRICS))}, or a custom metric "
+            "as module:function.",
+        )
+    return Metric(
+        name=name,
+        per_example=_PER_EXAMPLE.get(name),
+        corpus=_CORPUS.get(name),
+        higher_is_better=name not in LOWER_IS_BETTER,
+    )
+
+
+def _custom_metric(fn: MetricFn) -> Metric:
+    """Adapt a caller's ``(prediction, reference, example)`` callable to our view loop."""
+    name = custom.name_of(fn)
+    if name in KNOWN_METRICS:
+        raise ConfigError(
+            f"A custom metric may not be called {name!r}: that name is taken by a built-in.",
+            hint="Rename your function; the two would be indistinguishable in the report.",
+        )
+
+    def per_example(_pred: str, _ref: str, _labels: set[str], example: Example) -> float:
+        return float(fn(_pred, _ref, example))
+
+    return Metric(
+        name=name,
+        per_example=per_example,
+        corpus=None,  # a custom metric has no pooled form we could invent
+        higher_is_better=custom.declares_higher_is_better(fn),
+    )
+
+
+def _flag_examples(
+    examples: Sequence[Example],
+    predictions: Sequence[str],
+    results: Mapping[str, Record],
+) -> dict[str, tuple[str, ...]]:
+    """Deterministic failure-mode flags, for the answers we actually received.
+
+    A failed or missing call has no answer to flag — the report counts those on their own —
+    and neither has an example with no reference to check the answer against.
+    """
+    return {
+        example.id: flags.flags_for(example, prediction)
+        for example, prediction in zip(examples, predictions, strict=True)
+        if example.reference is not None and (record := results.get(example.id)) and record.ok
+    }
+
+
+def _asr_analysis(
+    dataset: Dataset, examples: Sequence[Example], predictions: Sequence[str]
+) -> AsrAnalysis | None:
+    """Alignment-based error analysis, for speech runs only. Needs no audio: it reads text."""
+    if dataset.task != "asr":
+        return None
+    pairs = []
+    for example, prediction in zip(examples, predictions, strict=True):
+        if not example.reference:
+            continue
+        config = NormalizeConfig(lang=example.lang, tones="keep")
+        pairs.append(
+            (
+                example.id,
+                normalize(example.reference, config),
+                normalize(prediction, config),
+            )
+        )
+    return analyse(pairs)
 
 
 def _score_view(
     view: str,
     tones: Tones,
     *,
-    names: Sequence[str],
+    metrics: Sequence[Metric],
     examples: Sequence[Example],
     predictions: Sequence[str],
     per_example: dict[str, dict[str, float]],
@@ -184,6 +313,7 @@ def _score_view(
             configs[lang] = NormalizeConfig(lang=lang, tones=tones)
         return configs[lang]
 
+    scored: list[Example] = []
     ids: list[str] = []
     preds: list[str] = []
     refs: list[str] = []
@@ -191,43 +321,52 @@ def _score_view(
         if example.reference is None:
             continue
         cfg = config_for(example.lang)
+        scored.append(example)
         ids.append(example.id)
         preds.append(normalize(prediction, cfg))
         refs.append(normalize(example.reference, cfg))
     labels = set(refs)
 
     summaries: list[MetricSummary] = []
-    for name in names:
-        per_item = _PER_EXAMPLE.get(name)
+    for metric in metrics:
+        per_item = metric.per_example
         values = (
-            [per_item(p, r, labels) for p, r in zip(preds, refs, strict=True)] if per_item else []
+            [
+                per_item(p, r, labels, example)
+                for p, r, example in zip(preds, refs, scored, strict=True)
+            ]
+            if per_item
+            else []
         )
-        key = f"{name}@{view}"
+        key = f"{metric.name}@{view}"
         for example_id, value in zip(ids, values, strict=False):
             per_example[example_id][key] = value
-        pooled = _CORPUS.get(name)
+        pooled = metric.corpus
         summaries.append(
             MetricSummary(
                 key=key,
-                name=name,
+                name=metric.name,
                 view=view,
                 n=len(refs),
                 mean=sum(values) / len(values) if values else None,
                 corpus=pooled(preds, refs, labels) if pooled and refs else None,
-                higher_is_better=name not in LOWER_IS_BETTER,
+                higher_is_better=metric.higher_is_better,
             )
         )
     return summaries
 
 
-# (prediction, reference, label set) -> value. macro_f1 has no per-example value.
-_PER_EXAMPLE: Final[dict[str, Callable[[str, str, set[str]], float]]] = {
-    "exact_match": lambda p, r, _labels: m.exact_match(p, r),
-    "chrf": lambda p, r, _labels: m.chrf(p, r),
-    "chrf++": lambda p, r, _labels: m.chrf(p, r, word_order=2),
-    "wer": lambda p, r, _labels: m.wer(p, r),
-    "cer": lambda p, r, _labels: m.cer(p, r),
-    "accuracy": lambda p, r, labels: 1.0 if m.extract_label(p, labels) == r else 0.0,
+# (prediction, reference, label set, example) -> value. macro_f1 has no per-example value.
+_PER_EXAMPLE: Final[dict[str, Callable[[str, str, set[str], Example], float]]] = {
+    "exact_match": lambda p, r, _labels, _ex: m.exact_match(p, r),
+    "chrf": lambda p, r, _labels, _ex: m.chrf(p, r),
+    "chrf++": lambda p, r, _labels, _ex: m.chrf(p, r, word_order=2),
+    "wer": lambda p, r, _labels, _ex: m.wer(p, r),
+    "cer": lambda p, r, _labels, _ex: m.cer(p, r),
+    "accuracy": lambda p, r, labels, _ex: 1.0 if m.extract_label(p, labels) == r else 0.0,
+    "accuracy_strict": lambda p, r, labels, _ex: (
+        1.0 if m.extract_label(p, labels, strict=True) == r else 0.0
+    ),
 }
 
 # (predictions, references, label set) -> pooled value. Metrics absent here have none.
@@ -237,4 +376,7 @@ _CORPUS: Final[dict[str, Callable[[list[str], list[str], set[str]], float | None
     "wer": lambda p, r, _labels: m.corpus_wer(p, r),
     "cer": lambda p, r, _labels: m.corpus_cer(p, r),
     "macro_f1": lambda p, r, labels: m.macro_f1([m.extract_label(x, labels) for x in p], r),
+    "macro_f1_strict": lambda p, r, labels: m.macro_f1(
+        [m.extract_label(x, labels, strict=True) for x in p], r
+    ),
 }

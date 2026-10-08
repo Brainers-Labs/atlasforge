@@ -33,7 +33,7 @@ atlasforge transcribe note.ogg --lang ha -> atlasforge eval asr_test.jsonl --tas
 ### ASR
 - Models: `NCAIR1/Hausa-ASR`, `NCAIR1/Yoruba-ASR`, `NCAIR1/Igbo-ASR`, `NCAIR1/NigerianAccentedEnglish`, routed by `--lang ha|yo|ig|en`.
 - Convert any ffmpeg-readable input (`.ogg/.opus/.mp3/.m4a/.wav`) to 16 kHz mono.
-- Chunk audio longer than 30 s (fixed windows with overlap in v0.1; silence-aware chunking is a stretch goal).
+- Chunk audio longer than 30 s (fixed windows with overlap by default; silence-aware chunking added in v0.1 as an opt-in `--silence-aware`, off by default until a run measures which splitter is better).
 - Output: `text`, `chunks[]` with *computed* chunk offsets. No confidence scores and no word timestamps unless verified.
 - ASR evaluation reports WER/CER plus **alignment-based error analysis**: top substitutions, deletions and insertions, and WER by audio-length bucket. Named-entity, code-switching and dialect analysis are out of scope for v0.1.
 

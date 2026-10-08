@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from atlasforge.finetune.config import QLoRAConfig
 
 RUN_FILE: Final = "training_run.json"
-_EXTRAS_HINT: Final = 'pip install "atlasforge[finetune]"'
+_EXTRAS_HINT: Final = 'pip install "brainers-atlasforge[finetune]"'
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)

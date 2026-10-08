@@ -82,7 +82,10 @@ class TestWerCer:
 
 
 class TestExtractLabel:
-    LABELS = frozenset({"positive", "negative", "very positive"})
+    #: A tuple, not a set: the function's precedence rule is stated in terms of the order it is
+    #: given, and a set's iteration order varies with PYTHONHASHSEED — which made the coverage of
+    #: the "a worse candidate does not replace the best so far" arc come and go between runs.
+    LABELS = ("positive", "negative", "very positive")
 
     def test_finds_label(self) -> None:
         assert m.extract_label("the answer is positive today", self.LABELS) == "positive"
@@ -92,6 +95,17 @@ class TestExtractLabel:
 
     def test_longest_wins_at_same_position(self) -> None:
         assert m.extract_label("very positive indeed", self.LABELS) == "very positive"
+
+    def test_an_earlier_label_is_not_displaced_by_a_later_one(self) -> None:
+        """The rule the whole function turns on: first occurrence wins, not last looked at.
+
+        ``negative`` matches too, further along; a scan that simply kept the last match would
+        return it. Both words have to be surrounded by spaces to match at all — which is why a
+        comma between them would test nothing here. This is also the only case that exercises the
+        loop's "worse candidate, keep looking" arc, so it is what makes that branch deterministic
+        rather than incidental.
+        """
+        assert m.extract_label("positive and not negative", self.LABELS) == "positive"
 
     def test_whole_word_only(self) -> None:
         assert m.extract_label("positively", self.LABELS) is None
@@ -103,7 +117,38 @@ class TestExtractLabel:
         assert m.extract_label("positive", self.LABELS) == "positive"
 
     def test_ignores_empty_label(self) -> None:
-        assert m.extract_label("anything", {""}) is None
+        assert m.extract_label("anything", ("",)) is None
+
+
+class TestExtractLabelStrict:
+    """G17: the loose match reads a negated answer as the label it negates."""
+
+    #: A tuple for the same reason as above: one of these tests exercises the loose scan.
+    LABELS = ("positive", "negative", "very positive")
+
+    def test_whole_answer_that_is_a_label(self) -> None:
+        assert m.extract_label("positive", self.LABELS, strict=True) == "positive"
+
+    def test_a_negated_answer_matches_nothing(self) -> None:
+        # The case the register names. Loose mode reads this as "positive".
+        assert m.extract_label("not positive", self.LABELS, strict=True) is None
+        assert m.extract_label("not positive", self.LABELS) == "positive"
+
+    def test_an_answer_that_only_mentions_a_label_matches_nothing(self) -> None:
+        assert m.extract_label("the answer is positive today", self.LABELS, strict=True) is None
+
+    def test_surrounding_whitespace_is_not_the_whole_answer(self) -> None:
+        assert m.extract_label("  positive\n", self.LABELS, strict=True) == "positive"
+
+    def test_a_longer_label_still_matches_whole(self) -> None:
+        assert m.extract_label("very positive", self.LABELS, strict=True) == "very positive"
+
+    def test_empty_answer_matches_nothing(self) -> None:
+        assert m.extract_label("", self.LABELS, strict=True) is None
+        assert m.extract_label("   ", self.LABELS, strict=True) is None
+
+    def test_ignores_empty_label(self) -> None:
+        assert m.extract_label("", ("",), strict=True) is None
 
 
 class TestMacroF1:
