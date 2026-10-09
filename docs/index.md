@@ -1,62 +1,78 @@
 # AtlasForge
 
-**Run, evaluate, compare and fine-tune the official N-ATLaS models** for Hausa, Yoruba, Igbo and Nigerian-accented English.
+**Run, evaluate, compare and fine-tune the official N-ATLaS models, and know whether you actually made them better.**
 
-> *"I changed this N-ATLaS model. Did I actually make it better on my task, and where did it get worse?"*
+N-ATLaS is Nigeria's open language and speech model for Hausa, Yoruba, Igbo and Nigerian-accented English. It is published as downloadable weights. AtlasForge is the tooling around them, built to answer one question:
 
-N-ATLaS is published as gated open weights on Hugging Face. Developers get the models, but no tooling to measure them on their own data. AtlasForge is that tooling: a Python library and command-line tool that turns a JSONL file of your examples into a trustworthy answer.
+> *I changed this model. Did it get better on my task, and where did it get worse?*
 
-!!! info "Project status: pre-alpha (`0.1.0.dev0`)"
-    Built for NAIC 2026, Problem 01 (Developer Infrastructure). Every feature in this documentation is labelled by how well it has been verified. Nothing is claimed to work unless it says so. See [Status and roadmap](project/status.md) for the full picture, including what has been run against real model weights and what has not.
+<div class="grid cards" markdown>
 
-## What you can do with it
+- :material-rocket-launch:{ .lg .middle } **Try it in two minutes**
 
-| You want to | Command | Guide |
-|---|---|---|
-| Check your machine is ready | `atlasforge doctor` | [Installation](getting-started/installation.md) |
-| Send one prompt to a model | `atlasforge run "Ina kwana?"` | [Quickstart](getting-started/quickstart.md) |
-| Score a model on your own dataset | `atlasforge eval` | [Evaluate a model](guides/evaluate.md) |
-| Find out whether a change really helped, and where it hurt | `atlasforge compare` | [Compare two models](guides/compare.md) |
-| Catch broken data before it ruins a result | `atlasforge dataset validate` | [Validate a dataset](guides/validate-dataset.md) |
-| Transcribe Hausa, Yoruba, Igbo or Nigerian English speech | `atlasforge transcribe` | [Speech](guides/asr.md) |
-| Re-score a finished run with different metrics, no model needed | `atlasforge report` | [Evaluate a model](guides/evaluate.md#re-scoring-without-a-model) |
+    ---
 
-## Why it exists
+    No model, no GPU, no token, no API. Generate demo data and run a real comparison offline.
 
-Three things make evaluating Nigerian-language models different from evaluating English ones, and AtlasForge is built around them.
+    [:octicons-arrow-right-24: Quickstart](get-started/quickstart.md)
 
-1. **Tone marks and special letters are meaning, but writers are inconsistent.** The same Yoruba sentence can arrive with or without tone marks, in precomposed or combining Unicode. A naive string comparison scores identical answers as wrong. AtlasForge reports every text metric under both a [tone-aware and a tone-insensitive view](concepts/tone-aware-scoring.md), and never strips the letters that carry meaning (Yoruba and Igbo underdots, Hausa hooked letters).
-2. **Datasets are small, so luck matters.** With 80 examples, a three-point gain can be noise. AtlasForge uses [paired bootstrap intervals and an exact McNemar test](concepts/honest-statistics.md), and only says *improved* or *regressed* when the whole interval is on one side of zero. Slices under 30 examples are reported as *insufficient data*.
-3. **There is no hosted N-ATLaS API.** The models are gated downloads. AtlasForge talks to any OpenAI-compatible server (vLLM, llama.cpp, Ollama, your own gateway) or loads the weights directly with `transformers`, so you choose where the model runs.
+- :material-server-network:{ .lg .middle } **Connect a model**
 
-## How it fits together
+    ---
 
-```mermaid
-flowchart LR
-    D[(Your JSONL dataset)] --> V[dataset validate]
-    D --> E[eval]
-    E -->|requests| B{{Backend}}
-    B --> O[OpenAI-compatible server<br/>vLLM · llama.cpp · Ollama]
-    B --> L[Local transformers<br/>LLM and ASR]
-    E --> R[(run directory<br/>run.json · results.jsonl<br/>report.md · report.json)]
-    R --> C[compare]
-    R --> RP[report]
-    C --> CR[(comparison.md · comparison.json)]
-```
+    Point AtlasForge at any OpenAI-compatible server, or load the weights directly.
 
-Read [How AtlasForge works](concepts/how-it-works.md) for the design, or jump straight to the [Quickstart](getting-started/quickstart.md).
+    [:octicons-arrow-right-24: Choose your setup](get-started/choose-your-setup.md)
 
-## Principles
+- :material-chart-line:{ .lg .middle } **Prove an improvement**
 
-- **Only official models.** Core paths use only the `NCAIR1/*` N-ATLaS models. There is no other foundation model, and no LLM-as-judge.
-- **Never invent behaviour.** Facts about the models are labelled `VERIFIED`, `INFERRED` or `UNKNOWN` in [Verified model facts](natlas/model-facts.md).
-- **Failures count against the model.** A failed call is scored as a wrong answer, never silently dropped.
-- **No weights are ever redistributed.** You download them yourself under your own accepted [licence](natlas/licence.md).
-- **A light core.** `pip install atlasforge` does not import `torch` or `transformers`. Heavy stacks are optional extras.
-- **No secrets in output.** Tokens are masked; error messages never contain response bodies; logs hold no prompts or audio.
+    ---
 
-## What AtlasForge is not
+    Paired statistics, per-slice results and honest "insufficient data" instead of over-claiming.
 
-- It is **not an SDK, gateway or playground** for N-ATLaS. Other projects provide those, and AtlasForge works with them through the OpenAI-compatible backend.
-- It is **not a judge of open-ended quality.** It measures against references you provide. It does not score fluency or factuality on its own.
-- It does **not host or redistribute** the models.
+    [:octicons-arrow-right-24: Compare two models](guides/compare-two-models.md)
+
+- :material-tune:{ .lg .middle } **Fine-tune and publish**
+
+    ---
+
+    A QLoRA recipe with safety checks, and a model card that carries the licence obligations.
+
+    [:octicons-arrow-right-24: Fine-tune with QLoRA](guides/fine-tune-with-qlora.md)
+
+</div>
+
+## What you get
+
+| | |
+|---|---|
+| **Evaluate** | Run any dataset through a model, resume after a crash, score it with chrF, WER, accuracy and more. [Guide](guides/evaluate-a-model.md) |
+| **Compare** | Base vs fine-tuned with confidence intervals, an exact significance test, and a list of regressions. [Guide](guides/compare-two-models.md) |
+| **Respect the languages** | Every text metric is reported with tone marks kept *and* ignored, so Yoruba and Igbo scores mean something. [Concept](concepts/tone-aware-scoring.md) |
+| **Check your data** | Duplicates, conflicting labels, train/test leakage, broken Unicode and stripped diacritics. [Guide](guides/validate-your-data.md) |
+| **Speech** | Transcribe any audio format with the official ASR models, including clips longer than their 30-second limit. [Guide](guides/transcribe-speech.md) |
+| **Fine-tune** | QLoRA recipe that refuses leaky data and tiny datasets before it touches a GPU. [Guide](guides/fine-tune-with-qlora.md) |
+| **Benchmark** | Run the published AfroBench-LITE suite through `lm-evaluation-harness`, with its task names taken from the harness itself. [Guide](guides/benchmark-with-afrobench.md) |
+| **Publish** | Model cards with attribution, "Powered by Awarri", the user cap, evaluation numbers and regressions. [Guide](guides/publish-a-model-card.md) |
+
+## Honest by default
+
+AtlasForge is built to avoid the usual ways evaluation tools flatter their users:
+
+- **Failed calls count as wrong.** They are never dropped to make the score look better.
+- **Small slices are not judged.** Fewer than 30 examples is reported as *insufficient data*.
+- **Both tone views are always shown.** Nothing is silently normalised away.
+- **Nothing leaves your machine** except the requests you send to the endpoint you configure. There is no telemetry.
+
+!!! warning "Project status: pre-alpha ({{ version }})"
+    The evaluation, comparison, dataset-checking and demo features are fully tested. The parts that need real N-ATLaS weights, namely the **local backend, the official speech models and fine-tuning**, are written and tested against stand-ins but **have not yet been run on real models**. See the [project status](help/status.md) page for exactly what is verified.
+
+## Who it is for
+
+- **Developers and teams** deciding whether N-ATLaS is good enough for their application.
+- **NAIC teams** that must show a fine-tuned model beats the base model, or that need reliable speech evaluation.
+- **Researchers** comparing Nigerian-language models on their own data.
+
+## What it is not
+
+AtlasForge is not a new model, a chatbot, a hosted service, or a wrapper around another company's model. It never redistributes N-ATLaS weights. See [Access and licences](get-started/access-and-licences.md).

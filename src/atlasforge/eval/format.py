@@ -9,11 +9,17 @@ from __future__ import annotations
 from typing import Final
 
 FRACTION_METRICS: Final = frozenset({"exact_match", "accuracy", "macro_f1", "wer", "cer"})
+_STRICT_SUFFIX: Final = "_strict"
 
 
 def is_fraction(name: str) -> bool:
-    """True for metrics stored as a 0-1 fraction."""
-    return name in FRACTION_METRICS
+    """True for metrics stored as a 0-1 fraction.
+
+    A ``_strict`` variant is a fraction too, so the suffix is stripped rather than the
+    set being duplicated -- otherwise every new strict metric would silently start
+    rendering as a raw 0-1 number beside its looser twin.
+    """
+    return name.removesuffix(_STRICT_SUFFIX) in FRACTION_METRICS
 
 
 def fmt_value(name: str, x: float | None) -> str:

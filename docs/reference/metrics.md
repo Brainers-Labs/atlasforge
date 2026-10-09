@@ -1,79 +1,88 @@
 # Metrics
 
-All metrics compare a model's **normalised** answer with the **normalised** reference (see [Normalisation](normalization.md)). Text metrics are computed under both the tone-aware and tone-insensitive views, giving keys such as `chrf@tone_aware` and `chrf@tone_insensitive`.
+Select metrics with `--metric` / `-m` (repeatable). Every text metric is computed under **both** [tone views](../concepts/tone-aware-scoring.md) and reported as `name@tone_aware` and `name@tone_insensitive`.
 
-## At a glance
+{{ metrics_table() }}
 
-| Metric | Key | Scale | Better | Per-example | Pooled | Intended for |
-|---|---|---|---|---|---|---|
-| Exact match | `exact_match` | 0 or 1 | higher | yes | no | generation |
-| chrF | `chrf` | 0-100 | higher | yes | yes | generation |
-| chrF++ | `chrf++` | 0-100 | higher | yes | yes | generation |
-| Word error rate | `wer` | fraction, can exceed 1 | **lower** | yes | yes | ASR |
-| Character error rate | `cer` | fraction, can exceed 1 | **lower** | yes | yes | ASR |
-| Accuracy | `accuracy` | 0 or 1 | higher | yes | no | classification |
-| Macro-F1 | `macro_f1` | 0-1 | higher | **no** | yes | classification |
+## Scales and direction
 
-- **Mean** in a report averages the per-example values. **Pooled** is computed over the whole corpus. They can differ, and for WER the pooled figure (total errors over total reference words) is the standard one to quote.
-- `accuracy` and `macro_f1` require a `classification` dataset; asking for them on another task is a configuration error.
-- Per-example values drive the paired statistics in [`compare`](../guides/compare.md). A metric without them (macro-F1) is reported as `not tested (pooled metric)`.
+- Fractions are shown as percentages (`62.0%`) and their differences as **points** (`+17.4 pts`).
+- chrF is already on a 0-100 scale and is shown as is.
+- For `wer` and `cer`, **lower is better**, and AtlasForge flips the verdict accordingly: a drop in WER is an `improved`.
+- WER and CER can exceed 100% when the model inserts more words than the reference has.
 
-## Definitions
+## Empty answers and references
 
-### Exact match
+- A failed or missing prediction is scored as an **empty answer**.
+- If a reference is empty after normalisation, WER and CER for that example are 0 when the answer is also empty and 1 otherwise. Such examples are excluded from the pooled WER and CER. `dataset validate` flags them.
 
-`1.0` if the normalised prediction equals the normalised reference exactly, else `0.0`.
+## Notes on specific metrics
 
-### chrF and chrF++
+**`exact_match`.** Compares normalised text, so case, punctuation and (in the insensitive view) tone marks do not matter.
 
-Character n-gram F-score as implemented in [sacreBLEU](https://github.com/mjpost/sacrebleu), on a **0-100** scale. chrF++ adds word n-grams (word order 2). Chosen because it is far more forgiving than BLEU for morphologically rich and tonally marked text. Edge cases: two empty strings score 100; one empty string scores 0.
+**`accuracy` and `macro_f1`.** The label set is the distinct references. The answer is matched to the label it names: the earliest whole-word occurrence, the longest label winning ties. If no label is found the answer counts as wrong. Negation is not understood.
 
-The **pooled** chrF is sacreBLEU's corpus score, which aggregates n-gram statistics across all examples; it differs slightly from the mean of sentence scores.
+**`accuracy_strict` and `macro_f1_strict`.** The same two figures with a stricter match: the **whole** answer must be a label. An answer that merely mentions one is no longer a hit, so `"the sentiment is not positive"` finds nothing instead of `positive`. Use it when the prompt asks for the label and nothing else and the model has taken to editorialising — the loose metric can score a model well for naming a label it then contradicts, and the strict one cannot. Keep the loose one beside it: the **gap between the two is the measure of how often the model answers more than it was asked**, which is a different question from whether it got the label right.
 
-### WER and CER
+```console
+$ atlasforge report runs/base -m accuracy -m accuracy_strict
+```
 
-Word and character error rates from [jiwer](https://github.com/jitsi/jiwer): `(substitutions + deletions + insertions) / reference length`. Values can **exceed 1** when the model inserts more than the reference contains. Lower is better.
+Both are classification-only and are scored on the same normalised text as everything else, so case, punctuation and tone marks are handled the same way.
 
-- An empty reference scores `0` if the prediction is also empty, else `1`.
-- The **pooled** WER and CER exclude pairs with an empty reference, and are `None` if none remain.
+**`chrf`, `chrf++`.** Computed with sacrebleu. Both sides empty scores 100; one side empty scores 0. chrF measures overlap, not meaning, so a fluent wrong answer can score well.
 
-### Accuracy (classification)
+**`wer`, `cer`.** Computed with jiwer. *Mean* is the average of per-utterance rates; *pooled* divides total errors by total reference words (or characters), the standard speech-recognition figure.
 
-The model's free-text answer is mapped to a label: AtlasForge finds the label that appears **earliest** in the normalised answer as a whole word or phrase (the longest wins on a tie). The example is correct if that label equals the reference label; if no label is found, it is wrong. The set of possible labels is the set of references in the dataset.
+**`macro_f1`.** Pooled only. It has no per-example value, so `compare` reports the two pooled numbers but no interval or verdict.
 
-!!! warning "Negation is not understood"
-    "Not positive" would be read as `positive`. Ask the model for the label only.
+## Your own metrics
 
-### Macro-F1
+A metric is any callable that takes the answer, the reference and the whole example, and
+returns a number:
 
-The unweighted mean of per-class F1 over the classes present in the references, where F1 is `2·TP / (2·TP + FP + FN)`. A prediction with no label found counts as a miss for its true class and a false positive for none. It treats rare classes as equally important as common ones, so prefer it to accuracy on imbalanced data.
+```python
+def mentions_dosage(prediction, reference, example):
+    return float("mg" in prediction and "mg" in reference)
+```
+
+Pass it in `metrics=[...]` from Python, or name it `module:function` on the command line
+(`--metric my_metrics:mentions_dosage`, where `my_metrics.py` is importable from where you
+run AtlasForge). This works everywhere a built-in name does — `atlasforge eval`,
+`atlasforge report`, `atlasforge compare` — and it runs offline, since only scoring changes:
+
+```python
+# docs:run
+import atlasforge
+
+
+def mentions_dosage(prediction, reference, example):
+    """Did the answer mention mg, and did the reference?"""
+    return float("mg" in prediction and "mg" in reference)
+
+
+report = atlasforge.score_finished_run(
+    "atlasforge-demo/runs/tuned",
+    "atlasforge-demo/toy_qa.jsonl",
+    metrics=["exact_match", mentions_dosage],
+)
+print(report.metric("mentions_dosage@tone_aware").mean)
+```
+
+Two things to know:
+
+- **Both strings arrive normalised for the view being scored** — tone-aware or tone-insensitive,
+  lower-cased, punctuation stripped — exactly like every built-in metric. Use
+  `example.reference` if you need the original text, and `example.lang` if your metric is
+  language-specific.
+- **Say the direction if lower is better.** Set `higher_is_better = False` on the function and
+  the report and the comparison verdict read the right way round; the default is higher-is-better.
+
+A custom metric is reported under both views like any other, with a mean over examples. It has
+no pooled figure — no corpus-wide number is computed for it — but it has per-example values, so
+`compare` runs the paired statistics on it normally. A custom metric may not reuse a built-in
+name, and a metric that raises fails the run rather than being swallowed.
 
 ## Latency
 
-Reports also include latency statistics over **successful calls only**: mean, median (p50), 95th percentile (p95) and max, in milliseconds. Percentiles use linear interpolation.
-
-## How failures are scored
-
-A failed or missing prediction is scored as an **empty answer**:
-
-| Metric | Value of an empty answer |
-|---|---|
-| exact match, accuracy | wrong (0) |
-| chrF | 0 |
-| WER, CER | all words deleted (1.0) |
-| macro-F1 | a miss for its class |
-
-This is intentional: dropping failed examples would let an unreliable server look better than a reliable one. The report states `n_ok`, `n_failed` and `n_missing`.
-
-## Python
-
-```python
-from atlasforge.eval import metrics as m
-
-m.exact_match("abuja", "abuja")        # 1.0
-m.chrf("good morning", "good evening")  # 0-100
-m.wer("a b c", "a x c")                 # 0.333...
-m.macro_f1(["a", "b", None], ["a", "b", "b"])
-```
-
-Metric functions expect **already normalised** text; use `atlasforge.eval.normalize.normalize` first, or go through `score_run`, which does it for you. The full list is in the [API reference](python-api.md#atlasforge.eval.metrics).
+Reports also include latency (mean, p50, p95, max) computed from successful calls only. It is informational: no verdict is attached to it.

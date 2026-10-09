@@ -1,0 +1,643 @@
+{
+  "task": "generation",
+  "dataset_sha256": "7803765cfec0fdab9d3bd564c9fa82e2ef13270ac6a034ace6053b48ea20051d",
+  "n_total": 92,
+  "n_ok": 90,
+  "n_failed": 2,
+  "n_missing": 0,
+  "metrics": [
+    {
+      "key": "exact_match@tone_aware",
+      "name": "exact_match",
+      "view": "tone_aware",
+      "n": 92,
+      "mean": 0.6195652173913043,
+      "corpus": null,
+      "higher_is_better": true
+    },
+    {
+      "key": "chrf@tone_aware",
+      "name": "chrf",
+      "view": "tone_aware",
+      "n": 92,
+      "mean": 67.18290887324983,
+      "corpus": 54.03356899284949,
+      "higher_is_better": true
+    },
+    {
+      "key": "exact_match@tone_insensitive",
+      "name": "exact_match",
+      "view": "tone_insensitive",
+      "n": 92,
+      "mean": 0.75,
+      "corpus": null,
+      "higher_is_better": true
+    },
+    {
+      "key": "chrf@tone_insensitive",
+      "name": "chrf",
+      "view": "tone_insensitive",
+      "n": 92,
+      "mean": 77.40682504276317,
+      "corpus": 70.49550141562341,
+      "higher_is_better": true
+    }
+  ],
+  "per_example": {
+    "agri-000": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-001": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-002": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-003": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-004": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-005": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 0.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 0.0
+    },
+    "agri-006": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-007": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-008": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-009": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-010": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-011": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-012": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-013": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-014": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-015": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-016": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-017": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-018": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-019": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-020": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-021": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 0.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 0.0
+    },
+    "agri-022": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-023": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-024": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-025": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-026": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-027": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-028": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-029": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 3.4482758620689653,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 3.4482758620689653
+    },
+    "agri-030": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-031": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-032": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-033": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-034": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-035": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-036": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-037": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "agri-038": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "agri-039": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 2.4390243902439024,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 2.4390243902439024
+    },
+    "num-000": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 25.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 25.0
+    },
+    "num-001": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-002": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-003": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-004": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-005": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-006": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-007": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-008": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-009": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 25.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 25.0
+    },
+    "num-010": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-011": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-012": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-013": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-014": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-015": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-016": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-017": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-018": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 25.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 25.0
+    },
+    "num-019": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-020": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 25.0,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 25.0
+    },
+    "num-021": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-022": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-023": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-024": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-025": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-026": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-027": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-028": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-029": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 38.888888888888886,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 38.888888888888886
+    },
+    "num-030": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-031": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-032": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-033": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-034": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-035": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-036": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-037": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "num-038": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 38.888888888888886,
+      "exact_match@tone_insensitive": 0.0,
+      "chrf@tone_insensitive": 38.888888888888886
+    },
+    "num-039": {
+      "exact_match@tone_aware": 1.0,
+      "chrf@tone_aware": 100.0,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-00": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 13.449163449163452,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-01": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 38.888888888888886,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-02": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 15.551463065275218,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-03": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 30.22716170004885,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-04": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 12.3015873015873,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-05": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 24.34979544126242,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-06": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 14.512195121951216,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-07": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 19.305555555555554,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-08": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 37.77777777777778,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-09": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 13.134865596724127,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-10": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 15.551463065275218,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    },
+    "yo-11": {
+      "exact_match@tone_aware": 0.0,
+      "chrf@tone_aware": 24.34979544126242,
+      "exact_match@tone_insensitive": 1.0,
+      "chrf@tone_insensitive": 100.0
+    }
+  },
+  "latency_ms": {
+    "mean": 956.8333333333334,
+    "p50": 956.5,
+    "p95": 1054.1,
+    "max": 1063.0
+  },
+  "normalization": {
+    "tone_aware": {
+      "tones": "keep",
+      "lowercase": true,
+      "punctuation": "strip"
+    },
+    "tone_insensitive": {
+      "tones": "strip",
+      "lowercase": true,
+      "punctuation": "strip"
+    }
+  },
+  "flags": {
+    "number_mismatch": 6
+  },
+  "n_flagged": 6,
+  "per_example_flags": {
+    "num-000": [
+      "number_mismatch"
+    ],
+    "num-009": [
+      "number_mismatch"
+    ],
+    "num-018": [
+      "number_mismatch"
+    ],
+    "num-020": [
+      "number_mismatch"
+    ],
+    "num-029": [
+      "number_mismatch"
+    ],
+    "num-038": [
+      "number_mismatch"
+    ]
+  },
+  "asr": null
+}

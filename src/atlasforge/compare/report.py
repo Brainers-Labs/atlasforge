@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from atlasforge.compare.compare import POOLED_ONLY
+from atlasforge.eval import flags
 from atlasforge.eval.format import fmt_bound, fmt_delta, fmt_value, is_fraction
 
 if TYPE_CHECKING:
@@ -18,6 +19,7 @@ def to_markdown(report: ComparisonReport) -> str:
     lines += _header(report)
     lines += _overall(report)
     lines += _regressions(report)
+    lines += _flags(report)
     lines += _slices(report)
     lines += _method(report)
     return "\n".join(lines).rstrip() + "\n"
@@ -29,8 +31,8 @@ def _header(report: ComparisonReport) -> list[str]:
         f"- **Examples:** {report.n_total}",
         f"- **Dataset fingerprint (sha256):** `{report.dataset_sha256[:16]}`",
         "",
-        "| Run | Model | Revision | Backend | Failed | Missing |",
-        "|---|---|---|---|---|---|",
+        "| Run | Model | Revision | Backend | Failed | Missing | Flagged |",
+        "|---|---|---|---|---|---|---|",
         _run_row("Base", report.base),
         _run_row("Candidate", report.candidate),
         "",
@@ -40,7 +42,7 @@ def _header(report: ComparisonReport) -> list[str]:
 def _run_row(label: str, info: RunInfo) -> str:
     return (
         f"| {label} | {info.model or '?'} | {_short(info.revision)} | {info.backend or '?'} "
-        f"| {info.n_failed} | {info.n_missing} |"
+        f"| {info.n_failed} | {info.n_missing} | {info.n_flagged} |"
     )
 
 
@@ -113,6 +115,30 @@ def _regressions(report: ComparisonReport) -> list[str]:
         for s in slices
     )
     return [*lines, ""]
+
+
+def _flags(report: ComparisonReport) -> list[str]:
+    """How often each deterministic rule fired in each run. Not a quality score."""
+    if not report.flags:
+        return []
+    lines = [
+        "## Failure-mode flags",
+        "",
+        (
+            "Deterministic rules over the text, counted per answer — the same rules the "
+            "single-run report lists. They are places to look, not a quality score, and not a "
+            "hallucination rate."
+        ),
+        "",
+        "| Flag | Base | Candidate | Delta | What it means |",
+        "|---|---|---|---|---|",
+    ]
+    lines.extend(
+        f"| `{f.name}` | {f.base} | {f.candidate} | {f.delta:+d} | {flags.DESCRIPTIONS[f.name]} |"
+        for f in report.flags
+    )
+    lines.append("")
+    return lines
 
 
 def _slices(report: ComparisonReport) -> list[str]:

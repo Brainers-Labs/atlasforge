@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Final
 from atlasforge.errors import ConfigError
 
 if TYPE_CHECKING:
+    from collections.abc import Mapping
+
     from atlasforge.backends.base import Backend
 
 DEFAULT_MODEL: Final = "NCAIR1/N-ATLaS"
@@ -20,13 +22,21 @@ def build_backend(
     model: str = DEFAULT_MODEL,
     api_key_env: str | None = "ATLASFORGE_API_KEY",
     asr_model: str | None = None,
+    asr_models: Mapping[str, str] | None = None,
     timeout: float = 120.0,
     retries: int = 2,
     quantize: str = "none",
     device: str = "auto",
+    adapter: str | None = None,
+    send_repetition_penalty: bool = True,
     allow_insecure_http: bool = False,
 ) -> Backend:
     """Create the named backend. Heavy dependencies are imported only for ``local``."""
+    if adapter and name != "local":  # checked first so it can never be silently ignored
+        raise ConfigError(
+            "--adapter only works with the local backend.",
+            hint="With a server, load the adapter there and pass its served name as --model.",
+        )
     if name == "openai":
         if not base_url:
             raise ConfigError(
@@ -42,14 +52,17 @@ def build_backend(
             asr_model=asr_model,
             timeout=timeout,
             max_retries=retries,
+            send_repetition_penalty=send_repetition_penalty,
             allow_insecure_http=allow_insecure_http,
         )
     if name == "local":
         from atlasforge.backends.local import LocalBackend  # noqa: PLC0415 - keep import light
 
         return LocalBackend(
+            adapter=adapter,
             model=model,
             quantize=quantize,  # type: ignore[arg-type]  # validated in LocalBackend
             device=device,
+            asr_models=asr_models,
         )
     raise ConfigError(f"Unknown backend {name!r}.", hint=f"Use one of: {', '.join(BACKEND_NAMES)}.")

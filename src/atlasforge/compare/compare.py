@@ -15,12 +15,15 @@ from atlasforge.compare.slices import (
 )
 from atlasforge.compare.stats import McNemarResult, is_binary, mcnemar_exact, paired_bootstrap
 from atlasforge.errors import ConfigError
+from atlasforge.eval.flags import FLAG_NAMES
+from atlasforge.eval.metrics import mean
 from atlasforge.eval.runner import RESULTS_NAME, read_manifest, read_results
 from atlasforge.eval.score import ScoreReport, score_run
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Mapping, Sequence
 
+    from atlasforge.eval.custom import MetricFn
     from atlasforge.eval.dataset import Dataset
 
 _EPS: Final = 1e-12
@@ -36,6 +39,17 @@ class RunInfo:
     backend: str | None
     n_failed: int
     n_missing: int
+    n_flagged: int = 0
+
+
+@dataclass(frozen=True, slots=True, kw_only=True)
+class FlagComparison:
+    """One failure-mode flag, in both runs. ``delta`` is candidate minus base."""
+
+    name: str
+    base: int
+    candidate: int
+    delta: int
 
 
 @dataclass(frozen=True, slots=True, kw_only=True)
@@ -75,6 +89,7 @@ class ComparisonReport:
     primary: str | None
     metrics: tuple[MetricComparison, ...]
     slices: tuple[SliceResult, ...]
+    flags: tuple[FlagComparison, ...] = ()
     settings: dict[str, Any] = field(default_factory=dict)
 
     @property
@@ -85,6 +100,11 @@ class ComparisonReport:
     def regressed_slices(self) -> tuple[SliceResult, ...]:
         return tuple(s for s in self.slices if s.status == "regressed")
 
+    @property
+    def new_flags(self) -> tuple[FlagComparison, ...]:
+        """Flags the candidate raises more often than the base — where to look next."""
+        return tuple(f for f in self.flags if f.delta > 0)
+
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
 
@@ -94,7 +114,7 @@ def compare_runs(
     base_dir: str | Path,
     candidate_dir: str | Path,
     *,
-    metrics: Sequence[str] | None = None,
+    metrics: Sequence[str | MetricFn] | None = None,
     slice_fields: Sequence[str] = BUILTIN_FIELDS,
     primary: str | None = None,
     n_boot: int = 1000,
@@ -124,6 +144,7 @@ def compare_runs(
                 backend=manifest.get("backend"),
                 n_failed=report.n_failed,
                 n_missing=report.n_missing,
+                n_flagged=report.n_flagged,
             )
         )
     return compare_scores(
@@ -210,6 +231,7 @@ def compare_scores(
         primary=chosen,
         metrics=tuple(comparisons),
         slices=tuple(slices),
+        flags=_flag_comparisons(base.flags, candidate.flags),
         settings={
             "n_boot": n_boot,
             "seed": seed,
@@ -279,8 +301,8 @@ def _compare_metric(
         view=view,
         higher_is_better=higher_is_better,
         n=n,
-        base_mean=sum(base_values) / n,
-        candidate_mean=sum(candidate_values) / n,
+        base_mean=mean(base_values),
+        candidate_mean=mean(candidate_values),
         delta=boot.mean,
         low=boot.low,
         high=boot.high,
@@ -320,4 +342,21 @@ def _info(report: ScoreReport) -> RunInfo:
         backend=None,
         n_failed=report.n_failed,
         n_missing=report.n_missing,
+        n_flagged=report.n_flagged,
+    )
+
+
+def _flag_comparisons(
+    base: Mapping[str, int], candidate: Mapping[str, int]
+) -> tuple[FlagComparison, ...]:
+    """Flag counts side by side, in the order ``flags.FLAG_NAMES`` lists them."""
+    return tuple(
+        FlagComparison(
+            name=name,
+            base=base.get(name, 0),
+            candidate=candidate.get(name, 0),
+            delta=candidate.get(name, 0) - base.get(name, 0),
+        )
+        for name in FLAG_NAMES
+        if base.get(name, 0) or candidate.get(name, 0)
     )

@@ -5,8 +5,9 @@ The LLM path is written against the model card and tested only with stand-in ``t
 modules: fp16 needs a GPU, so its real behaviour (memory, speed) is still unverified. Findings are
 recorded in ``planning/21_NATLAS_DISCOVERY.md``.
 
-Needs ``pip install "atlasforge[local]"``. Model files are gated on Hugging Face: accept
-the licence on each model page and provide ``HF_TOKEN``. Weights are never bundled.
+Needs ``pip install "brainers-atlasforge[local]"`` (or ``-e ".[local]"`` in a clone). Model
+files are gated on Hugging Face: accept the licence on each model page and provide
+``HF_TOKEN``. Weights are never bundled.
 
 Heavy imports happen lazily, on first use, so importing this module is cheap.
 """
@@ -18,6 +19,7 @@ import time
 from typing import TYPE_CHECKING, Any, Final, Literal
 
 from atlasforge.asr.audio import SAMPLE_RATE, decode_audio, duration_s, pcm_to_float32
+from atlasforge.asr.models import ASR_MODELS
 from atlasforge.backends.factory import DEFAULT_MODEL
 from atlasforge.errors import (
     AudioError,
@@ -33,16 +35,10 @@ if TYPE_CHECKING:
 
     from atlasforge.types import AudioInput, Lang, Message
 
-ASR_MODELS: Final[dict[str, str]] = {
-    "ha": "NCAIR1/Hausa-ASR",
-    "yo": "NCAIR1/Yoruba-ASR",
-    "ig": "NCAIR1/Igbo-ASR",
-    "en": "NCAIR1/NigerianAccentedEnglish",
-}
 ASR_LIMIT_S: Final = 30.0
 
 Quantize = Literal["none", "4bit", "8bit"]
-_EXTRAS_HINT: Final = 'pip install "atlasforge[local]"'
+_EXTRAS_HINT: Final = 'pip install "brainers-atlasforge[local]"'
 _ACCESS_HINT: Final = (
     "Accept the licence on the model's Hugging Face page, then set HF_TOKEN "
     "(or run `huggingface-cli login`). `atlasforge doctor` checks the token."
@@ -60,16 +56,18 @@ class LocalBackend:
         quantize: Quantize = "none",
         device: str = "auto",
         dtype: str = "float16",
+        adapter: str | None = None,
         asr_models: Mapping[str, str] | None = None,
     ) -> None:
         if quantize not in ("none", "4bit", "8bit"):
             raise ConfigError(f"quantize must be 'none', '4bit' or '8bit', got {quantize!r}.")
         self._model_id = model
+        self._adapter = adapter  # a LoRA adapter (path or repo) applied on top of the base model
         self._revision = revision
         self._quantize = quantize
         self._device = device
         self._dtype = dtype
-        self._asr_repos = {**ASR_MODELS, **(asr_models or {})}
+        self._asr_repos: dict[str, str] = {**ASR_MODELS, **(asr_models or {})}
         self._tokenizer: Any = None
         self._llm: Any = None
         self._pipelines: dict[str, Any] = {}
@@ -169,7 +167,9 @@ class LocalBackend:
             device = str(self._llm.device)
         return BackendInfo(
             backend="local",
-            model=self._model_id,
+            # The adapter is part of the model's identity: it keeps a base run and an adapter
+            # run from being mistaken for each other when resuming or comparing.
+            model=f"{self._model_id}+{self._adapter}" if self._adapter else self._model_id,
             revision=revision,
             device=device,
             dtype=self._dtype if self._quantize == "none" else self._quantize,
@@ -218,6 +218,10 @@ class LocalBackend:
             llm = transformers.AutoModelForCausalLM.from_pretrained(self._model_id, **kwargs)
             if self._device != "auto" and self._quantize == "none":
                 llm = llm.to(self._device)
+            if self._adapter:
+                llm = _import("peft").PeftModel.from_pretrained(llm, self._adapter)
+        except ConfigError:
+            raise
         except Exception as exc:
             raise _map_load_error(exc, self._model_id) from exc
         self._tokenizer, self._llm = tokenizer, llm

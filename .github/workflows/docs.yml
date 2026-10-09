@@ -1,23 +1,37 @@
 name: Docs
 
+# Publishes the documentation site to https://brainers-labs.github.io/atlasforge/, which is the
+# address `site_url` in mkdocs.yml and the Documentation link in the issue-template config have
+# named since they were written. Before this workflow existed nothing deployed the site, so both
+# of those pointed at a 404.
+#
+# Separate from the `docs` job in ci.yml on purpose. That job runs on every pull request, builds
+# the same site strictly and uploads it as an artifact so a reviewer can read the change; this is
+# the only workflow that writes to the live site, and it runs on main alone.
+#
+# Pages must already be enabled for the repository with its build type set to "workflow":
+#
+#   gh api -X POST repos/Brainers-Labs/atlasforge/pages -f build_type=workflow
+#
+# Without that, `configure-pages` fails rather than guessing.
+
 on:
   push:
     branches: [main]
-    paths: ["docs/**", "mkdocs.yml", "src/**", "CHANGELOG.md", "pyproject.toml", ".github/workflows/docs.yml"]
-  pull_request:
-    paths: ["docs/**", "mkdocs.yml", "src/**", "CHANGELOG.md", "pyproject.toml", ".github/workflows/docs.yml"]
   workflow_dispatch:
 
 permissions:
   contents: read
 
+# One deploy at a time, and never cancel one in flight: a half-published site is worse than a
+# stale one.
 concurrency:
-  group: docs-${{ github.ref }}
-  cancel-in-progress: true
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
-    name: build docs (strict)
+    name: build the site strictly
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -26,22 +40,24 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -e ".[docs]"
+      # Strict: a broken link, a missing page or an undocumented metric or setting fails the build,
+      # so nothing reaches the site that a pull request would not have caught first.
       - run: mkdocs build --strict
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site
 
   deploy:
-    name: deploy to GitHub Pages
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: deploy to Pages
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write # publish to the site
+      id-token: write # trusted publishing: the deployment is proved by a token, not a stored secret
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4

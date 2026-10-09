@@ -1,54 +1,26 @@
-# Contributing
+--8<-- "CONTRIBUTING.md"
 
-Thank you for helping. AtlasForge is small and its rules are few but firm, because its value is that its numbers can be trusted.
+## Building these docs
 
-## Ground rules
+```bash
+pip install -e ".[docs]"
+mkdocs serve          # live preview at http://127.0.0.1:8000
+mkdocs build --strict # what CI runs: any broken link or missing page fails the build
+```
 
-- **Only official `NCAIR1/*` models in core paths.** Never another foundation model, and no LLM-as-judge.
-- **Never invent model behaviour.** If a fact about a model is not verified, verify it and record it (see [Verified model facts](../natlas/model-facts.md)) or do not expose it. Label claims `VERIFIED`, `INFERRED` or `UNKNOWN`.
-- **Never fabricate validation or data.** No made-up benchmarks, testers or results.
-- **Keep the core install light.** No `torch` or `transformers` imports at package import time. Heavy dependencies go in extras and are imported lazily.
-- **Every public function has type hints and a test.** The default test suite runs on a CPU with no credentials and no gated weights.
-- **No secrets, prompts or audio in logs, errors or reports.**
-- **Never redistribute model weights**, quantised or otherwise.
+The CLI reference, metrics table, fine-tune settings, file-format examples and every terminal transcript are **generated from the code** while the site builds (see `docs_macros.py`), so do not edit those by hand. If you add a metric or a fine-tune setting without documenting it, the build fails on purpose.
 
-## Good first contributions
+Commands shown in the docs are also checked by a test that every flag they use really exists.
 
-- **Normalisation rules** for Hausa, Yoruba and Igbo, especially from native speakers who can say what is and is not the same word.
-- **Benchmark packs**, always with provenance and licence recorded alongside.
-- **Documentation**, including translations. A translation must be reviewed by a named human speaker; unreviewed machine translation is not accepted.
-- **Bug reports** with the output of `atlasforge doctor --json`, the exact command, and the full error including its `->` hint line.
+A new feature has three more places to land, each with a test that will tell you if you forget:
 
-## Workflow
+| If you add... | Also update | Checked by |
+|---|---|---|
+| an optional dependency (an extra in `pyproject.toml`) | the extras table on the installation page | `test_every_extra_is_offered_on_the_installation_page` |
+| a command that writes a file | [File formats](../reference/file-formats.md) | `test_every_file_the_tool_writes_is_documented_in_the_formats_page` |
+| a public module or entry point | [Python API](../reference/python-api.md) | `test_the_api_reference_names_every_entry_point` |
+| a whole new guide | `mkdocs.yml` nav **and** the table on the guides index | `test_every_page_is_in_the_navigation_and_every_nav_entry_exists` |
+| a credential or a new environment variable | [Environment variables](../reference/environment.md) | `test_the_credentials_the_tool_reads_are_documented` |
 
-1. Fork and clone, then set up the environment:
-
-    ```bash
-    python3 -m venv .venv && . .venv/bin/activate
-    pip install -e ".[dev]"
-    pre-commit install
-    ```
-
-2. Make your change with tests.
-3. Run all the checks:
-
-    ```bash
-    ruff check . && ruff format --check . && mypy && pytest
-    ```
-
-4. If you changed behaviour, update the docs in `docs/` and add a line to `CHANGELOG.md`.
-5. Open a pull request describing what changed and why.
-
-See [Development](development.md) for the project layout and how to extend it.
-
-## Code conventions
-
-- Python 3.10+; `from __future__ import annotations` in library modules (not in `cli.py`, where Typer reads annotations at runtime).
-- `mypy --strict` must pass. Prefer small frozen dataclasses with `slots=True, kw_only=True` for data.
-- Raise an `AtlasForgeError` subclass with a **hint** for any error a user can act on.
-- Comments explain *why*, never *what*. No multi-paragraph docstrings.
-- Public docstrings use Google style so they render in the [API reference](../reference/python-api.md).
-
-## Reporting a security issue
-
-Do not open a public issue. See [Security and privacy](../operations/security-privacy.md#reporting-a-vulnerability).
+An entry on [Status](../help/status.md) is the fifth: say whether the feature has been exercised
+against a real model, and if it has not, say so plainly.

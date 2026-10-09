@@ -1,0 +1,9 @@
+# Imports the official N-ATLaS safetensors snapshot into Ollama and quantises it to int4.
+# Keep the result on your own machine: the Awarri licence does not let you redistribute it.
+#
+# Replace the path with the snapshot directory printed by huggingface_hub's snapshot_download, then:
+#   ollama create natlas-local-q4 -f Modelfile --quantize int4
+FROM /path/to/the/downloaded/N-ATLaS/snapshot
+PARAMETER temperature 0.1
+PARAMETER repeat_penalty 1.12
+PARAMETER num_predict 1000

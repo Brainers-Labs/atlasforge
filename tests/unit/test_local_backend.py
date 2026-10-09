@@ -261,7 +261,7 @@ class TestLoading:
         monkeypatch.setitem(sys.modules, "torch", None)
         with pytest.raises(ConfigError) as info:
             LocalBackend().generate(MESSAGES)  # type: ignore[arg-type]
-        assert info.value.hint == 'pip install "atlasforge[local]"'
+        assert info.value.hint == 'pip install "brainers-atlasforge[local]"'
 
     def test_invalid_quantize(self) -> None:
         with pytest.raises(ConfigError, match="quantize"):
@@ -449,3 +449,61 @@ class TestInfoAndLifecycle:
 
     def test_repr_has_no_secrets_and_names_the_model(self) -> None:
         assert "NCAIR1/N-ATLaS" in repr(LocalBackend())
+
+
+class TestAdapter:
+    def install_peft(self, monkeypatch: pytest.MonkeyPatch) -> list[tuple[object, str]]:
+        applied: list[tuple[object, str]] = []
+
+        class PeftModel:
+            @staticmethod
+            def from_pretrained(model: object, adapter: str) -> object:
+                applied.append((model, adapter))
+                wrapped = FakeLLM()
+                wrapped.config.max_position_embeddings = LIMIT
+                return wrapped
+
+        peft = ModuleType("peft")
+        peft.PeftModel = PeftModel  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "peft", peft)
+        return applied
+
+    def test_adapter_is_applied_on_top_of_the_base_model(
+        self, fake: Harness, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        applied = self.install_peft(monkeypatch)
+        LocalBackend(adapter="my/adapter").generate(MESSAGES)  # type: ignore[arg-type]
+        assert applied == [(fake.llm, "my/adapter")]
+
+    def test_no_adapter_means_peft_is_never_touched(
+        self, fake: Harness, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setitem(sys.modules, "peft", None)  # would raise if imported
+        LocalBackend().generate(MESSAGES)  # type: ignore[arg-type]
+
+    def test_the_adapter_is_part_of_the_model_identity(self, fake: Harness) -> None:
+        assert LocalBackend().info().model == "NCAIR1/N-ATLaS"
+        assert LocalBackend(adapter="runs/hausa").info().model == "NCAIR1/N-ATLaS+runs/hausa"
+
+    def test_a_missing_peft_gives_the_extras_hint(
+        self, fake: Harness, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setitem(sys.modules, "peft", None)
+        with pytest.raises(ConfigError) as info:
+            LocalBackend(adapter="x").generate(MESSAGES)  # type: ignore[arg-type]
+        assert info.value.hint == 'pip install "brainers-atlasforge[local]"'
+
+    def test_a_bad_adapter_is_mapped_without_echoing_the_error(
+        self, fake: Harness, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        class PeftModel:
+            @staticmethod
+            def from_pretrained(model: object, adapter: str) -> object:
+                raise ValueError("secret path details")
+
+        peft = ModuleType("peft")
+        peft.PeftModel = PeftModel  # type: ignore[attr-defined]
+        monkeypatch.setitem(sys.modules, "peft", peft)
+        with pytest.raises(BackendError) as info:
+            LocalBackend(adapter="x").generate(MESSAGES)  # type: ignore[arg-type]
+        assert "secret" not in info.value.format()

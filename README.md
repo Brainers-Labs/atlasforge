@@ -2,15 +2,47 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0.dev0`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested (559 tests). The four ASR models and an int4-quantised copy of the LLM (via Ollama) have been run for real on a Mac M1; the LLM at fp16, vLLM and fine-tuning have **not** (they need a GPU). Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a2`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
 
-**Full documentation:** build and browse it with `pip install -e ".[docs]" && mkdocs serve` (sources in [`docs/`](docs/index.md)).
+## Documentation
+
+Full documentation (quickstart, concepts, guides, reference, troubleshooting) lives in [`docs/`](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/index.md) and builds into a searchable site:
+
+```bash
+pip install -e ".[docs]"
+mkdocs serve        # live preview
+```
+
+No model? Start with the offline demo: `atlasforge demo`. A Jupyter/Colab walkthrough of the whole workflow on that demo data is in [`notebooks/`](https://github.com/Brainers-Labs/atlasforge/blob/main/notebooks/README.md), and the output it produces — a report and a comparison in Markdown, JSON and HTML — is committed in [`examples/reports/`](https://github.com/Brainers-Labs/atlasforge/blob/main/examples/README.md).
 
 ## The question AtlasForge answers
 
 > *I changed this N-ATLaS model. Did I actually make it better on my task, and where did it get worse?*
 
 N-ATLaS is published as gated open weights on Hugging Face, so developers get the models but no tooling to measure them on their own data. AtlasForge is that tooling.
+
+## Install
+
+Python 3.10 to 3.13.
+
+```bash
+pip install --pre brainers-atlasforge
+atlasforge --version
+```
+
+The distribution is `brainers-atlasforge`, not `atlasforge` — that name on PyPI belongs to an unrelated bioinformatics project. The import name and the command are both `atlasforge`. `--pre` is written above but is not required while the alpha is the only version published: pip falls back to pre-releases when a project has no stable release to prefer, so the plain command installs it too. It becomes load-bearing as soon as a stable version exists, because pip will then choose that one.
+
+To work on AtlasForge itself, or to run the tip of `main` rather than a release:
+
+```bash
+git clone https://github.com/Brainers-Labs/atlasforge
+cd atlasforge
+python -m venv .venv
+. .venv/bin/activate                 # Windows PowerShell: .venv\Scripts\Activate.ps1
+pip install -e .
+```
+
+That base install pulls in no PyTorch and no other machine-learning framework. Extras add one job at a time — `pip install "brainers-atlasforge[local]"` to run the weights in-process, `[asr]` for speech, `[finetune]` for QLoRA. [Installation](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/get-started/installation.md) lists them all, and the [Quickstart](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/get-started/quickstart.md) reaches a real comparison in about two minutes with no model at all.
 
 ## Works today
 
@@ -25,17 +57,23 @@ atlasforge report runs/base --dataset data.jsonl    # re-score with no model
 atlasforge transcribe note.ogg --lang ha --base-url ...
 ```
 
-- **`eval`**: JSONL in, resumable run out, `report.md` + `report.json`. Every text metric is reported under both a **tone-aware** and a **tone-insensitive** view (Yoruba/Igbo underdots and Hausa hooked letters are never stripped). Failed calls count as wrong.
-- **`compare`**: paired bootstrap confidence intervals, an exact McNemar test for right/wrong metrics, per-slice results (language, length, has-number, or any `meta` field). A change is only called *improved* or *regressed* when the whole interval is on one side of zero, and slices under 30 examples are reported as *insufficient data*.
+- **`eval`**: JSONL in, resumable run out, `report.md` + `report.json` + `report.html` (one self-contained page: no JavaScript, no network, no server). Every text metric is reported under both a **tone-aware** and a **tone-insensitive** view (Yoruba/Igbo underdots and Hausa hooked letters are never stripped). Failed calls count as wrong.
+
+- **`compare`**: paired bootstrap confidence intervals, an exact McNemar test for right/wrong metrics, per-slice results (language, length, has-number, or any `meta` field), and the same three report shapes as `eval`. A change is only called *improved* or *regressed* when the whole interval is on one side of zero, and slices under 30 examples are reported as *insufficient data*.
 - **`dataset validate`**: malformed lines (all of them, with line numbers), duplicates, conflicting labels, train/test leakage, broken Unicode, stripped diacritics, class imbalance.
 - **Backends**: `openai` works with any OpenAI-compatible server (vLLM, llama.cpp, Ollama, HF Endpoints, community gateways). It retries 429/5xx and connection errors, and never puts response bodies in error messages.
 - **Safety nets**: `eval` stops after 20 consecutive failures instead of hammering a dead server, and keeps everything finished so it can resume.
+- **`finetune --dry-run`** (no GPU): validates the training data, refuses train/test leakage and tiny datasets, and prints the plan. **`card`** writes a model card with the licence obligations (attribution, "Powered by Awarri", the 1,000-user cap), the evaluation numbers and any regressions.
 - **ASR helpers**: any audio format via ffmpeg (including WhatsApp `.ogg`/opus), automatic splitting of audio over the models' 30-second limit, transcript merging.
 
-## Verified against real weights, and what is not
+## Not yet run against real weights
 
-- **Run for real (Mac M1, 16 GB):** all four ASR models through `--backend local` / `transformers`; the LLM as an int4 Ollama import through `atlasforge run`. Evidence is in `planning/21_NATLAS_DISCOVERY.md`.
-- **Not yet run:** the `local` backend for the **LLM** (fp16 needs a GPU of 24 GB or more), vLLM serving, formal WER or any benchmark, and fine-tuning recipes and `card` (not written).
+- `--backend local` (transformers): wiring is tested with stand-in modules only.
+- Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
+- `atlasforge finetune` (QLoRA via PEFT/TRL): data checks and `--dry-run` are tested; the training run itself needs an NVIDIA GPU and has never been executed.
+- `--backend local --adapter DIR`: evaluating a fine-tuned adapter; wiring tested with stand-ins only.
+
+Nothing above has been checked from a machine that has the weights. `scripts/live_smoke.py` is the run that does it, and it writes down what it saw — including the checks it could not perform. **It has not been run either.** The [project status](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/help/status.md) page is the record.
 
 ## Metrics
 

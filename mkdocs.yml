@@ -1,75 +1,65 @@
 site_name: AtlasForge
 site_description: Run, evaluate, compare and fine-tune the official N-ATLaS models (Hausa, Yoruba, Igbo, Nigerian English).
-repo_url: https://github.com/im-aderm/atlasforge
-repo_name: im-aderm/atlasforge
+site_url: https://brainers-labs.github.io/atlasforge/
+repo_url: https://github.com/Brainers-Labs/atlasforge
+repo_name: Brainers-Labs/atlasforge
 edit_uri: edit/main/docs/
 docs_dir: docs
 strict: true
 
-validation:
-  omitted_files: warn
-  absolute_links: warn
-  unrecognized_links: warn
-  anchors: warn
-
 theme:
   name: material
+  language: en
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.top
     - navigation.footer
+    - navigation.indexes
     - search.suggest
     - search.highlight
     - content.code.copy
     - content.tabs.link
+    - content.action.edit
     - toc.follow
   palette:
+    # `primary: black` gives Material a greyscale base to start from. There is deliberately no
+    # `accent:` entry: Material has no greyscale accent, and an unsupported name is ignored in
+    # silence, leaving the default indigo. Every accent value is declared in extra.css instead.
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: teal
-      accent: teal
+      primary: black
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: teal
-      accent: teal
+      primary: black
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
 
-plugins:
-  - search
-  - mkdocstrings:
-      handlers:
-        python:
-          paths: [src]
-          options:
-            show_root_heading: true
-            show_source: false
-            heading_level: 3
-            members_order: source
-            docstring_style: google
-            show_signature_annotations: true
-            separate_signature: true
-            merge_init_into_class: true
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
   - attr_list
   - def_list
-  - footnotes
   - md_in_html
   - tables
   - toc:
       permalink: true
+      toc_depth: 3
   - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -77,45 +67,74 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search
+  - macros:
+      module_name: docs_macros
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 3
+            members_order: source
+            docstring_section_style: list
+            merge_init_into_class: true
+            show_signature_annotations: true
+            separate_signature: true
 
 nav:
   - Home: index.md
-  - Getting started:
-      - Installation: getting-started/installation.md
-      - Quickstart: getting-started/quickstart.md
-      - Models and access: getting-started/models-and-access.md
+  - Get started:
+      - get-started/index.md
+      - Quickstart (no model needed): get-started/quickstart.md
+      - Installation: get-started/installation.md
+      - Access and licences: get-started/access-and-licences.md
+      - Choose your setup: get-started/choose-your-setup.md
   - Concepts:
-      - How AtlasForge works: concepts/how-it-works.md
+      - concepts/index.md
+      - How it works: concepts/how-it-works.md
+      - N-ATLAS integration: concepts/n-atlas-integration.md
       - Tone-aware scoring: concepts/tone-aware-scoring.md
-      - Honest statistics: concepts/honest-statistics.md
+      - Statistics: concepts/statistics.md
+      - Failure-mode flags: concepts/failure-modes.md
+      - Datasets: concepts/datasets.md
+      - Run directories: concepts/run-directories.md
   - Guides:
-      - Evaluate a model: guides/evaluate.md
-      - Compare two models: guides/compare.md
-      - Validate a dataset: guides/validate-dataset.md
-      - Transcribe and evaluate speech: guides/asr.md
-      - Serve the models: guides/serve-models.md
-      - Run locally with transformers: guides/local-backend.md
-      - Run on a Mac (Apple Silicon): guides/mac.md
-      - Fine-tuning: guides/fine-tuning.md
-      - Use the Python API: guides/python-api.md
+      - guides/index.md
+      - Use it in Colab or a notebook: guides/colab-and-notebooks.md
+      - Evaluate a model: guides/evaluate-a-model.md
+      - Compare two models: guides/compare-two-models.md
+      - Validate your data: guides/validate-your-data.md
+      - Transcribe speech: guides/transcribe-speech.md
+      - Serve N-ATLaS: guides/serve-n-atlas.md
+      - Benchmark with AfroBench-LITE: guides/benchmark-with-afrobench.md
+      - Fine-tune with QLoRA: guides/fine-tune-with-qlora.md
+      - Publish a model card: guides/publish-a-model-card.md
   - Reference:
+      - reference/index.md
       - CLI: reference/cli.md
-      - Dataset format: reference/dataset-format.md
-      - Metrics: reference/metrics.md
-      - Normalisation: reference/normalization.md
-      - Output files: reference/output-files.md
-      - Configuration: reference/configuration.md
-      - Errors and exit codes: reference/errors.md
       - Python API: reference/python-api.md
-  - N-ATLaS:
-      - Verified model facts: natlas/model-facts.md
-      - Licence and compliance: natlas/licence.md
-  - Operations:
-      - Troubleshooting: operations/troubleshooting.md
-      - Security and privacy: operations/security-privacy.md
-      - FAQ: operations/faq.md
+      - Metrics: reference/metrics.md
+      - Fine-tune settings: reference/fine-tune-settings.md
+      - File formats: reference/file-formats.md
+      - Errors and exit codes: reference/errors.md
+      - Configuration file: reference/configuration.md
+      - Environment variables: reference/environment.md
+  - Help:
+      - Troubleshooting: help/troubleshooting.md
+      - FAQ: help/faq.md
+      - Project status: help/status.md
+      - Glossary: help/glossary.md
   - Project:
-      - Status and roadmap: project/status.md
       - Contributing: project/contributing.md
-      - Development: project/development.md
+      - Code of Conduct: project/code-of-conduct.md
+      - Security policy: project/security.md
+      - Releasing: project/releasing.md
       - Changelog: project/changelog.md

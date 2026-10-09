@@ -1,51 +1,56 @@
-# Configuration
+# Configuration file
 
-AtlasForge has **no configuration file**. Everything is set by command-line options, environment variables or function arguments. This keeps runs reproducible: what you typed is what ran, and the important parts are recorded in each run's `run.json`.
+An optional `atlasforge.toml` in your project sets the defaults every run in it shares: which
+backend, which endpoint, which model. Without one, nothing changes — every setting has a built-in
+default and every command works from flags alone.
 
-## Environment variables
+## The file
 
-| Variable | Used by | Meaning |
-|---|---|---|
-| `ATLASFORGE_BASE_URL` | `run`, `transcribe`, `eval` | default for `--base-url` |
-| `ATLASFORGE_API_KEY` | the `openai` backend | the bearer token sent as `Authorization: Bearer ...` |
-| `HF_TOKEN` | the `local` backend, `doctor` | Hugging Face access token for the gated models |
-| `HUGGING_FACE_HUB_TOKEN` | the `local` backend, `doctor` | older name for the same thing |
-| `HF_HOME` | `doctor`, Hugging Face libraries | where Hugging Face keeps its cache and login; `doctor` looks for a cached login here, else in `~/.cache/huggingface` |
-| `HF_HUB_DISABLE_XET` | Hugging Face libraries | set to `1` to avoid the Xet transfer path if downloads fail with `CAS Client Error` |
+```toml
+[atlasforge]
+backend = "openai"
+base_url = "http://127.0.0.1:8000/v1"
+model = "NCAIR1/N-ATLaS"
+```
 
-**Precedence:** a command-line option always beats the environment variable.
+Only the `[atlasforge]` table is read, so the file may hold other tools' settings too.
 
-!!! tip "Why there is no `--api-key` flag"
-    Command-line arguments appear in shell history and in the process list. Keys come from the environment so they stay out of both. AtlasForge never prints a key; tokens shown by `doctor` are masked (`hf_****abcd`).
+{{ config_table() }}
 
-The API key variable name can be changed from Python (`OpenAIBackend(api_key_env="MY_VAR")`), or you can pass the key directly with `api_key=`.
+## Where it is looked for
 
-## Defaults
+The file is read from the **nearest directory at or above the one you run in**. A project root
+holds it once and commands run from any subdirectory pick it up.
 
-| Setting | Default | Source |
-|---|---|---|
-| model | `NCAIR1/N-ATLaS` | the official LLM |
-| backend | `openai` | |
-| temperature | `0.1` | N-ATLaS model card |
-| repetition penalty | `1.12` | N-ATLaS model card |
-| max new tokens | `1000` | N-ATLaS model card |
-| request timeout | `120` seconds | |
-| retries | `2` | with exponential backoff, starting at 0.5 s and capped at 8 s; a `Retry-After` header is honoured up to 30 s |
-| concurrency | `1` | |
-| circuit breaker | `20` consecutive failures | |
-| ASR window / overlap | `28 s` / `2 s` | the models accept at most 30 s |
-| bootstrap resamples / seed | `1000` / `0` | |
-| minimum slice size | `30` | |
-| confidence level | `95%` | fixed |
+Nothing is read from your home directory or anywhere system-wide. A run made in a repository is
+reproducible from that repository alone, and a file you did not write cannot change your settings.
 
-!!! warning "The model repository's own generation defaults differ"
-    The model's `generation_config.json` has `temperature=0.6` and no repetition penalty. AtlasForge sends its own explicit values on every request, so servers' defaults never affect an evaluation. See [Verified model facts](../natlas/model-facts.md).
+## Precedence
 
-## What gets recorded
+Highest wins:
 
-The `run.json` manifest stores the model, revision, backend, device, dtype, generation parameters, language and dataset hash, so any result can be traced back to the settings that produced it. It never stores tokens, keys or URLs.
+1. the flag you type (`--model ...`)
+2. the environment variable, where the option has one (`ATLASFORGE_BASE_URL`)
+3. `atlasforge.toml`
+4. the built-in default
 
-## Network safety
+So a file never overrides something you asked for on the command line:
 
-- Plain `http://` is refused for any host other than `localhost`, `127.0.0.1` and `::1`, unless `--allow-insecure-http` is given. This stops an API key being sent unencrypted by accident.
-- Error messages from the HTTP backend never include the response body, because servers sometimes echo the prompt back.
+```bash
+atlasforge run "Kwana biyu" --model my-fine-tune   # the flag wins
+```
+
+## What is deliberately not in the file
+
+- **`allow_insecure_http`.** Permitting plain http to a non-local server should be typed on the
+  command line and visible in your shell history, not a property of a checked-in file.
+- **Your API key.** Use `ATLASFORGE_API_KEY` or `HF_TOKEN` from the environment
+  ([environment variables](environment.md)), so a token never lands in a file you might commit.
+- **Anything not in the table above.** An unknown key is an error naming the valid ones, not a
+  silent no-op — a setting that quietly does nothing is worse than one that stops the run.
+
+## Checking what is in effect
+
+`atlasforge doctor` has a `config` row that names the file it found and the settings it will
+apply, so a stale or unexpected file is visible rather than mysterious. With no file the row says
+so; with a broken one the check fails and shows the reason and the line to fix.

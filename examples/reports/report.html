@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AtlasForge evaluation report</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff; --fg: #1b1f24; --muted: #5b6471; --line: #d8dee6; --track: #e9eef4;
+  --bar: #2563eb; --bar-2: #93b4f5; --good: #1a7f37; --bad: #b42318; --flat: #8b95a3;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115; --fg: #e7ecf2; --muted: #9aa4b2; --line: #2a3038; --track: #232a33;
+    --bar: #60a5fa; --bar-2: #38507a; --good: #4ade80; --bad: #f87171; --flat: #7b8697;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 24px 16px; background: var(--bg); color: var(--fg);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+main { max-width: 920px; margin: 0 auto; }
+h1 { font-size: 24px; margin: 0 0 16px; }
+h2 { font-size: 19px; margin: 32px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+p { margin: 8px 0; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 2px 16px; margin: 0 0 8px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+ul { margin: 8px 0; padding-left: 22px; }
+li { margin: 2px 0; }
+.chart { display: block; width: 100%; max-width: 720px; height: auto; margin: 8px 0 2px; }
+.chart text { font: 11px system-ui, sans-serif; fill: var(--fg); }
+.chart .tick { fill: var(--muted); font-size: 10px; }
+.chart .track { fill: var(--track); }
+.chart .bar { fill: var(--bar); }
+.chart .bar-2 { fill: var(--bar-2); }
+.chart .improved { fill: var(--good); }
+.chart .regressed { fill: var(--bad); }
+.chart .flat { fill: var(--flat); }
+.chart .axis { stroke: var(--line); stroke-width: 1; }
+.chart .whisker { stroke: var(--muted); stroke-width: 1; }
+.legend { color: var(--muted); font-size: 13px; }
+.swatch {
+  display: inline-block; width: 10px; height: 10px; margin-right: 4px;
+  border-radius: 2px; vertical-align: baseline;
+}
+.note { color: var(--muted); font-size: 13px; }
+footer { color: var(--muted); font-size: 13px; margin-top: 40px; border-top: 1px solid var(--line); padding-top: 8px; }
+</style>
+</head>
+<body>
+<main>
+<h1>AtlasForge evaluation report</h1>
+<dl>
+<dt>Task</dt><dd>generation</dd>
+<dt>Examples</dt><dd>92 (90 ok, 2 failed, 0 missing)</dd>
+<dt>Dataset fingerprint (sha256)</dt><dd>7803765cfec0fdab</dd>
+<dt>Model</dt><dd>synthetic-demo/base</dd>
+<dt>Revision</dt><dd>sample-dat</dd>
+<dt>Backend</dt><dd>synthetic</dd>
+</dl>
+<h2>Metrics</h2>
+<p class="legend"><span class="swatch bar"></span>tone-aware <span class="swatch bar-2"></span>tone-insensitive</p>
+<svg class="chart" viewBox="0 0 720 104" role="img" aria-label="Mean score per metric, under both tone views">
+<title>Mean score per metric, under both tone views</title>
+<text x="200.0" y="22.0" text-anchor="end">exact_match</text>
+<rect x="210.0" y="4.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="4.0" width="263.9" height="10" class="bar"/>
+<text x="642.0" y="12.0" text-anchor="start">62.0%</text>
+<rect x="210.0" y="22.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="22.0" width="319.5" height="10" class="bar-2"/>
+<text x="642.0" y="30.0" text-anchor="start">75.0%</text>
+<text x="200.0" y="62.0" text-anchor="end">chrf</text>
+<rect x="210.0" y="44.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="44.0" width="286.2" height="10" class="bar"/>
+<text x="642.0" y="52.0" text-anchor="start">67.2</text>
+<rect x="210.0" y="62.0" width="426.0" height="10" class="track"/>
+<rect x="210.0" y="62.0" width="329.8" height="10" class="bar-2"/>
+<text x="642.0" y="70.0" text-anchor="start">77.4</text>
+<line x1="210" y1="82.0" x2="636" y2="82.0" class="axis"/>
+<line x1="210.0" y1="82.0" x2="210.0" y2="86.0" class="axis"/>
+<text x="210.0" y="100.0" text-anchor="middle" class="tick">0%</text>
+<line x1="316.5" y1="82.0" x2="316.5" y2="86.0" class="axis"/>
+<text x="316.5" y="100.0" text-anchor="middle" class="tick">25%</text>
+<line x1="423.0" y1="82.0" x2="423.0" y2="86.0" class="axis"/>
+<text x="423.0" y="100.0" text-anchor="middle" class="tick">50%</text>
+<line x1="529.5" y1="82.0" x2="529.5" y2="86.0" class="axis"/>
+<text x="529.5" y="100.0" text-anchor="middle" class="tick">75%</text>
+<line x1="636.0" y1="82.0" x2="636.0" y2="86.0" class="axis"/>
+<text x="636.0" y="100.0" text-anchor="middle" class="tick">100%</text>
+</svg>
+<p class="note">Means. Fraction metrics are shown as percentages, chrF on its own 0-100 scale; WER and CER are the only ones where lower is better. Pooled figures are in the table.</p>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Metric</th>
+<th>View</th>
+<th>Mean</th>
+<th>Pooled</th>
+<th>n</th>
+</tr></thead>
+<tbody>
+<tr><td>exact_match</td><td>tone-aware</td><td>62.0%</td><td>-</td><td>92</td></tr>
+<tr><td>chrf</td><td>tone-aware</td><td>67.2</td><td>54.0</td><td>92</td></tr>
+<tr><td>exact_match</td><td>tone-insensitive</td><td>75.0%</td><td>-</td><td>92</td></tr>
+<tr><td>chrf</td><td>tone-insensitive</td><td>77.4</td><td>70.5</td><td>92</td></tr>
+</tbody>
+</table>
+</div>
+<h2>Latency</h2>
+<dl>
+<dt>Mean</dt><dd>957 ms</dd>
+<dt>p50</dt><dd>956 ms</dd>
+<dt>p95</dt><dd>1054 ms</dd>
+<dt>Max</dt><dd>1063 ms</dd>
+</dl>
+<p class="note">Successful calls only: a failure has no meaningful latency to average.</p>
+<h2>Failure-mode flags</h2>
+<p>6 of 90 answer(s) raised at least one flag. Each one is a rule you can read and re-check, not a quality score and not a hallucination rate.</p>
+<svg class="chart" viewBox="0 0 720 50" role="img" aria-label="Answers raising each failure-mode flag">
+<title>Answers raising each failure-mode flag</title>
+<text x="200.0" y="11.0" text-anchor="end">number_mismatch</text>
+<rect x="210.0" y="2.0" width="426.0" height="12" class="track"/>
+<rect x="210.0" y="2.0" width="426.0" height="12" class="bar"/>
+<text x="642.0" y="11.0" text-anchor="start">6</text>
+<line x1="210" y1="28.0" x2="636" y2="28.0" class="axis"/>
+<line x1="210.0" y1="28.0" x2="210.0" y2="32.0" class="axis"/>
+<text x="210.0" y="46.0" text-anchor="middle" class="tick">0</text>
+<line x1="423.0" y1="28.0" x2="423.0" y2="32.0" class="axis"/>
+<text x="423.0" y="46.0" text-anchor="middle" class="tick">3</text>
+<line x1="636.0" y1="28.0" x2="636.0" y2="32.0" class="axis"/>
+<text x="636.0" y="46.0" text-anchor="middle" class="tick">6</text>
+</svg>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Flag</th>
+<th>Answers</th>
+<th>What it means</th>
+</tr></thead>
+<tbody>
+<tr><td>number_mismatch</td><td>6</td><td>the answer&#x27;s numbers differ from the reference&#x27;s</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">A flag is a place to look, not a verdict: an answer can be flagged and still be right. Per-example flags are in report.json under per_example_flags.</p>
+<h2>Method</h2>
+<ul>
+<li><em>Mean</em> averages per-example scores; <em>pooled</em> is computed over the whole corpus (WER, CER, chrF, macro-F1).</li>
+<li>Every text metric is shown under both views: <em>tone-aware</em> keeps tone marks, <em>tone-insensitive</em> strips them. Underdots and Hausa hooked letters are always kept.</li>
+<li>Failed or missing predictions are scored as an empty answer, so they count against the model.</li>
+<li>chrF is on a 0-100 scale. Other metrics are percentages; for WER and CER lower is better.</li>
+</ul>
+<footer>
+Written by AtlasForge 0.1.0a2. Self-contained: no scripts, no network.
+</footer>
+</main>
+</body>
+</html>

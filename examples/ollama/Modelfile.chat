@@ -1,0 +1,36 @@
+# Restores N-ATLaS's chat template on top of a model imported into Ollama.
+#
+# Ollama's safetensors import keeps only the weights, so without this the model receives raw text
+# with no role headers. This reproduces the Llama-3.1-Instruct format from the model's own
+# tokenizer_config.json (default system block included). It leaves out the tool-calling parts, and
+# leaves the beginning-of-text token for Ollama to add.
+#
+# Use it:  ollama create natlas-local-chat -f Modelfile.chat
+# where natlas-local-q4 is the name you gave the imported model.
+FROM natlas-local-q4
+TEMPLATE """{{- if ne (index .Messages 0).Role "system" }}<|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+<|eot_id|>{{ end }}
+{{- range .Messages }}
+{{- if eq .Role "system" }}<|start_header_id|>system<|end_header_id|>
+
+Cutting Knowledge Date: December 2023
+Today Date: 26 Jul 2024
+
+{{ .Content }}<|eot_id|>
+{{- else }}<|start_header_id|>{{ .Role }}<|end_header_id|>
+
+{{ .Content }}<|eot_id|>
+{{- end }}
+{{- end }}<|start_header_id|>assistant<|end_header_id|>
+
+"""
+PARAMETER stop "<|eot_id|>"
+PARAMETER stop "<|end_of_text|>"
+PARAMETER stop "<|eom_id|>"
+PARAMETER temperature 0.1
+PARAMETER repeat_penalty 1.12
+PARAMETER num_predict 1000

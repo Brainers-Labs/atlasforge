@@ -70,6 +70,12 @@ class TestFormat:
         assert fmt_delta("chrf", 3.21) == "+3.2"
         assert fmt_bound("chrf++", -1.05) == "-1.1"
 
+    def test_a_strict_variant_formats_like_its_base(self) -> None:
+        """Otherwise a strict metric would sit beside its loose twin as a bare 0-1 number."""
+        assert fmt_value("accuracy_strict", 0.714) == "71.4%"
+        assert fmt_delta("macro_f1_strict", 0.085) == "+8.5 pts"
+        assert fmt_value("chrf_strict", 54.32) == "54.3"  # not a fraction, strict or not
+
     def test_none_is_a_dash(self) -> None:
         assert fmt_value("chrf", None) == "-"
         assert fmt_delta("wer", None) == "-"

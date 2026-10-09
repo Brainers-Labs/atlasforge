@@ -1,0 +1,354 @@
+/* Monochrome: black, white, and the greys between them. No hue anywhere — in either scheme.
+ *
+ * Two rules of engagement with Material, both of which cost an afternoon if you get them wrong:
+ *
+ * 1. Custom properties are declared on `body[data-md-color-scheme=...]`, never on `:root`.
+ *    Material's own palette rules also target <body>. A declaration on an element beats an
+ *    inherited one from <html> whatever the specificity, so `:root` would silently lose.
+ * 2. Anything that has to beat one of Material's per-type selectors (admonitions are coloured
+ *    one type at a time) carries the `[data-md-color-primary]` attribute as well, which adds a
+ *    class-level of specificity. That is why the scheme blocks below are written the long way.
+ *
+ * Everything downstream is expressed through the --af-* tokens, so a colour is changed in one
+ * place and both schemes stay in step.
+ *
+ * Why the accent is entirely here rather than in mkdocs.yml: Material has no greyscale accent.
+ * An unsupported name — `accent: grey` — is accepted without complaint and generates no rule at
+ * all, which leaves the default indigo in place. The same is true of the link colour that comes
+ * with `primary: black`: it is indigo, not grey. Both are overridden below.
+ */
+
+/* ----------------------------------------------------------------- light */
+
+body[data-md-color-scheme="default"][data-md-color-primary] {
+  --af-bg: #ffffff;
+  --af-surface: #f4f4f4;
+  --af-surface-2: #e8e8e8;
+  --af-text: #0a0a0a;
+  --af-text-muted: #5c5c5c;
+  --af-text-faint: #8a8a8a;
+  --af-line: rgba(0, 0, 0, 0.12);
+  --af-line-strong: rgba(0, 0, 0, 0.32);
+  --af-bar: #101010;
+  --af-bar-light: #262626;
+  --af-on-bar: #ffffff;
+  --af-link: #1f1f1f;
+  --af-accent: #4a4a4a;
+  --af-accent-tint: rgba(0, 0, 0, 0.06);
+  --af-accent-tint-strong: rgba(0, 0, 0, 0.12);
+  --af-code-bg: #f4f4f4;
+  --af-code-text: #1a1a1a;
+  --af-code-line: rgba(0, 0, 0, 0.08);
+  --af-mark: rgba(0, 0, 0, 0.2);
+  --af-shadow: rgba(0, 0, 0, 0.12);
+  --af-shadow-strong: rgba(0, 0, 0, 0.24);
+  --af-bg-translucent: rgba(255, 255, 255, 0.7);
+  --af-bg-translucent-thin: rgba(255, 255, 255, 0.4);
+
+  /* syntax: one axis only — how dark the token is, plus italics for comments */
+  --af-hl-keyword: #000000;
+  --af-hl-string: #4a4a4a;
+  --af-hl-comment: #8c8c8c;
+  --af-hl-number: #262626;
+  --af-hl-function: #1a1a1a;
+  --af-hl-operator: #6b6b6b;
+  --af-hl-name: #0a0a0a;
+  --af-hl-special: #000000;
+  --af-hl-generic: #6b6b6b;
+}
+
+/* ------------------------------------------------------------------ dark */
+
+body[data-md-color-scheme="slate"][data-md-color-primary] {
+  --af-bg: #121212;
+  --af-surface: #1c1c1c;
+  --af-surface-2: #272727;
+  --af-text: #e8e8e8;
+  --af-text-muted: #a3a3a3;
+  --af-text-faint: #7a7a7a;
+  --af-line: rgba(255, 255, 255, 0.14);
+  --af-line-strong: rgba(255, 255, 255, 0.34);
+  --af-bar: #000000;
+  --af-bar-light: #1f1f1f;
+  --af-on-bar: #f5f5f5;
+  --af-link: #ededed;
+  --af-accent: #c4c4c4;
+  --af-accent-tint: rgba(255, 255, 255, 0.08);
+  --af-accent-tint-strong: rgba(255, 255, 255, 0.16);
+  --af-code-bg: #1a1a1a;
+  --af-code-text: #e4e4e4;
+  --af-code-line: rgba(255, 255, 255, 0.1);
+  --af-mark: rgba(255, 255, 255, 0.28);
+  --af-shadow: rgba(0, 0, 0, 0.6);
+  --af-shadow-strong: rgba(0, 0, 0, 0.8);
+  --af-bg-translucent: rgba(18, 18, 18, 0.7);
+  --af-bg-translucent-thin: rgba(18, 18, 18, 0.4);
+
+  --af-hl-keyword: #ffffff;
+  --af-hl-string: #c9c9c9;
+  --af-hl-comment: #808080;
+  --af-hl-number: #ededed;
+  --af-hl-function: #e6e6e6;
+  --af-hl-operator: #a6a6a6;
+  --af-hl-name: #e8e8e8;
+  --af-hl-special: #ffffff;
+  --af-hl-generic: #a6a6a6;
+}
+
+/* ------------------------------------------------------- Material mapping */
+
+body[data-md-color-scheme][data-md-color-primary] {
+  --md-default-fg-color: var(--af-text);
+  --md-default-fg-color--light: var(--af-text-muted);
+  --md-default-fg-color--lighter: var(--af-text-faint);
+  --md-default-fg-color--lightest: var(--af-line);
+  --md-default-bg-color: var(--af-bg);
+  --md-default-bg-color--light: var(--af-bg-translucent);
+  --md-default-bg-color--lighter: var(--af-bg-translucent-thin);
+  --md-default-bg-color--lightest: var(--af-line);
+
+  --md-primary-fg-color: var(--af-bar);
+  --md-primary-fg-color--light: var(--af-bar-light);
+  --md-primary-fg-color--dark: var(--af-bar);
+  --md-primary-bg-color: var(--af-on-bar);
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+
+  --md-accent-fg-color: var(--af-accent);
+  --md-accent-fg-color--transparent: var(--af-accent-tint);
+  --md-accent-bg-color: var(--af-bg);
+  --md-accent-bg-color--light: var(--af-bg-translucent);
+
+  --md-typeset-color: var(--af-text);
+  --md-typeset-a-color: var(--af-link);
+  --md-typeset-mark-color: var(--af-mark);
+  --md-typeset-del-color: var(--af-accent-tint);
+  --md-typeset-ins-color: var(--af-accent-tint-strong);
+  --md-typeset-kbd-color: var(--af-surface);
+  --md-typeset-kbd-accent-color: var(--af-surface-2);
+  --md-typeset-kbd-border-color: var(--af-line);
+  --md-typeset-table-color: var(--af-line);
+  --md-typeset-table-color--light: var(--af-accent-tint);
+
+  --md-code-bg-color: var(--af-code-bg);
+  --md-code-fg-color: var(--af-code-text);
+  --md-code-hl-color: var(--af-code-line);
+  --md-code-hl-color--light: var(--af-code-line);
+  --md-code-hl-keyword-color: var(--af-hl-keyword);
+  --md-code-hl-special-color: var(--af-hl-special);
+  --md-code-hl-function-color: var(--af-hl-function);
+  --md-code-hl-constant-color: var(--af-hl-number);
+  --md-code-hl-string-color: var(--af-hl-string);
+  --md-code-hl-name-color: var(--af-hl-name);
+  --md-code-hl-operator-color: var(--af-hl-operator);
+  --md-code-hl-punctuation-color: var(--af-hl-operator);
+  --md-code-hl-comment-color: var(--af-hl-comment);
+  --md-code-hl-generic-color: var(--af-hl-generic);
+  --md-code-hl-variable-color: var(--af-hl-string);
+  --md-code-hl-number-color: var(--af-hl-number);
+
+  --md-admonition-bg-color: transparent;
+  --md-admonition-fg-color: var(--af-text);
+
+  --md-footer-bg-color: var(--af-bar);
+  --md-footer-bg-color--dark: var(--af-bar-light);
+  --md-footer-fg-color: var(--af-on-bar);
+  --md-footer-fg-color--light: rgba(255, 255, 255, 0.7);
+  --md-footer-fg-color--lighter: rgba(255, 255, 255, 0.45);
+
+  --md-shadow-z1: 0 0.1rem 0.3rem var(--af-shadow), 0 0 0.1rem var(--af-shadow);
+  --md-shadow-z2: 0 0.2rem 0.5rem var(--af-shadow), 0 0 0.1rem var(--af-shadow-strong);
+  --md-shadow-z3: 0 0.3rem 0.8rem var(--af-shadow-strong);
+
+  /* Mermaid reads these off the body and builds its SVG from them. */
+  --md-mermaid-font-family: var(--md-code-font, monospace);
+  --md-mermaid-edge-color: var(--af-text-muted);
+  --md-mermaid-node-bg-color: var(--af-surface);
+  --md-mermaid-node-fg-color: var(--af-text);
+  --md-mermaid-label-bg-color: var(--af-surface);
+  --md-mermaid-label-fg-color: var(--af-text);
+  --md-mermaid-sequence-actor-bg-color: var(--af-surface-2);
+  --md-mermaid-sequence-actor-border-color: var(--af-line-strong);
+  --md-mermaid-sequence-actor-fg-color: var(--af-text);
+  --md-mermaid-sequence-actor-line-color: var(--af-text-muted);
+  --md-mermaid-sequence-actorman-bg-color: var(--af-surface-2);
+  --md-mermaid-sequence-actorman-line-color: var(--af-text-muted);
+  --md-mermaid-sequence-box-bg-color: var(--af-surface);
+  --md-mermaid-sequence-box-fg-color: var(--af-text);
+  --md-mermaid-sequence-label-bg-color: var(--af-surface);
+  --md-mermaid-sequence-label-fg-color: var(--af-text);
+  --md-mermaid-sequence-loop-bg-color: var(--af-surface-2);
+  --md-mermaid-sequence-loop-border-color: var(--af-line-strong);
+  --md-mermaid-sequence-loop-fg-color: var(--af-text);
+  --md-mermaid-sequence-message-fg-color: var(--af-text);
+  --md-mermaid-sequence-message-line-color: var(--af-text-muted);
+  --md-mermaid-sequence-note-bg-color: var(--af-surface-2);
+  --md-mermaid-sequence-note-border-color: var(--af-line-strong);
+  --md-mermaid-sequence-note-fg-color: var(--af-text);
+  --md-mermaid-sequence-number-bg-color: var(--af-text);
+  --md-mermaid-sequence-number-fg-color: var(--af-bg);
+}
+
+/* ------------------------------------------------------------------ text */
+
+/* A monochrome link cannot lean on its colour, so it is underlined always — its shape, not its
+ * hue, is what says "this is a link". Headings are the exception: they are links too (the
+ * permalink anchor), and an underlined heading looks broken. */
+body[data-md-color-scheme][data-md-color-primary] .md-typeset a {
+  text-decoration: underline;
+  text-decoration-color: var(--af-line-strong);
+  text-underline-offset: 0.15em;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset a:hover {
+  color: var(--af-accent);
+  text-decoration-color: currentcolor;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .headerlink,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset h1 > a,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset h2 > a,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset h3 > a {
+  text-decoration: none;
+}
+
+/* Comments are the one token an italic face can carry, which keeps code readable when the
+ * only difference between two tokens is a shade of grey. */
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .highlight .c,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .highlight .c1,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .highlight .cm,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .highlight .cs {
+  font-style: italic;
+}
+
+/* ------------------------------------------------------------ admonitions */
+
+/* Material colours each admonition type with its own literal value. Rather than enumerate
+ * twenty types, one prefixed rule each covers the border, the title tint and the icon (which is
+ * a mask, so it follows the text colour). Type is still legible: every type keeps its own icon. */
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .admonition,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset details {
+  border-color: var(--af-line-strong);
+  box-shadow: none;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .admonition-title,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset summary {
+  background-color: var(--af-surface-2);
+  border-top-left-radius: 0.15rem;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .admonition-title::before,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset summary::before {
+  background-color: var(--af-text-muted);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .admonition-title::after,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset summary::after {
+  color: var(--af-text-muted);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .admonition:focus-within,
+body[data-md-color-scheme][data-md-color-primary] .md-typeset details:focus-within {
+  box-shadow: 0 0 0 0.2rem var(--af-accent-tint);
+}
+
+/* --------------------------------------------------------------- surfaces */
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .grid.cards > ul > li {
+  background-color: var(--af-bg);
+  border: 0.05rem solid var(--af-line);
+  border-radius: 0.4rem;
+  box-shadow: none;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .grid.cards > ul > li:hover {
+  border-color: var(--af-line-strong);
+  box-shadow: none;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .grid.cards > ul > li > hr {
+  border-color: var(--af-line);
+}
+
+/* ----------------------------------------------------------------- pills */
+
+/* Two states, told apart by fill rather than hue: a solid chip reads as "locked in", an outline
+ * as "not yet". The words are in the chip either way. */
+.md-typeset .status-verified,
+.md-typeset .status-unverified {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .status-verified {
+  background: var(--af-text);
+  border: 0.05rem solid var(--af-text);
+  color: var(--af-bg);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .status-unverified {
+  background: transparent;
+  border: 0.05rem solid var(--af-line-strong);
+  color: var(--af-text-muted);
+}
+
+/* ---------------------------------------------------------------- chrome */
+
+body[data-md-color-scheme][data-md-color-primary] .md-header,
+body[data-md-color-scheme][data-md-color-primary] .md-tabs {
+  border-bottom: 0.05rem solid var(--af-line);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-tabs {
+  background-color: var(--af-bar);
+}
+
+/* The search field needs no help: Material already draws it as 26%-black alpha, which is a
+ * greyscale value that works on the light bar and the dark one alike. */
+
+/* The sidebar's active entry is marked with a rule, the way a printed index would be. Its
+ * colour needs no help: nav links are drawn with --md-typeset-a-color, so the active one is
+ * already the darkest thing on the page, and the hover state still works. */
+body[data-md-color-scheme][data-md-color-primary] .md-nav__item .md-nav__link--active {
+  border-left: 0.1rem solid var(--af-text);
+  margin-left: -0.7rem;
+  padding-left: 0.6rem;
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset table:not([class]) th {
+  background-color: var(--af-surface-2);
+  color: var(--af-text);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset table:not([class]) tr:hover {
+  background-color: var(--af-accent-tint);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset blockquote {
+  border-left-color: var(--af-line-strong);
+  color: var(--af-text-muted);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset hr {
+  border-bottom-color: var(--af-line);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .md-button {
+  border-color: var(--af-line-strong);
+  color: var(--af-text);
+}
+
+body[data-md-color-scheme][data-md-color-primary] .md-typeset .md-button--primary {
+  background-color: var(--af-text);
+  border-color: var(--af-text);
+  color: var(--af-bg);
+}
+
+/* Terminal transcripts: a little more breathing room, never wrap the tables. */
+.md-typeset pre > code {
+  font-size: 0.78rem;
+}

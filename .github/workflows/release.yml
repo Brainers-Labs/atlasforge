@@ -1,0 +1,81 @@
+name: Release
+
+# A tag is the release. Push one and this builds the artefacts, proves they install, and
+# attaches them to a GitHub release with checksums.
+#
+# Publishing to PyPI is deliberately NOT here: it is a manual, separate workflow
+# (`publish.yml`) so that no tag push can ever upload to the index on its own.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: build, verify and attach to the release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the release and upload assets
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # --generate-notes needs the history
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: python -m pip install build
+
+      - name: the tag, the package version and the changelog must agree
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          python -m pip install -e .
+          version="$(python -c 'import atlasforge; print(atlasforge.__version__)')"
+          if [ "$version" != "$tag" ]; then
+            echo "::error::tag $GITHUB_REF_NAME says $tag but the package says $version."
+            echo "Bump __version__ in src/atlasforge/__init__.py, or retag."
+            exit 1
+          fi
+          if ! grep -qF "[$version]" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no [$version] section."
+            echo "Move the [Unreleased] entries under a [$version] heading before tagging."
+            exit 1
+          fi
+
+      - run: python -m build
+
+      - name: the built wheel installs and runs in a fresh venv
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          /tmp/clean/bin/atlasforge --version
+          /tmp/clean/bin/python -c "import atlasforge, sys; assert 'torch' not in sys.modules"
+          /tmp/clean/bin/atlasforge demo /tmp/demo > /dev/null
+
+      - name: checksums
+        run: cd dist && sha256sum ./* > SHA256SUMS.txt && cat SHA256SUMS.txt
+
+      - name: create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # An alpha is not "Latest". `gh release create` marks a release full unless told
+          # otherwise, so the version decides: a PEP 440 pre-release (a1, b2, rc1, .dev1) is
+          # flagged, and anything else is left as an ordinary release. `packaging` is already
+          # installed — it is a dependency of `build`, above.
+          if python -c "import os, sys; from packaging.version import Version; sys.exit(0 if Version(os.environ['GITHUB_REF_NAME'].lstrip('v')).is_prerelease else 1)"; then
+            prerelease="--prerelease"
+          else
+            prerelease=""
+          fi
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --verify-tag \
+            $prerelease \
+            --generate-notes \
+            dist/*

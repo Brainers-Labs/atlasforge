@@ -1,5 +1,12 @@
 # Contributing
 
+Please read the
+[Code of Conduct](https://github.com/Brainers-Labs/atlasforge/blob/main/CODE_OF_CONDUCT.md);
+by taking part you agree to uphold it.
+
+The rest of this page is also part of the documentation site, so every command below is
+tested and every link is checked when the site builds.
+
 ## Setup
 
 ```bash
@@ -13,6 +20,11 @@ pre-commit install
 ruff check . && ruff format --check . && mypy && pytest
 ```
 
+Run those with nothing overridden, and on Windows without `PYTHONIOENCODING` set. That variable
+changes what a child process's output decodes as, so it can make the suite pass locally while the
+Windows runner — which does not set it — fails on an encoding mismatch that has nothing to do with
+the code under test.
+
 ## Ground rules
 
 - Only official `NCAIR1/*` models in core paths. Never another foundation model.
@@ -24,3 +36,7 @@ ruff check . && ruff format --check . && mypy && pytest
 ## Good first issues
 
 Normalisation rules, benchmark packs (with provenance and licence), and documentation, especially from native speakers of Hausa, Yoruba and Igbo.
+
+## A gotcha when testing concurrency against a local server
+
+`eval --concurrency N` deliberately bursts up to `2 x N` connections at once. A test HTTP server left on `socketserver`'s default listen backlog of 5 refuses some of them on macOS, which looks like a scoring bug (examples that should be right come back as failures) but is not. The shared `FakeModelServer` in `tests/unit/test_cli_e2e.py` sets a larger `request_queue_size` for this reason; do the same in any new test server.

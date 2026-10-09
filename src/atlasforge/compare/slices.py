@@ -12,6 +12,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Final, Literal
 
 from atlasforge.compare.stats import paired_bootstrap
+from atlasforge.eval.metrics import mean
 
 if TYPE_CHECKING:
     from collections.abc import Mapping, Sequence
@@ -110,8 +111,8 @@ def _analyse_group(
     seed: int,
 ) -> SliceResult:
     n = len(base)
-    base_mean = sum(base) / n
-    candidate_mean = sum(candidate) / n
+    base_mean = mean(base)
+    candidate_mean = mean(candidate)
     if n < min_n:
         return SliceResult(
             field=field,

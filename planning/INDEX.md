@@ -26,6 +26,8 @@
 - [11 Execution Plan (28 Sep → 12 Oct)](11_14_DAY_EXECUTION_PLAN.md)
 - [18 Risks](18_RISKS.md)
 - [16 Submission Checklist](16_SUBMISSION_CHECKLIST.md)
+- [24 Submission Runbook (8 → 12 Oct)](24_SUBMISSION_RUNBOOK.md)
+- [23 Gap Analysis](23_GAP_ANALYSIS.md)
 - [19 Demo Story](19_DEMO_STORY.md)
 - [17 Open Source Plan](17_OPEN_SOURCE_PLAN.md)
 

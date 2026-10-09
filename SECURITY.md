@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-Email **security@TODO-brainerslabs-domain** (replace before making the repository public) with details and reproduction steps. Please do not open a public issue. We aim to acknowledge within 72 hours.
+Report privately through GitHub's [security advisory form](https://github.com/Brainers-Labs/atlasforge/security/advisories/new) with details and reproduction steps. Please do not open a public issue. We aim to acknowledge within 72 hours.
 
 ## Scope and practices
 
