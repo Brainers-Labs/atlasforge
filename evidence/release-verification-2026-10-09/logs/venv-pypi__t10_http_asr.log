@@ -1,0 +1,7 @@
+$ atlasforge transcribe short.wav --lang ha --base-url http://127.0.0.1:56214/v1 --model whisper-test
+[exit 0] [0.4s]
+--- stdout ---
+stub transcript 1
+
+--- stderr ---
+

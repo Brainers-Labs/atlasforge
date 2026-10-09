@@ -1,0 +1,22 @@
+$ atlasforge run 'Name one fruit.' --backend local --device cpu --model HuggingFaceTB/SmolLM2-135M-Instruct --temperature 0 --max-new-tokens 12 --json
+[exit 0] [4.9s]
+--- stdout ---
+{
+  "text": "One of the most popular fruits in the world is the banana",
+  "model": "HuggingFaceTB/SmolLM2-135M-Instruct",
+  "revision": null,
+  "latency_ms": 299.8,
+  "finish_reason": "length",
+  "request_id": null,
+  "usage": {
+    "prompt_tokens": 34,
+    "completion_tokens": 12
+  }
+}
+
+--- stderr ---
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6503.91it/s]
+

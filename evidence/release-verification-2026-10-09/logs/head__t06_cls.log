@@ -1,0 +1,17 @@
+$ atlasforge eval cls.jsonl --task classification --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --out cls --temperature 0 --max-new-tokens 8 --timeout 300
+[exit 0] [7.7s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric             ┃   Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━┩
+│ accuracy (aware)   │ 100.0% │      - │ 12 │
+│ macro_f1 (aware)   │      - │ 100.0% │ 12 │
+│ accuracy (insens.) │ 100.0% │      - │ 12 │
+│ macro_f1 (insens.) │      - │ 100.0% │ 12 │
+└────────────────────┴────────┴────────┴────┘
+12 examples: 12 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote cls/report.md, cls/report.json and cls/report.html
+
+--- stderr ---
+
+

@@ -1,0 +1,6 @@
+$ python3 -m venv <test-dir>/venv-nb && <test-dir>/venv-nb/bin/pip install -q --upgrade pip && <test-dir>/venv-nb/bin/pip install -q brainers-atlasforge nbclient ipykernel nbformat
+[exit 0] [12.1s]
+--- stdout ---
+
+--- stderr ---
+

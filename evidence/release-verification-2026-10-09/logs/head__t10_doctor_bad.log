@@ -1,0 +1,24 @@
+$ atlasforge doctor
+[exit 1] [2.0s]
+--- stdout ---
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Status ┃ Check          ┃ Detail                                                                                                                                                               ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ OK     │ python         │ 3.10.12                                                                                                                                                              │
+│ WARN   │ gpu            │ no NVIDIA GPU detected                                                                                                                                               │
+│ OK     │ disk           │ 101 GB free                                                                                                                                                          │
+│ OK     │ ffmpeg         │ /opt/homebrew/bin/ffmpeg                                                                                                                                             │
+│ FAIL   │ config         │ <test-dir>/work/extras_head/badcfg/atlasforge.toml is not valid TOML: Expected '=' after a key in a key/value pair (at line 2, column 6) │
+│ OK     │ hf-token       │ cached login found                                                                                                                                                   │
+│ OK     │ model-access   │ licence accepted on all 5 models                                                                                                                                     │
+│ WARN   │ extra:local    │ missing accelerate                                                                                                                                                   │
+│ OK     │ extra:asr      │ installed                                                                                                                                                            │
+│ WARN   │ extra:finetune │ missing peft, trl, datasets                                                                                                                                          │
+└────────┴────────────────┴──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+gpu: ASR models run on CPU. The 8B LLM needs a GPU or a remote OpenAI-compatible endpoint.
+config: Check the quoting and the structure; see the configuration reference.
+extra:local: pip install "brainers-atlasforge[local]"
+extra:finetune: pip install "brainers-atlasforge[finetune]"
+
+--- stderr ---
+

@@ -1,0 +1,18 @@
+$ atlasforge eval small.jsonl --out timeout --base-url http://127.0.0.1:54886/v1 --model m --retries 2 --timeout 1 --max-consecutive-failures 0
+[exit 1] [3.3s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━┓
+┃ Metric                ┃ Mean ┃ Pooled ┃ n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━┩
+│ exact_match (aware)   │ 0.0% │      - │ 3 │
+│ chrf (aware)          │  0.0 │    0.0 │ 3 │
+│ exact_match (insens.) │ 0.0% │      - │ 3 │
+│ chrf (insens.)        │  0.0 │    0.0 │ 3 │
+└───────────────────────┴──────┴────────┴───┘
+3 examples: 0 ok, 3 failed, 0 missing (failures count as wrong)
+Wrote timeout/report.md, timeout/report.json and timeout/report.html
+
+--- stderr ---
+
+warning: 3 of 3 example(s) failed; see timeout/results.jsonl
+

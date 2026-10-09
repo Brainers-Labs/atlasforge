@@ -1,0 +1,18 @@
+$ atlasforge compare real.jsonl --base raw --candidate chat --out cmp --slice domain -m exact_match -m chrf -m mymetrics:contains_ref
+[exit 0] [0.4s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Metric                 ┃ Base ┃ Cand. ┃ Delta     ┃ 95% CI          ┃ Verdict  ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ exact_match (aware)    │ 0.0% │ 96.7% │ +96.7 pts │ [+91.7, +100.0] │ improved │
+│ chrf (aware)           │ 12.7 │ 99.7  │ +87.0     │ [+85.1, +88.6]  │ improved │
+│ contains_ref (aware)   │ 0.9  │ 1.0   │ +0.1      │ [+0.0, +0.2]    │ improved │
+│ exact_match (insens.)  │ 0.0% │ 96.7% │ +96.7 pts │ [+91.7, +100.0] │ improved │
+│ chrf (insens.)         │ 12.7 │ 99.7  │ +87.0     │ [+85.1, +88.6]  │ improved │
+│ contains_ref (insens.) │ 0.9  │ 1.0   │ +0.1      │ [+0.0, +0.2]    │ improved │
+└────────────────────────┴──────┴───────┴───────────┴─────────────────┴──────────┘
+No statistically clear regressions.
+Wrote cmp/comparison.md, cmp/comparison.json and cmp/comparison.html
+
+--- stderr ---
+

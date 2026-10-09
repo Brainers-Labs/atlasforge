@@ -1,0 +1,18 @@
+$ atlasforge run Kedu? Gwa m banyere Naịjirịa n'ụzọ dị mkpụmkpụ. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --json --max-new-tokens 120 --timeout 300
+[exit 0] [4.8s]
+--- stdout ---
+{
+  "text": "Naịjirịa bụ obodo a ma ama maka nnukwu ọdịiche omenala ya, ebe ndị si n'ebe dị iche iche na-asụ asụsụ dị iche iche na-akwaga. Ọtụtụ nde mmadụ bi na mpaghara ahụ, a maara Naịjirịa maka akụnụba ya bara ụba, ebe obodo dị ka Lagos, Abuja, na Eko na-adọta ọtụtụ ndị nj",
+  "model": "natlas-local-chat",
+  "revision": null,
+  "latency_ms": 4532.4,
+  "finish_reason": "length",
+  "request_id": "chatcmpl-305",
+  "usage": {
+    "prompt_tokens": 61,
+    "completion_tokens": 120
+  }
+}
+
+--- stderr ---
+

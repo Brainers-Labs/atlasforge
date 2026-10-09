@@ -1,0 +1,16 @@
+$ atlasforge eval d.jsonl --out resume --base-url http://127.0.0.1:54629/v1 --model m --retries 0 -m exact_match
+[exit 0] [0.3s]
+--- stdout ---
+Resumed: 15 example(s) were already finished.
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃   Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 100.0% │      - │ 40 │
+│ exact_match (insens.) │ 100.0% │      - │ 40 │
+└───────────────────────┴────────┴────────┴────┘
+40 examples: 40 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote resume/report.md, resume/report.json and resume/report.html
+
+--- stderr ---
+
+

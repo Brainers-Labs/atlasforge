@@ -1,0 +1,9 @@
+$ atlasforge eval d.jsonl --out guard --base-url http://127.0.0.1:54671/v1 --model other-model --retries 0 
+[exit 2] [0.3s]
+--- stdout ---
+
+--- stderr ---
+
+error: guard holds a different run (changed: model).
+  -> Use a new output directory, or delete this one to start over.
+

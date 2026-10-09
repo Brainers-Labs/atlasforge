@@ -1,0 +1,41 @@
+$ atlasforge eval --help
+[exit 0] [0.2s]
+--- stdout ---
+                                                                                                                                                                                                        
+ Usage: atlasforge eval [OPTIONS] {dataset}                                                                                                                                                             
+                                                                                                                                                                                                        
+ Run a dataset through a model, score it, and write report.md / report.json.                                                                                                                            
+                                                                                                                                                                                                        
+ Re-running with the same --out resumes: finished examples are skipped.                                                                                                                                 
+                                                                                                                                                                                                        
+╭─ Arguments ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *    dataset      <path>  JSONL dataset. [required]                                                                                                                                                  │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ *  --out                       -o                                  <path>   Run directory (created; resumable). [required]                                                                           │
+│    --task                      -t                                  <str>    One of: generation, classification, asr. [default: generation]                                                           │
+│    --backend                   -b                                  <str>    openai: any OpenAI-compatible server (vLLM, llama.cpp, Ollama). local: transformers. [default: openai]                   │
+│    --base-url                                                      <str>    Server URL, e.g. http://127.0.0.1:8000/v1 [env var: ATLASFORGE_BASE_URL]                                                 │
+│    --model                                                         <str>    Model name or Hugging Face repo id. [default: NCAIR1/N-ATLaS]                                                            │
+│    --quantize                                                      <str>    local backend only: none, 4bit or 8bit (NVIDIA GPU). [default: none]                                                     │
+│    --adapter                                                       <str>    local backend only: a LoRA adapter (path or repo) applied on the base model.                                             │
+│    --send-repetition-penalty       --no-send-repetition-penalty             openai backend: send the model-card repetition_penalty. Disable if the server rejects it.                                │
+│                                                                             [default: send-repetition-penalty]                                                                                       │
+│    --device                                                        <str>    local backend only: auto, cpu, cuda, mps. [default: auto]                                                                │
+│    --timeout                                                       <float>  Seconds to wait per request. [default: 120.0]                                                                            │
+│    --retries                                                       <int>    Retries on 429/5xx/connection errors (openai backend). [default: 2]                                                      │
+│    --allow-insecure-http                                                    Permit plain http to a non-local server.                                                                                 │
+│    --metric                    -m                                  <str>    Metric name, or module:function for one of your own. Repeatable.                                                         │
+│    --concurrency                                                   <int>    Parallel requests (HTTP backends). [default: 1]                                                                          │
+│    --lang                      -l                                  <str>    Default language for ASR.                                                                                                │
+│    --temperature                                                   <float>  0 for greedy decoding. [default: 0.1]                                                                                    │
+│    --max-new-tokens                                                <int>    Maximum tokens to generate. [default: 1000]                                                                              │
+│    --seed                                                          <int>    Sampling seed. Recorded in the run and its report.                                                                       │
+│    --retry-errors                  --no-retry-errors                        Re-run failed examples on resume. [default: retry-errors]                                                                │
+│    --max-consecutive-failures                                      <int>    Stop after this many failures in a row (0 = never). Progress is kept. [default: 20]                                      │
+│    --help                                                                   Show this message and exit.                                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+--- stderr ---
+

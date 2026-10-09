@@ -1,0 +1,18 @@
+$ atlasforge run Ina kwana? Gaya mini game da Najeriya a taƙaice. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --json --max-new-tokens 120 --timeout 300
+[exit 0] [4.6s]
+--- stdout ---
+{
+  "text": "Ya kamata! Na san kai mai son yaji ba, har ma da tunanin zama a Najeriya! Abinda nake so shine lokacin da za mu iya magana cikin 'yanci, tattauna ra'ayoyin siyasa, da samun damar shiga al'amuran gida. Ka sani, wani abu kamar... (a hankali a ba da labari game da yadda mutum ya yi tunanin zama a Najeriya)",
+  "model": "natlas-local-chat",
+  "revision": null,
+  "latency_ms": 4212.3,
+  "finish_reason": "stop",
+  "request_id": "chatcmpl-107",
+  "usage": {
+    "prompt_tokens": 54,
+    "completion_tokens": 115
+  }
+}
+
+--- stderr ---
+

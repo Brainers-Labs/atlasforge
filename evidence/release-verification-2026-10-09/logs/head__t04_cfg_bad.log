@@ -1,0 +1,8 @@
+$ atlasforge run q1
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: <test-dir>/work/eval/proj/atlasforge.toml has unknown setting(s): base-url.
+  -> Valid keys under [atlasforge]: backend, base_url, device, model, quantize, retries, timeout.
+

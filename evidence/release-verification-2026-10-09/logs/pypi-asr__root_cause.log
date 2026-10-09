@@ -1,0 +1,3 @@
+  File "<test-dir>/venv-pypi-asr/lib/python3.10/site-packages/scipy/sparse/linalg/_svdp.py", line 23, in <module>
+    from ._propack import _spropack  # type: ignore[attr-defined]
+ImportError: dlopen(<test-dir>/venv-pypi-asr/lib/python3.10/site-packages/scipy/sparse/linalg/_propack/_spropack.cpython-310-darwin.so, 0x0002): tried: '<test-dir>/venv-pypi-asr/lib/python3.10/site-packages/scipy/sparse/linalg/_propack/_spropack.cpython-310-darwin.so' (section '__DATA/__thread_bss' has a zero-fill section type, but offset field is not zero), '/S

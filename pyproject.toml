@@ -120,7 +120,7 @@ line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
 # Design docs contain illustrative snippets, not code we ship.
-extend-exclude = ["planning"]
+extend-exclude = ["planning", "evidence"]  # the verification harness is a record, not shipped code
 
 [tool.ruff.lint]
 select = [

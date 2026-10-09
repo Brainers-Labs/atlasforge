@@ -1,0 +1,7 @@
+$ atlasforge run q3 --base-url http://127.0.0.1:55014/v1 --model m
+[exit 0] [0.3s]
+--- stdout ---
+ans3
+
+--- stderr ---
+

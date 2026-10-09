@@ -1,0 +1,46 @@
+[ ok ] 5.01: [asr] extra: `transcribe --backend local` loads the official Hausa model and returns text on a fresh install
+         an kwatanta faretin gine-ginen da ke yin sararin samaniya, hunkunk, da ginshiƙi mai walƙiya wanda aka bayyana ta gaban ruwan victoria habu.
+[ ok ] 5.02: Hausa transcription of a real clip is close to the reference (WER < 0.35, tone-aware view)
+         WER=0.167 | ref: An kwatanta faretin gine-ginen da ke yin sararin samaniyar Hong Kong da ginshiƙi mai walƙiya wanda aka bayyana ta gaban ruwan Victoria Harbor. | hyp: an kwatanta faretin gine-ginen da
+[ ok ] 5.03: Any format ffmpeg reads works, including WhatsApp-style opus/ogg, mp3, m4a and flac (result within WER 0.35 of the wav result)
+         WER vs wav: {'ogg': 0.0, 'mp3': 0.0, 'm4a': 0.0, 'flac': 0.0}
+[ ok ] 5.04: --lang selects a different model: Hausa audio through the Yoruba model is clearly worse than through the Hausa model
+         WER via ha model=0.167; via yo model=1.125
+[ ok ] 5.05: Several files in one command: the missing one is reported on stderr (exit 1) but the others are still transcribed and written to --out
+         rc=1 written=['audio/ha_01.wav', 'audio/ha_02.wav']; stderr=rce cleanup anyway. | error: audio/does_not_exist.wav: Audio file not found: audio/does_not_exist.wav |   -> Check the path.
+[ ok ] 5.06: --json records carry file, lang, text, latency_ms and chunks
+         keys=['chunks', 'file', 'lang', 'latency_ms', 'text']
+[ ok ] 5.07: A file that is not audio gives a clean error (exit 1, no traceback)
+         error: fake.wav: ffmpeg could not decode the audio: [in#0 @ 0x778ec1c000] Error opening input: Invalid data found when processing input | Error opening input file
+[ ok ] 5.08: An unsupported language is a clear error naming the valid ones
+         error: Unsupported language 'xx'. |   -> Use one of: ha, yo, ig, en (or hausa, yoruba, igbo, english).
+[ ok ] 5.09: A 79 s recording (limit is 30 s) is split into overlapping windows automatically and merged into one transcript
+         windows=3 boundaries=[(0.0, 28.0), (26.0, 54.0), (52.0, 79.2)] WER vs concatenated reference=0.378
+[ ok ] 5.10: Overlap merging does not leave duplicated passages (no repeated 4-word sequence at the seams)
+         repeated 4-grams=0
+[ ok ] 5.11: --silence-aware moves window cuts to a pause: each interior boundary falls inside/near a silent gap
+         boundaries=[26.51, 53.63] near_silence=[True, True] WER=0.396
+[ ok ] 5.12ha: eval --task asr on 10 real FLEURS 'ha' clips: pooled WER equals an independent jiwer computation (both tone views), nothing failed
+         WER tone-aware=0.291 tone-insens=0.291 CER=0.097 mean latency=2768 ms n_failed=0
+[ ok ] 5.12yo: eval --task asr on 10 real FLEURS 'yo' clips: pooled WER equals an independent jiwer computation (both tone views), nothing failed
+         WER tone-aware=0.612 tone-insens=0.457 CER=0.260 mean latency=4842 ms n_failed=0
+[ ok ] 5.12ig: eval --task asr on 10 real FLEURS 'ig' clips: pooled WER equals an independent jiwer computation (both tone views), nothing failed
+         WER tone-aware=0.409 tone-insens=0.409 CER=0.159 mean latency=4130 ms n_failed=0
+[ ok ] 5.12en: eval --task asr on 10 real FLEURS 'en' clips: pooled WER equals an independent jiwer computation (both tone views), nothing failed
+         WER tone-aware=0.085 tone-insens=0.085 CER=0.041 mean latency=1602 ms n_failed=0
+[ ok ] 5.13: The ASR report includes error analysis (substitutions, deletions, insertions)
+         ['10 utterance(s) aligned: 154 correct words, 46 substituted, 6 dropped, 8 inserted (pooled word error rate 29.1%).']
+[FAIL] 5.20: The run manifest/report name the speech model that actually transcribed (NCAIR1/Hausa-ASR), not the LLM default
+         manifest model='NCAIR1/N-ATLaS'; report header: ['- **Model:** NCAIR1/N-ATLaS']
+[ ok ] 5.14: ASR report.html is self-contained
+         13719B
+[ ok ] 5.15: Clips longer than 30 s inside an eval dataset (3 Igbo clips of 31 to 34 s) are chunked automatically and transcribed
+         long clips=['ig-05', 'ig-07', 'ig-08']
+[ ok ] 5.16: Re-running a finished ASR eval resumes instantly and does not reload/re-transcribe
+         0.9s; ['Resumed: 10 example(s) were already finished.']
+[ ok ] 5.17: --device cpu works and gives (nearly) the same WER as the default device
+         cpu WER=0.291 default=0.291
+[ ok ] 5.18: compare works on real ASR runs; lower-is-better WER is oriented correctly and the two devices show no regression
+         verdicts=[('wer@tone_aware', 'no clear change'), ('cer@tone_aware', 'no clear change'), ('wer@tone_insensitive', 'no clear change'), ('cer@tone_insensitive', 'no clear change')]
+[ ok ] 5.19: doctor sees the cached Hugging Face login and the installed asr extra, and checks gated access to each NCAIR1 model
+         hf-token=cached login found; model-access=ok licence accepted on all 5 models

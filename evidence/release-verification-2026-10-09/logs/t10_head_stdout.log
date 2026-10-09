@@ -1,0 +1,20 @@
+[ ok ] 10.01: transcribe over HTTP (--backend openai): posts the audio as WAV with language and model to /audio/transcriptions and prints the text
+         out='stub transcript 1' request={'path': '/v1/audio/transcriptions', 'len': 607234, 'ctype': 'multipart/form-data; boundary=fad49c96382e67b2adf43d02a528ed08', 'has_riff': True, 'lang': True, 'model': 
+[ ok ] 10.02: A 79 s recording over HTTP is split client-side into 3 windows (3 requests, each a WAV under 30 s) and merged
+         requests=3 sizes=[896514, 896514, 870914] chunks=3
+[ ok ] 10.03: Hostile text in a model name, a model answer, or a slice value is escaped in report.html and comparison.html (no injected tags)
+         unescaped in: []; escaped marker present=True
+[ ok ] 10.04: Scoring a run that was killed halfway counts the unfinished examples as MISSING and wrong (not silently ignored): score = finished/40
+         finished=12 n_missing=28 exact_match=0.300 (expected 0.300)
+[ ok ] 10.05: atlasforge.toml is found from any subdirectory below it (nearest file at or above the working directory)
+         server hits=1 model=from-parent-file
+[ ok ] 10.06: A config file in a SIBLING/other directory is not picked up (nothing read from elsewhere or from the home directory)
+         error: The openai backend needs a server URL. |   -> Pass --base-url (or set ATLASFORGE_BASE_URL), e.g. http://127.0.0.1:8
+[ ok ] 10.07: doctor exits 1 when a check FAILS (a broken atlasforge.toml), and says which line/why, rather than crashing
+         │ FAIL   │ config         │ <test-dir>/work/extras_head/badcfg/atlasforge.toml is not valid TOML: Expected '=' after a key in a key/value pair (at line 2, column 6) │
+[ ok ] 10.08: -V is the short form of --version
+         atlasforge 0.1.0a2
+[ ok ] 10.09: Running `demo` twice in the same place is safe (no traceback, data still valid afterwards)
+         second run rc=2: error: atlasforge-demo already exists and is not empty. |   -> Choose a new folder, e.g. `atlasforge demo my-demo`.
+[ ok ] 10.10: A missing dataset path is a clean error, not a traceback
+         error: cannot read /does/not/exist.jsonl: No such file or directory |   -> Check the path.

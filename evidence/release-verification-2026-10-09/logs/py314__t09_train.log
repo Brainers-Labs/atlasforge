@@ -1,0 +1,6 @@
+$ atlasforge finetune ft.json
+[exit 124] [400.0s]
+--- stdout ---
+
+--- stderr ---
+TIMEOUT

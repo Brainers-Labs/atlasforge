@@ -1,0 +1,68 @@
+$ atlasforge doctor --json
+[exit 0] [0.2s]
+--- stdout ---
+[
+  {
+    "name": "python",
+    "status": "ok",
+    "detail": "3.10.12",
+    "hint": null
+  },
+  {
+    "name": "gpu",
+    "status": "warn",
+    "detail": "no NVIDIA GPU detected",
+    "hint": "ASR models run on CPU. The 8B LLM needs a GPU or a remote OpenAI-compatible endpoint."
+  },
+  {
+    "name": "disk",
+    "status": "ok",
+    "detail": "108 GB free",
+    "hint": null
+  },
+  {
+    "name": "ffmpeg",
+    "status": "ok",
+    "detail": "/opt/homebrew/bin/ffmpeg",
+    "hint": null
+  },
+  {
+    "name": "config",
+    "status": "ok",
+    "detail": "no atlasforge.toml; using flag, environment, defaults",
+    "hint": null
+  },
+  {
+    "name": "hf-token",
+    "status": "ok",
+    "detail": "found (hf_****abcd)",
+    "hint": null
+  },
+  {
+    "name": "model-access",
+    "status": "warn",
+    "detail": "could not check 5 of 5 models",
+    "hint": "Install huggingface_hub and go online to check gated access, or open https://huggingface.co/NCAIR1/N-ATLaS to confirm by hand."
+  },
+  {
+    "name": "extra:local",
+    "status": "warn",
+    "detail": "missing torch, transformers, accelerate",
+    "hint": "pip install \"brainers-atlasforge[local]\""
+  },
+  {
+    "name": "extra:asr",
+    "status": "warn",
+    "detail": "missing transformers, librosa, soundfile",
+    "hint": "pip install \"brainers-atlasforge[asr]\""
+  },
+  {
+    "name": "extra:finetune",
+    "status": "warn",
+    "detail": "missing peft, trl, datasets",
+    "hint": "pip install \"brainers-atlasforge[finetune]\""
+  }
+]
+
+--- stderr ---
+

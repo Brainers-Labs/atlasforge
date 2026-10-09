@@ -1,0 +1,18 @@
+$ atlasforge run Ina kwana? Gaya mini game da Najeriya a taƙaice. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --json --max-new-tokens 120 --timeout 300
+[exit 0] [2.5s]
+--- stdout ---
+{
+  "text": "Kwam yanzu Nijeriya take, wato kasa mai mutane daban-daban da al'adu daban-daban, amma duk sun hada kai a matsayin 'yan uwa daya.",
+  "model": "natlas-local-chat",
+  "revision": null,
+  "latency_ms": 2108.1,
+  "finish_reason": "stop",
+  "request_id": "chatcmpl-697",
+  "usage": {
+    "prompt_tokens": 54,
+    "completion_tokens": 51
+  }
+}
+
+--- stderr ---
+

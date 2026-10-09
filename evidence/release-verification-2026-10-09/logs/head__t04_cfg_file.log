@@ -1,0 +1,7 @@
+$ atlasforge run q1
+[exit 0] [0.3s]
+--- stdout ---
+ans1
+
+--- stderr ---
+

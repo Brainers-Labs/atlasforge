@@ -1,0 +1,25 @@
+$ ollama show natlas-local-chat
+[exit 0] [0.1s]
+--- stdout ---
+  Model
+    architecture        llama     
+    parameters          8.0B      
+    context length      131072    
+    embedding length    4096      
+    quantization        int4      
+    requires            0.19.0    
+
+  Capabilities
+    completion    
+
+  Parameters
+    temperature       0.1                  
+    num_predict       1000                 
+    repeat_penalty    1.12                 
+    stop              "<|eot_id|>"         
+    stop              "<|end_of_text|>"    
+    stop              "<|eom_id|>"         
+
+
+--- stderr ---
+

@@ -1,0 +1,8 @@
+$ atlasforge transcribe audio/ha_00.wav --lang ha --backend local
+[exit 1] [18.0s]
+--- stdout ---
+
+--- stderr ---
+error: audio/ha_00.wav: Could not load NCAIR1/Hausa-ASR (ImportError).
+  -> Run `atlasforge doctor`.
+

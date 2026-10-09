@@ -1,0 +1,9 @@
+$ atlasforge eval d.jsonl --out breaker --base-url http://127.0.0.1:54712/v1 --model m --retries 0 --max-consecutive-failures 5
+[exit 2] [0.3s]
+--- stdout ---
+
+--- stderr ---
+
+error: Stopped after 5 failures in a row. Last error: BackendHTTPError: Endpoint returned HTTP 500.
+  -> Fix the cause, then re-run with the same --out to resume; everything already finished is kept.
+

@@ -1,0 +1,29 @@
+$ atlasforge --help
+[exit 0] [0.2s]
+--- stdout ---
+                                                                                                                                                                                                        
+ Usage: atlasforge [OPTIONS] COMMAND [ARGS]...                                                                                                                                                          
+                                                                                                                                                                                                        
+ Run, evaluate, compare and fine-tune the official N-ATLaS models.                                                                                                                                      
+                                                                                                                                                                                                        
+╭─ Options ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ --version  -V        Show version.                                                                                                                                                                   │
+│ --help               Show this message and exit.                                                                                                                                                     │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ doctor      Check Python, GPU, disk, ffmpeg, Hugging Face token and optional extras.                                                                                                                 │
+│ run         Send one prompt to N-ATLaS and print the answer.                                                                                                                                         │
+│ transcribe  Transcribe audio with the official N-ATLaS ASR model. Long audio is split automatically.                                                                                                 │
+│ eval        Run a dataset through a model, score it, and write report.md / report.json.                                                                                                              │
+│ report      Re-score a finished run (no model needed) and rewrite its report.                                                                                                                        │
+│ compare     Did the candidate actually beat the base, and where did it get worse?                                                                                                                    │
+│ demo        Write synthetic demo data and sample runs, to try AtlasForge with no model at all.                                                                                                       │
+│ finetune    Fine-tune N-ATLaS with QLoRA and save a LoRA adapter (needs an NVIDIA GPU).                                                                                                              │
+│ card        Write a licence-aware model card (attribution, 'Powered by Awarri', user cap) for an adapter.                                                                                            │
+│ dataset     Dataset tools.                                                                                                                                                                           │
+│ bench       Benchmark suite runners.                                                                                                                                                                 │
+╰──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+--- stderr ---
+

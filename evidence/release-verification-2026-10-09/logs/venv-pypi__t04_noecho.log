@@ -1,0 +1,18 @@
+$ atlasforge eval d.jsonl --out noecho --base-url http://127.0.0.1:54971/v1 --model m --retries 0 --max-consecutive-failures 0
+[exit 1] [0.3s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃ Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 0.0% │      - │ 40 │
+│ chrf (aware)          │  0.0 │    0.0 │ 40 │
+│ exact_match (insens.) │ 0.0% │      - │ 40 │
+│ chrf (insens.)        │  0.0 │    0.0 │ 40 │
+└───────────────────────┴──────┴────────┴────┘
+40 examples: 0 ok, 40 failed, 0 missing (failures count as wrong)
+Wrote noecho/report.md, noecho/report.json and noecho/report.html
+
+--- stderr ---
+
+warning: 40 of 40 example(s) failed; see noecho/results.jsonl
+

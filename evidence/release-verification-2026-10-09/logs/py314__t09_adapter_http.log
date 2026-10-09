@@ -1,0 +1,8 @@
+$ atlasforge eval train.jsonl --out x --base-url http://127.0.0.1:9/v1 --adapter adapter
+[exit 2] [0.3s]
+--- stdout ---
+
+--- stderr ---
+error: --adapter only works with the local backend.
+  -> With a server, load the adapter there and pass its served name as --model.
+

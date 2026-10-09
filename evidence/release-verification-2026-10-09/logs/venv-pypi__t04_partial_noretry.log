@@ -1,0 +1,17 @@
+$ atlasforge eval d.jsonl --out partial --base-url http://127.0.0.1:54799/v1 --model m --retries 0 --no-retry-errors -m exact_match
+[exit 0] [0.3s]
+--- stdout ---
+Resumed: 40 example(s) were already finished.
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃  Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 92.5% │      - │ 40 │
+│ exact_match (insens.) │ 92.5% │      - │ 40 │
+└───────────────────────┴───────┴────────┴────┘
+40 examples: 37 ok, 3 failed, 0 missing (failures count as wrong)
+Wrote partial/report.md, partial/report.json and partial/report.html
+
+--- stderr ---
+
+warning: 3 of 40 example(s) failed; see partial/results.jsonl
+

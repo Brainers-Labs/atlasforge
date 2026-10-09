@@ -1,0 +1,18 @@
+$ atlasforge run q4 --base-url http://127.0.0.1:56020/v1 --model m --json --system 'Be brief.' --temperature 0 --max-new-tokens 77 --seed 5
+[exit 0] [0.3s]
+--- stdout ---
+{
+  "text": "ans4",
+  "model": "m",
+  "revision": null,
+  "latency_ms": 2.1,
+  "finish_reason": "stop",
+  "request_id": "stub-1",
+  "usage": {
+    "prompt_tokens": 3,
+    "completion_tokens": 2
+  }
+}
+
+--- stderr ---
+

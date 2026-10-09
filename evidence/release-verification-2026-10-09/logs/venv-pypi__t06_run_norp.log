@@ -1,0 +1,7 @@
+$ atlasforge run What is the capital of Nigeria? Answer in one word. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --temperature 0 --system You answer with a single word. --no-send-repetition-penalty
+[exit 0] [0.4s]
+--- stdout ---
+Abuja
+
+--- stderr ---
+

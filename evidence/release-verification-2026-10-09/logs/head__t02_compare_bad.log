@@ -1,0 +1,8 @@
+$ atlasforge compare edited.jsonl --base atlasforge-demo/runs/base --candidate atlasforge-demo/runs/tuned --out cmp_bad
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: atlasforge-demo/runs/base was not produced from this dataset and task.
+  -> Re-run it on the same dataset file, or pass the dataset it was run on.
+

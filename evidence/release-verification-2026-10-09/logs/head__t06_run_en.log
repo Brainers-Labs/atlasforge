@@ -1,0 +1,18 @@
+$ atlasforge run What is the capital of Nigeria? Answer in one sentence. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --json --max-new-tokens 120 --timeout 300
+[exit 0] [6.8s]
+--- stdout ---
+{
+  "text": "The capital of Nigeria is Abuja.",
+  "model": "natlas-local-chat",
+  "revision": null,
+  "latency_ms": 6359.1,
+  "finish_reason": "stop",
+  "request_id": "chatcmpl-450",
+  "usage": {
+    "prompt_tokens": 46,
+    "completion_tokens": 8
+  }
+}
+
+--- stderr ---
+

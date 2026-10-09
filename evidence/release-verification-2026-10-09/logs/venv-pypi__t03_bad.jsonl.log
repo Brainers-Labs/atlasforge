@@ -1,0 +1,87 @@
+$ atlasforge dataset validate bad.jsonl --task generation  --json
+[exit 1] [0.2s]
+--- stdout ---
+{
+  "path": "bad.jsonl",
+  "task": "generation",
+  "sha256": "ef4073265db09f69f3fb851219fce3720164e2a80af9118da9db9517970ea068",
+  "n_lines": 8,
+  "n_examples": 1,
+  "issues": [
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 2: duplicate id 'a' (first seen on line 1)",
+      "line": 2,
+      "count": null,
+      "hint": "Give each example a unique 'id'."
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 3: unknown key(s): refrence",
+      "line": 3,
+      "count": null,
+      "hint": "Allowed keys: audio, id, input, lang, messages, meta, reference. Put extra columns under 'meta'."
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 4: provide exactly one of 'input' or 'messages'",
+      "line": 4,
+      "count": null,
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 5: provide exactly one of 'input' or 'messages'",
+      "line": 5,
+      "count": null,
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 6: Unsupported language 'klingon'.",
+      "line": 6,
+      "count": null,
+      "hint": "Use one of: ha, yo, ig, en (or hausa, yoruba, igbo, english)."
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 7: invalid JSON (Expecting value)",
+      "line": 7,
+      "count": null,
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "line 8: each line must be a JSON object",
+      "line": 8,
+      "count": null,
+      "hint": null
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 1
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 1,
+      "median": 1,
+      "max": 1
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1,
+      "max": 1
+    }
+  }
+}
+
+--- stderr ---
+

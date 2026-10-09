@@ -1,0 +1,8 @@
+$ atlasforge dataset validate nonutf8.jsonl --task generation  --json
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: nonutf8.jsonl is not valid UTF-8 (bad byte at offset 22).
+  -> Re-save the file as UTF-8.
+

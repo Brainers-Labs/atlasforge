@@ -1,0 +1,19 @@
+$ atlasforge eval real.jsonl --base-url http://127.0.0.1:11434/v1 --temperature 0 --max-new-tokens 40 --timeout 300 -m exact_match -m chrf -m mymetrics:contains_ref --model natlas-local-chat --out chat
+[exit 0] [19.7s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                 ┃  Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)    │ 96.7% │      - │ 60 │
+│ chrf (aware)           │  99.7 │   99.3 │ 60 │
+│ contains_ref (aware)   │   1.0 │      - │ 60 │
+│ exact_match (insens.)  │ 96.7% │      - │ 60 │
+│ chrf (insens.)         │  99.7 │   99.3 │ 60 │
+│ contains_ref (insens.) │   1.0 │      - │ 60 │
+└────────────────────────┴───────┴────────┴────┘
+60 examples: 60 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote chat/report.md, chat/report.json and chat/report.html
+
+--- stderr ---
+
+

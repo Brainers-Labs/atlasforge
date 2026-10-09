@@ -1,0 +1,7 @@
+$ atlasforge run hello
+[exit 0] [0.3s]
+--- stdout ---
+stub:hello
+
+--- stderr ---
+

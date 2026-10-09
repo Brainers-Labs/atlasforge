@@ -1,0 +1,7 @@
+$ printf q6 | atlasforge run - --base-url http://127.0.0.1:56020/v1 --model m
+[exit 0] [0.3s]
+--- stdout ---
+ans6
+
+--- stderr ---
+

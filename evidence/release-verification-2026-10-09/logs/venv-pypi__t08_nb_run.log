@@ -1,0 +1,9 @@
+$ <test-dir>/venv-nb/bin/python run_nb.py
+[exit 0] [4.6s]
+--- stdout ---
+CELLS_OK 6
+HAS_REGRESSION True True
+
+--- stderr ---
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+

@@ -1,0 +1,8 @@
+$ atlasforge demo
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: atlasforge-demo already exists and is not empty.
+  -> Choose a new folder, e.g. `atlasforge demo my-demo`.
+

@@ -1,0 +1,7 @@
+$ pip list 2>/dev/null | grep -i -E '^(torch|transformers|librosa|peft|trl|accelerate) ' || echo none
+[exit 0] [0.8s]
+--- stdout ---
+none
+
+--- stderr ---
+

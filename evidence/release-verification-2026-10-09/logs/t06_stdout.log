@@ -1,0 +1,35 @@
+[ ok ] 6.01: Precondition: the official N-ATLaS weights are imported in Ollama (int4) and served
+         models=['natlas-local-chat:latest', 'natlas-local-q4:latest', 'qwen3.6:latest']
+[ ok ] 6.02: The served model is an 8.0B Llama with 131072 context, int4 (matches config.json, not the card's 8,092)
+         Model architecture llama parameters 8.0B context length 131072 embedding length 4096 quantization int4 requires 0.19.0 Capabilities completion Parameters temperature 0.1 num_predict 1000 repeat_penalt
+[ ok ] 6.03en: run: the real model answers a en prompt (non-empty text, token usage and latency reported)
+         'The capital of Nigeria is Abuja.' tokens={'prompt_tokens': 46, 'completion_tokens': 8} 6134ms
+[ ok ] 6.03ha: run: the real model answers a ha prompt (non-empty text, token usage and latency reported)
+         'Ya kamata! Na san kai mai son yaji ba, har ma da tunanin zama a Najeriya! Abinda nake so shine lokacin da za m' tokens={'prompt_tokens': 54, 'completion_tokens': 115} 4212ms
+[ ok ] 6.03yo: run: the real model answers a yo prompt (non-empty text, token usage and latency reported)
+         'Ìlú Eko jẹ́ ìlú tó gbòde kan, ó sì ní àwọn ènìyàn láti orísun ẹ̀yà tó yàtọ̀ síra.' tokens={'prompt_tokens': 59, 'completion_tokens': 51} 2041ms
+[ ok ] 6.03ig: run: the real model answers a ig prompt (non-empty text, token usage and latency reported)
+         "Naịjirịa bụ obodo a ma ama maka nnukwu ọdịiche omenala ya, ebe ndị si n'ebe dị iche iche na-asụ asụsụ dị iche " tokens={'prompt_tokens': 61, 'completion_tokens': 120} 4347ms
+[ ok ] 6.04: Real model, --system and --temperature 0: answers 'Abuja'
+         Abuja
+[ ok ] 6.05: --no-send-repetition-penalty works against the real server too
+         Abuja
+[ ok ] 6.06: The 60-question real dataset validates
+         OK: 60 valid example(s) from 60 line(s), 0 error(s), 0 warning(s).
+[ ok ] 6.07: eval of 60 real questions on the real model completes with no failures, reports latency, and a custom metric
+         n_failed=0 contains_ref=0.9833333333333333 mean latency=323ms p95=386ms
+[ ok ] 6.08: Every record has a prediction and a request id/latency; examples are the model's real text, not echoes
+         60 records; sample: ['Abuja', 'Accra', 'Nairobi']
+[ ok ] 6.09: run.json records the served model name and the settings used (temperature 0, max_new_tokens 40)
+         {"model": "natlas-local-chat", "backend": "openai", "gen_params": {"temperature": 0.0, "repetition_penalty": 1.12, "max_new_tokens": 40, "top_p": null, "seed": null}}
+[ ok ] 6.10: A second real run (same weights, without the chat template) completes
+         ailures count as wrong) | Wrote raw/report.md, raw/report.json and raw/report.html
+[ ok ] 6.11: compare on two REAL runs: per-metric verdicts, win/tie/loss, and domain slices with n=30 each get real verdicts (not 'insufficient data')
+         exact_match@tone_aware:improved d=+0.967; chrf@tone_aware:improved d=+86.958; contains_ref@tone_aware:improved d=+0.100 | capitals n=30 improved; arithmetic n=30 improved
+[ ok ] 6.12: A custom metric gets the full paired statistics in compare (interval + wins/ties/losses)
+         (0.8833333333333333, 0.9833333333333333, 0.016666666666666666, 0.2)
+[ ok ] 6.13: Classification task on the real model reports accuracy and macro-F1 (12 reviews)
+         accuracy=1.0 macro_f1=1.0
+[ ok ] 6.14: --concurrency 2 against the real server completes with no failures
+         n_failed=0 wall=20s
+exit 0

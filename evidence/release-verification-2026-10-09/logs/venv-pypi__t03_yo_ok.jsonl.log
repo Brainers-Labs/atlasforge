@@ -1,0 +1,37 @@
+$ atlasforge dataset validate yo_ok.jsonl --task generation  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "yo_ok.jsonl",
+  "task": "generation",
+  "sha256": "2a5e38e399366bbb45516662822b9b10d503e5f8adec0889c0a69957fe1aad68",
+  "n_lines": 25,
+  "n_examples": 25,
+  "issues": [],
+  "stats": {
+    "langs": {
+      "yo": 25
+    },
+    "diacritics": {
+      "yo": {
+        "texts": 50,
+        "tone_rate": 1.0,
+        "underdot_rate": 0.5,
+        "hooked_rate": 0.0
+      }
+    },
+    "input_words": {
+      "min": 6,
+      "median": 6,
+      "max": 6
+    },
+    "reference_words": {
+      "min": 4,
+      "median": 4,
+      "max": 4
+    }
+  }
+}
+
+--- stderr ---
+

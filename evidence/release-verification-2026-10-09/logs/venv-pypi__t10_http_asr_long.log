@@ -1,0 +1,7 @@
+$ atlasforge transcribe long.wav --lang ha --base-url http://127.0.0.1:56214/v1 --model whisper-test --json
+[exit 0] [0.3s]
+--- stdout ---
+{"file": "long.wav", "lang": "ha", "text": "stub transcript 1 stub transcript 2 stub transcript 3", "latency_ms": 8.1, "chunks": [{"start_s": 0.0, "end_s": 28.0, "text": "stub transcript 1"}, {"start_s": 26.0, "end_s": 54.0, "text": "stub transcript 2"}, {"start_s": 52.0, "end_s": 79.2, "text": "stub transcript 3"}]}
+
+--- stderr ---
+

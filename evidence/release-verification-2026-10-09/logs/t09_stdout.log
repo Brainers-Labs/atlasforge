@@ -1,0 +1,25 @@
+[ ok ] 9.01: The package installs and starts on Python 3.14.7 (outside the documented 3.10 to 3.13: forward-compatibility data point)
+         atlasforge 0.1.0a2 on Python 3.14.7
+[ ok ] 9.02: finetune --dry-run plans a LoRA run on a non-default base model
+         Base model: HuggingFaceTB/SmolLM2-135M-Instruct Training file: train.jsonl (40 examples, fingerprint ffaaed1aad367a0a) Held-out file: (none given: leakage was NOT checked) Median length: 7 words per e
+[ n/a] 9.03: A real LoRA training run (needs CUDA; the docs say it will not work on a Mac)
+         Attempted on this Mac with quantize=none: the process died (exit 124) while loading the model with device_map='auto' in float16 on Apple's GPU. The SAME crash reproduces with plain transformers and no
+[FAIL] 9.03b: Observation: on a non-CUDA machine, `finetune` with quantize=none gives no friendly message (the 4-bit path does); it crashes inside torch
+         exit 124; stderr tail: TIMEOUT
+[ ok ] 9.04: Precondition: a real PEFT LoRA adapter (built with plain peft, not by AtlasForge) exists to evaluate
+         files=['README.md', 'adapter_config.json', 'adapter_model.safetensors', 'chat_template.jinja', 'tokenizer.json', 'tokenizer_config.json']
+[ ok ] 9.06: eval --backend local runs the real tokenizer chat template and generation, and --adapter loads a LoRA adapter
+         base rc=0, tuned rc=0;  deprecated! Use `dtype` instead! |  | Loading weights:   0%|          | 0/272 [00:00<?, ?it/s] | Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6537.38it/s]
+[ ok ] 9.07: An adapter is part of the model's identity in the manifest (a tuned run can never be mistaken for the base run)
+         base model='HuggingFaceTB/SmolLM2-135M-Instruct'  tuned model='HuggingFaceTB/SmolLM2-135M-Instruct+adapter'
+[ ok ] 9.08: The adapter is actually APPLIED: with a non-zero LoRA the tuned model's answers differ from the base model's
+         40 of 40 answers differ; e.g. base='Here is the code to generate an item with the given name' tuned='```python\ndef get_item(name):\n    return'
+[ ok ] 9.09: compare works between a base run and an adapter run on real local-backend output (with slices)
+         verdicts=[('exact_match@tone_aware', 'no clear change'), ('chrf@tone_aware', 'regressed')]
+[ ok ] 9.10: local backend: greedy decoding is deterministic, max-new-tokens is honoured, token usage and finish_reason are reported
+         'One of the most popular fruits in the world is the banana' tokens={'prompt_tokens': 34, 'completion_tokens': 12} finish=length
+[ ok ] 9.11: A model whose tokenizer has no chat template is refused with a clear error (never a guessed prompt format)
+         [transformers] `torch_dtype` is deprecated! Use `dtype` instead! |  | Loading weights:   0%|          | 0/29 [00:00<?, ?it/s] | Loading weights: 100%|██████████| 29/29 [00:00<00:00, 23600.08it/s] | [t
+[ ok ] 9.12: --adapter with the openai backend is refused with an explanation
+         error: --adapter only works with the local backend. |   -> With a server, load the adapter there and pass its served name as --model.
+exit 0

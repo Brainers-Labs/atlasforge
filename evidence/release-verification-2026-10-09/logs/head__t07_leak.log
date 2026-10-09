@@ -1,0 +1,8 @@
+$ atlasforge finetune ft_leak.json --dry-run
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: The training data has 1 error(s): 1 example(s) also appear in test_leak.jsonl (0 identical, 1 differing only in case, punctuation or tone marks): t3
+  -> Run `atlasforge dataset validate train.jsonl --task generation --against test_leak.jsonl` for the full list.
+

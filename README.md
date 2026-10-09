@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0a2`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. Several parts have **never been run against real N-ATLaS weights** because they need a GPU or a large-memory machine: the `local` backend, the ASR models and fine-tuning. They are marked below. Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a2`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. The four official speech models, the local backend for speech, and the LLM (as an int4 copy served by Ollama) have been run for real on a Mac; the LLM at full precision, vLLM, and the fine-tuning training run have **not**, because they need an NVIDIA GPU. The full record, with every check and its evidence, is the [release verification report](https://github.com/Brainers-Labs/atlasforge/blob/main/evidence/release-verification-2026-10-09/REPORT.md). Nothing is claimed to work until it is listed here.
 
 ## Documentation
 
@@ -66,14 +66,22 @@ atlasforge transcribe note.ogg --lang ha --base-url ...
 - **`finetune --dry-run`** (no GPU): validates the training data, refuses train/test leakage and tiny datasets, and prints the plan. **`card`** writes a model card with the licence obligations (attribution, "Powered by Awarri", the 1,000-user cap), the evaluation numbers and any regressions.
 - **ASR helpers**: any audio format via ffmpeg (including WhatsApp `.ogg`/opus), automatic splitting of audio over the models' 30-second limit, transcript merging.
 
-## Not yet run against real weights
+## Verified on real weights, and what is not
 
-- `--backend local` (transformers): wiring is tested with stand-in modules only.
-- Official ASR models: the chunking and merging are tested; the models themselves have not been loaded.
-- `atlasforge finetune` (QLoRA via PEFT/TRL): data checks and `--dry-run` are tested; the training run itself needs an NVIDIA GPU and has never been executed.
-- `--backend local --adapter DIR`: evaluating a fine-tuned adapter; wiring tested with stand-ins only.
+Run for real on a MacBook (Apple M1, 16 GB) and recorded in the [release verification report](https://github.com/Brainers-Labs/atlasforge/blob/main/evidence/release-verification-2026-10-09/REPORT.md):
 
-Nothing above has been checked from a machine that has the weights. `scripts/live_smoke.py` is the run that does it, and it writes down what it saw — including the checks it could not perform. **It has not been run either.** The [project status](https://github.com/Brainers-Labs/atlasforge/blob/main/docs/help/status.md) page is the record.
+- All four official speech models, through `atlasforge transcribe` and `atlasforge eval --task asr` on real FLEURS audio (10 clips per language, indicative only): Hausa WER 0.29, Yoruba 0.61 (0.46 when tone marks are ignored), Igbo 0.41, English 0.085 on US-accent audio. Long recordings are split and merged correctly.
+- The official LLM as an int4 import served by Ollama, through `run`, `eval`, `compare` and a classification run. This is a quantised copy, so it says nothing about full-precision quality.
+- Loading and evaluating a LoRA adapter through `--backend local --adapter`, with a tiny stand-in model (not N-ATLaS).
+
+**Not run**, and why:
+
+- `atlasforge finetune` training: it needs an NVIDIA GPU; data checks and `--dry-run` are tested.
+- The LLM at full precision through `--backend local` (16 GB of weights; does not fit a 16 GB machine).
+- vLLM and llama.cpp serving, and the AfroBench-LITE wrapper against the real harness.
+- Nigerian-accented speech accuracy, and any real-user (beta tester) evidence.
+
+`scripts/live_smoke.py`, which writes a dated evidence file on a machine that has the weights, has not been run.
 
 ## Metrics
 

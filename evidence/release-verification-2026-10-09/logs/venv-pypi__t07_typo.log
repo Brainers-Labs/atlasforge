@@ -1,0 +1,8 @@
+$ atlasforge finetune ft_typo.json --dry-run
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: Unknown setting(s) in ft_typo.json: lora_rank.
+  -> Known settings: base_model, batch_size, eval_file, grad_accum, learning_rate, logging_steps, lora_alpha, lora_dropout, lora_r, max_seq_len, min_examples, num_epochs, output_dir, quantize, revision, seed, target_modules, train_file, warmup_ratio.
+

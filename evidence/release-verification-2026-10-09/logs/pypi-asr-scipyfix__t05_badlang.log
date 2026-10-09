@@ -1,0 +1,8 @@
+$ atlasforge transcribe audio/ha_00.wav --lang xx --backend local
+[exit 2] [0.3s]
+--- stdout ---
+
+--- stderr ---
+error: Unsupported language 'xx'.
+  -> Use one of: ha, yo, ig, en (or hausa, yoruba, igbo, english).
+

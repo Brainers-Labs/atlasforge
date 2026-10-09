@@ -1,0 +1,17 @@
+$ atlasforge compare d.jsonl --base evil --candidate evil2 --out evil_cmp --slice domain --task generation
+[exit 0] [0.2s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Metric                ┃ Base ┃ Cand. ┃ Delta    ┃ 95% CI       ┃ Verdict         ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ exact_match (aware)   │ 0.0% │ 0.0%  │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (aware)          │ 4.6  │ 4.6   │ +0.0     │ [+0.0, +0.0] │ no clear change │
+│ exact_match (insens.) │ 0.0% │ 0.0%  │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (insens.)        │ 4.6  │ 4.6   │ +0.0     │ [+0.0, +0.0] │ no clear change │
+└───────────────────────┴──────┴───────┴──────────┴──────────────┴─────────────────┘
+No statistically clear regressions.
+4 slice(s) had too few examples to judge (see the report).
+Wrote evil_cmp/comparison.md, evil_cmp/comparison.json and evil_cmp/comparison.html
+
+--- stderr ---
+

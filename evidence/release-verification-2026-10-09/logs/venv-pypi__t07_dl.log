@@ -1,0 +1,6 @@
+$ pip download brainers-atlasforge --no-deps -d <test-dir>/dl -q
+[exit 0] [0.7s]
+--- stdout ---
+
+--- stderr ---
+

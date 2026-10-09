@@ -1,0 +1,10 @@
+$ atlasforge transcribe fake.wav --lang ha --backend local
+[exit 1] [1.0s]
+--- stdout ---
+
+--- stderr ---
+error: fake.wav: ffmpeg could not decode the audio: [in#0 @ 0x7b90c1c000] Error opening input: Invalid data found when processing input
+Error opening input file fake.wav.
+Error opening input files: Invalid data found when processing input
+  -> Is it a valid audio file? Try converting it to wav yourself to check.
+

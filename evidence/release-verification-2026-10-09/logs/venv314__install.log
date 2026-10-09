@@ -1,0 +1,112 @@
+Processing <repo>
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting httpx>=0.27 (from brainers-atlasforge==0.1.0a2)
+  Using cached httpx-0.28.1-py3-none-any.whl.metadata (7.1 kB)
+Collecting jiwer>=3.0 (from brainers-atlasforge==0.1.0a2)
+  Using cached jiwer-4.0.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting numpy>=1.26 (from brainers-atlasforge==0.1.0a2)
+  Downloading numpy-2.5.3-cp314-cp314-macosx_14_0_arm64.whl.metadata (6.6 kB)
+Collecting rich>=13.7 (from brainers-atlasforge==0.1.0a2)
+  Using cached rich-15.0.0-py3-none-any.whl.metadata (18 kB)
+Collecting sacrebleu>=2.4 (from brainers-atlasforge==0.1.0a2)
+  Using cached sacrebleu-2.6.0-py3-none-any.whl.metadata (39 kB)
+Collecting typer>=0.12 (from brainers-atlasforge==0.1.0a2)
+  Using cached typer-0.27.3-py3-none-any.whl.metadata (16 kB)
+Collecting accelerate>=0.33 (from brainers-atlasforge==0.1.0a2)
+  Downloading accelerate-1.15.0-py3-none-any.whl.metadata (19 kB)
+Collecting datasets>=2.20 (from brainers-atlasforge==0.1.0a2)
+  Downloading datasets-5.1.0-py3-none-any.whl.metadata (24 kB)
+Collecting huggingface-hub>=0.24 (from brainers-atlasforge==0.1.0a2)
+  Using cached huggingface_hub-2.2.0-py3-none-any.whl.metadata (16 kB)
+Collecting peft>=0.12 (from brainers-atlasforge==0.1.0a2)
+  Downloading peft-0.21.2-py3-none-any.whl.metadata (15 kB)
+Collecting pyyaml>=6.0 (from brainers-atlasforge==0.1.0a2)
+  Downloading pyyaml-6.0.3-cp314-cp314-macosx_11_0_arm64.whl.metadata (2.4 kB)
+Collecting safetensors>=0.4 (from brainers-atlasforge==0.1.0a2)
+  Using cached safetensors-0.8.0-cp310-abi3-macosx_11_0_arm64.whl.metadata (4.2 kB)
+Collecting scipy<1.15 (from brainers-atlasforge==0.1.0a2)
+  Downloading scipy-1.14.1.tar.gz (58.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 58.6/58.6 MB 1.9 MB/s  0:00:36
+  Installing build dependencies: started
+  Installing build dependencies: still running...
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × Preparing metadata (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [53 lines of output]
+      + meson setup <tmp> <tmp> -Dbuildtype=release -Db_ndebug=if-release -Db_vscrt=md --native-file=<tmp>
+      The Meson build system
+      Version: 1.12.1
+      Source dir: <tmp>
+      Build dir: <tmp>
+      Build type: native build
+      Project name: scipy
+      Project version: 1.14.1
+      C compiler for the host machine: cc (clang 21.0.0 "Apple clang version 21.0.0 (clang-2100.3.34.2)")
+      C linker for the host machine: cc ld64 27037.1
+      C++ compiler for the host machine: c++ (clang 21.0.0 "Apple clang version 21.0.0 (clang-2100.3.34.2)")
+      C++ linker for the host machine: c++ ld64 27037.1
+      Cython compiler for the host machine: cython (cython 3.0.12)
+      Host machine cpu family: aarch64
+      Host machine cpu: aarch64
+      Program python found: YES (<test-dir>/venv314/bin/python3.14)
+      Found pkg-config: YES (/opt/homebrew/bin/pkg-config) 3.0.7
+      Run-time dependency python found: YES 3.14
+      Program cython found: YES (<tmp>
+      Compiler for C supports arguments -Wno-unused-but-set-variable: YES
+      Compiler for C supports arguments -Wno-unused-function: YES
+      Compiler for C supports arguments -Wno-conversion: YES
+      Compiler for C supports arguments -Wno-misleading-indentation: YES
+      Library m found: YES
+      
+      ../meson.build:84:0: ERROR: Unknown compiler(s): [['gfortran'], ['flang-new'], ['flang'], ['nvfortran'], ['pgfortran'], ['ifort'], ['ifx'], ['g95']]
+      The following exception(s) were encountered:
+      Running `gfortran --help` gave "[Errno 2] No such file or directory: 'gfortran'"
+      Running `gfortran --version` gave "[Errno 2] No such file or directory: 'gfortran'"
+      Running `gfortran -V` gave "[Errno 2] No such file or directory: 'gfortran'"
+      Running `flang-new --help` gave "[Errno 2] No such file or directory: 'flang-new'"
+      Running `flang-new --version` gave "[Errno 2] No such file or directory: 'flang-new'"
+      Running `flang-new -V` gave "[Errno 2] No such file or directory: 'flang-new'"
+      Running `flang --help` gave "[Errno 2] No such file or directory: 'flang'"
+      Running `flang --version` gave "[Errno 2] No such file or directory: 'flang'"
+      Running `flang -V` gave "[Errno 2] No such file or directory: 'flang'"
+      Running `nvfortran --help` gave "[Errno 2] No such file or directory: 'nvfortran'"
+      Running `nvfortran --version` gave "[Errno 2] No such file or directory: 'nvfortran'"
+      Running `nvfortran -V` gave "[Errno 2] No such file or directory: 'nvfortran'"
+      Running `pgfortran --help` gave "[Errno 2] No such file or directory: 'pgfortran'"
+      Running `pgfortran --version` gave "[Errno 2] No such file or directory: 'pgfortran'"
+      Running `pgfortran -V` gave "[Errno 2] No such file or directory: 'pgfortran'"
+      Running `ifort --help` gave "[Errno 2] No such file or directory: 'ifort'"
+      Running `ifort --version` gave "[Errno 2] No such file or directory: 'ifort'"
+      Running `ifort -V` gave "[Errno 2] No such file or directory: 'ifort'"
+      Running `ifx --help` gave "[Errno 2] No such file or directory: 'ifx'"
+      Running `ifx --version` gave "[Errno 2] No such file or directory: 'ifx'"
+      Running `ifx -V` gave "[Errno 2] No such file or directory: 'ifx'"
+      Running `g95 --help` gave "[Errno 2] No such file or directory: 'g95'"
+      Running `g95 --version` gave "[Errno 2] No such file or directory: 'g95'"
+      Running `g95 -V` gave "[Errno 2] No such file or directory: 'g95'"
+      
+      A full log can be found at <tmp>
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> scipy
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+install exit 1

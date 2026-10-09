@@ -1,0 +1,18 @@
+$ atlasforge eval asr_ha.jsonl --task asr --out run_ha --backend local
+[exit 0] [0.9s]
+--- stdout ---
+Resumed: 10 example(s) were already finished.
+┏━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric        ┃  Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━┩
+│ wer (aware)   │ 29.7% │  29.1% │ 10 │
+│ cer (aware)   │ 10.5% │   9.7% │ 10 │
+│ wer (insens.) │ 29.7% │  29.1% │ 10 │
+│ cer (insens.) │ 10.5% │   9.7% │ 10 │
+└───────────────┴───────┴────────┴────┘
+10 examples: 10 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote run_ha/report.md, run_ha/report.json and run_ha/report.html
+
+--- stderr ---
+
+

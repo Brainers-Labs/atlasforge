@@ -1,0 +1,16 @@
+$ atlasforge eval d.jsonl --out allfail --base-url http://127.0.0.1:55765/v1 --model m --retries 0 --max-consecutive-failures 0 -m exact_match
+[exit 1] [0.3s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃ Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 0.0% │      - │ 40 │
+│ exact_match (insens.) │ 0.0% │      - │ 40 │
+└───────────────────────┴──────┴────────┴────┘
+40 examples: 0 ok, 40 failed, 0 missing (failures count as wrong)
+Wrote allfail/report.md, allfail/report.json and allfail/report.html
+
+--- stderr ---
+
+warning: 40 of 40 example(s) failed; see allfail/results.jsonl
+

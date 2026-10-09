@@ -1,0 +1,11 @@
+$ atlasforge demo
+[exit 0] [0.2s]
+--- stdout ---
+Wrote synthetic demo data to atlasforge-demo (NOT real N-ATLaS output).
+Try these, in order:
+  atlasforge dataset validate atlasforge-demo/toy_qa.jsonl
+  atlasforge report atlasforge-demo/runs/base --dataset atlasforge-demo/toy_qa.jsonl
+  atlasforge compare atlasforge-demo/toy_qa.jsonl --base atlasforge-demo/runs/base --candidate atlasforge-demo/runs/tuned --slice domain
+
+--- stderr ---
+

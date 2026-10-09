@@ -1,0 +1,18 @@
+$ atlasforge run Bawo ni? Sọ fun mi nípa ìlú Eko ní ṣókí. --base-url http://127.0.0.1:11434/v1 --model natlas-local-chat --json --max-new-tokens 120 --timeout 300
+[exit 0] [2.3s]
+--- stdout ---
+{
+  "text": "Ìlú Eko jẹ́ ìlú tó gbòde kan, ó sì ní àwọn ènìyàn láti orísun ẹ̀yà tó yàtọ̀ síra.",
+  "model": "natlas-local-chat",
+  "revision": null,
+  "latency_ms": 2041.4,
+  "finish_reason": "stop",
+  "request_id": "chatcmpl-327",
+  "usage": {
+    "prompt_tokens": 59,
+    "completion_tokens": 51
+  }
+}
+
+--- stderr ---
+

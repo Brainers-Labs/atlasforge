@@ -1,0 +1,40 @@
+[ ok ] 8.01: The live documentation site is up and every page in its sitemap loads (HTTP 200), logged out
+         42 pages; failing=[]
+[ ok ] 8.02: No broken internal links on the live site
+         2478 internal links checked; broken=[]
+[ ok ] 8.03: The live home page and navigation are intact (Quickstart, Reference, Troubleshooting present)
+         48120 bytes
+[FAIL] 8.04: Public docs do not claim things are 'never run on real weights' that we have now proved were run
+         stale on live site: {'help/status/': ['Not run on real weights']}
+[ ok ] 8.05: PyPI: name, version, Python range, licence and project URLs are correct
+         version=0.1.0a2 python=>=3.10 license=Apache-2.0 urls={'Homepage': 'https://github.com/Brainers-Labs/atlasforge', 'Issues': 'https://github.com/Brainers-Labs/atlasforge/issues'}
+[FAIL] 8.06: PyPI project description is accurate now that the speech models and LLM were run on real weights
+         PyPI page (frozen at release 0.1.0a2) still says: ['never been run', 'Not yet run against real weights', 'have not been loaded', 'has not been run either']. It can only be corrected by publishing a ne
+[ ok ] 8.07: The PyPI project page loads
+         HTTP 200
+[ ok ] 8.08: The GitHub repository is public (loads logged out)
+         HTTP 200
+[ ok ] 8.09-LICENSE: Repository has LICENSE
+         HTTP 200
+[ ok ] 8.09-README.md: Repository has README.md
+         HTTP 200
+[ ok ] 8.09-SECURITY.md: Repository has SECURITY.md
+         HTTP 200
+[ ok ] 8.09-CONTRIBUTING.md: Repository has CONTRIBUTING.md
+         HTTP 200
+[ ok ] 8.09-CHANGELOG.md: Repository has CHANGELOG.md
+         HTTP 200
+[ ok ] 8.10: SECURITY.md has a real private reporting route (advisory form or email) and no leftover TODO placeholder
+         # Security Policy ## Reporting a vulnerability Report privately through GitHub's [security advisory form](https://github.com/Brainers-Labs/atlasforge/security/advisories/new) with details and reproduc
+[ ok ] 8.11: pyproject.toml has no placeholder organisation text
+         no placeholder markers
+[ ok ] 8.12: Latest CI runs on main are green (CI, docs, release workflows where present)
+         {'Docs': 'success', 'CI': 'success', 'Publish to PyPI': 'success'}
+[ ok ] 8.13: CI passes on Linux, macOS and Windows with Python 3.10 and 3.13 (the support claim)
+         10 jobs: core install stays light=success; secrets + dependency audit=success; docs build (strict)=success; test (ubuntu-latest, py3.10)=success; test (ubuntu-latest, py3.13)=success; test (macos-late
+[ ok ] 8.14: The Colab link resolves
+         HTTP 200
+[ ok ] 8.15: The notebook exists in the public repository (so the Colab link has something to open)
+         HTTP 200, 7110 bytes
+[ ok ] 8.16: The quickstart notebook runs top to bottom in a clean environment using the PUBLISHED package, with no errors
+         CELLS_OK 6 | HAS_REGRESSION True True

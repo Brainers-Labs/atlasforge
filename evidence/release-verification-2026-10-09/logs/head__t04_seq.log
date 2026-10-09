@@ -1,0 +1,17 @@
+$ atlasforge eval d.jsonl --out seq --base-url http://127.0.0.1:55897/v1 --model m --retries 0 -m exact_match -m chrf
+[exit 0] [0.3s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃   Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 100.0% │      - │ 40 │
+│ chrf (aware)          │  100.0 │  100.0 │ 40 │
+│ exact_match (insens.) │ 100.0% │      - │ 40 │
+│ chrf (insens.)        │  100.0 │  100.0 │ 40 │
+└───────────────────────┴────────┴────────┴────┘
+40 examples: 40 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote seq/report.md, seq/report.json and seq/report.html
+
+--- stderr ---
+
+

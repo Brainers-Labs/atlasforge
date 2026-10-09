@@ -1,0 +1,21 @@
+$ atlasforge eval train.jsonl --out tuned --backend local --device cpu --model HuggingFaceTB/SmolLM2-135M-Instruct --temperature 0 --max-new-tokens 12 --adapter adapter -m exact_match -m chrf
+[exit 0] [19.0s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃ Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 0.0% │      - │ 40 │
+│ chrf (aware)          │  6.4 │    6.4 │ 40 │
+│ exact_match (insens.) │ 0.0% │      - │ 40 │
+│ chrf (insens.)        │  6.4 │    6.4 │ 40 │
+└───────────────────────┴──────┴────────┴────┘
+40 examples: 40 ok, 0 failed, 0 missing (failures count as wrong)
+Wrote tuned/report.md, tuned/report.json and tuned/report.html
+
+--- stderr ---
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 6537.38it/s]
+
+

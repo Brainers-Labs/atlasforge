@@ -1,0 +1,7 @@
+$ <test-dir>/venv-head/bin/python -c import sys, atlasforge, atlasforge.cli; heavy=[m for m in ('torch','transformers','librosa','peft','trl') if m in sys.modules]; print('HEAVY', heavy)
+[exit 0] [0.2s]
+--- stdout ---
+HEAVY []
+
+--- stderr ---
+

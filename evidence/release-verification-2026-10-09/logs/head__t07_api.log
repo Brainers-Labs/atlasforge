@@ -1,0 +1,10 @@
+$ <test-dir>/venv-head/bin/python api.py
+[exit 0] [0.2s]
+--- stdout ---
+EM 1.0 files ['report.html', 'report.json', 'report.md', 'results.jsonl', 'run.json']
+API ['Evaluation', 'compare_runs', 'evaluate', 'score_finished_run', 'write_comparison', 'write_reports']
+RESCORED 12
+CMP ['no clear change', 'no clear change']
+
+--- stderr ---
+

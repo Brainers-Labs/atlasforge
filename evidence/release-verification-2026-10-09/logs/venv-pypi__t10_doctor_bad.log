@@ -1,0 +1,26 @@
+$ atlasforge doctor
+[exit 1] [0.2s]
+--- stdout ---
+┏━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Status ┃ Check          ┃ Detail                                                                                                                                                                    ┃
+┡━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ OK     │ python         │ 3.10.12                                                                                                                                                                   │
+│ WARN   │ gpu            │ no NVIDIA GPU detected                                                                                                                                                    │
+│ OK     │ disk           │ 104 GB free                                                                                                                                                               │
+│ OK     │ ffmpeg         │ /opt/homebrew/bin/ffmpeg                                                                                                                                                  │
+│ FAIL   │ config         │ <test-dir>/work/extras_venv-pypi/badcfg/atlasforge.toml is not valid TOML: Expected '=' after a key in a key/value pair (at line 2, column 6) │
+│ OK     │ hf-token       │ cached login found                                                                                                                                                        │
+│ WARN   │ model-access   │ could not check 5 of 5 models                                                                                                                                             │
+│ WARN   │ extra:local    │ missing torch, transformers, accelerate                                                                                                                                   │
+│ WARN   │ extra:asr      │ missing transformers, librosa, soundfile                                                                                                                                  │
+│ WARN   │ extra:finetune │ missing peft, trl, datasets                                                                                                                                               │
+└────────┴────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+gpu: ASR models run on CPU. The 8B LLM needs a GPU or a remote OpenAI-compatible endpoint.
+config: Check the quoting and the structure; see the configuration reference.
+model-access: Install huggingface_hub and go online to check gated access, or open https://huggingface.co/NCAIR1/N-ATLaS to confirm by hand.
+extra:local: pip install "brainers-atlasforge[local]"
+extra:asr: pip install "brainers-atlasforge[asr]"
+extra:finetune: pip install "brainers-atlasforge[finetune]"
+
+--- stderr ---
+

@@ -1,0 +1,8 @@
+$ atlasforge report atlasforge-demo/runs/base --dataset atlasforge-demo/toy_qa.jsonl -m accuracy
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: accuracy needs a classification dataset.
+  -> Use task 'classification', or pick exact_match / chrf / wer / cer.
+

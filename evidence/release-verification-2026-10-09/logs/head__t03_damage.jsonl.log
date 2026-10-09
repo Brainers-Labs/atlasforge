@@ -1,0 +1,55 @@
+$ atlasforge dataset validate damage.jsonl --task generation  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "damage.jsonl",
+  "task": "generation",
+  "sha256": "29f35344b367411c7ef9d42fe2e911c3eed083a898ccc4cec0f2ad90984b450b",
+  "n_lines": 3,
+  "n_examples": 3,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "replacement-character",
+      "message": "1 example(s) contain U+FFFD (encoding damage): u1",
+      "line": null,
+      "count": 1,
+      "hint": "Re-export the source data as UTF-8; the original characters are lost."
+    },
+    {
+      "severity": "warning",
+      "code": "control-characters",
+      "message": "1 example(s) contain control characters: u3",
+      "line": null,
+      "count": 1,
+      "hint": null
+    },
+    {
+      "severity": "warning",
+      "code": "non-nfc",
+      "message": "1 example(s) have text not in Unicode NFC form: u2",
+      "line": null,
+      "count": 1,
+      "hint": "Normalise with unicodedata.normalize('NFC', text) before training. Scoring normalises anyway, but training data should be consistent."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 3
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 1,
+      "median": 2,
+      "max": 4
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1,
+      "max": 1
+    }
+  }
+}
+
+--- stderr ---
+

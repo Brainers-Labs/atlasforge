@@ -1,0 +1,17 @@
+$ atlasforge compare atlasforge-demo/toy_qa.jsonl --base atlasforge-demo/runs/base --candidate atlasforge-demo/runs/base --out cmp_same
+[exit 0] [0.2s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Metric                ┃ Base  ┃ Cand. ┃ Delta    ┃ 95% CI       ┃ Verdict         ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ exact_match (aware)   │ 62.0% │ 62.0% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (aware)          │ 67.2  │ 67.2  │ +0.0     │ [+0.0, +0.0] │ no clear change │
+│ exact_match (insens.) │ 75.0% │ 75.0% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (insens.)        │ 77.4  │ 77.4  │ +0.0     │ [+0.0, +0.0] │ no clear change │
+└───────────────────────┴───────┴───────┴──────────┴──────────────┴─────────────────┘
+No statistically clear regressions.
+1 slice(s) had too few examples to judge (see the report).
+Wrote cmp_same/comparison.md, cmp_same/comparison.json and cmp_same/comparison.html
+
+--- stderr ---
+

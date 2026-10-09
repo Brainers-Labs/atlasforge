@@ -1,0 +1,74 @@
+........................................................................ [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 15%]
+........................................................................ [ 21%]
+........................................................................ [ 26%]
+........................................................................ [ 31%]
+........................................................................ [ 36%]
+........................................................................ [ 42%]
+........................................................................ [ 47%]
+........................................................................ [ 52%]
+........................................................................ [ 57%]
+........................................................................ [ 63%]
+........................................................................ [ 68%]
+........................................................................ [ 73%]
+........................................................................ [ 79%]
+........................................................................ [ 84%]
+........................................................................ [ 89%]
+........................................................................ [ 94%]
+.......................................................................  [100%]
+================================ tests coverage ================================
+______________ coverage: platform darwin, python 3.10.12-final-0 _______________
+
+Name                                  Stmts   Miss Branch BrPart  Cover   Missing
+---------------------------------------------------------------------------------
+src/atlasforge/__init__.py                3      0      0      0   100%
+src/atlasforge/__main__.py                2      0      0      0   100%
+src/atlasforge/api.py                    76      0      8      0   100%
+src/atlasforge/asr/__init__.py            4      0      0      0   100%
+src/atlasforge/asr/audio.py              53      0     10      0   100%
+src/atlasforge/asr/chunking.py          138      0     38      0   100%
+src/atlasforge/asr/models.py              7      0      0      0   100%
+src/atlasforge/backends/__init__.py       2      0      0      0   100%
+src/atlasforge/backends/base.py           8      0      0      0   100%
+src/atlasforge/backends/factory.py       17      0      8      0   100%
+src/atlasforge/backends/local.py        156      4     48      3    97%   98->106, 151-152, 189, 277
+src/atlasforge/backends/openai.py       127      0     30      0   100%
+src/atlasforge/bench.py                 138      0     46      0   100%
+src/atlasforge/cards/__init__.py          2      0      0      0   100%
+src/atlasforge/cards/model_card.py      108      0     36      0   100%
+src/atlasforge/cli.py                   232      1     48      1    99%   467
+src/atlasforge/compare/__init__.py        5      0      0      0   100%
+src/atlasforge/compare/compare.py       123      1     28      2    98%   189, 333->332
+src/atlasforge/compare/report.py         90      2     26      2    97%   146, 205
+src/atlasforge/compare/slices.py         63      0     18      0   100%
+src/atlasforge/compare/stats.py          54      0     16      0   100%
+src/atlasforge/config.py                 60      4     14      1    93%   46, 91, 122-123
+src/atlasforge/demo.py                   84      2     12      0    98%   161, 172
+src/atlasforge/doctor.py                108      8     22      1    93%   86-87, 134-135, 138-139, 149, 271
+src/atlasforge/errors.py                 31      0      2      0   100%
+src/atlasforge/eval/__init__.py           0      0      0      0   100%
+src/atlasforge/eval/asr_analysis.py      98      2     32      2    97%   186, 194
+src/atlasforge/eval/custom.py            29      0      6      0   100%
+src/atlasforge/eval/dataset.py          111      0     34      0   100%
+src/atlasforge/eval/flags.py             75      2     24      0    98%   158-159
+src/atlasforge/eval/format.py            18      0      6      0   100%
+src/atlasforge/eval/metrics.py           73      0     24      0   100%
+src/atlasforge/eval/normalize.py         51      0     10      0   100%
+src/atlasforge/eval/report.py            54      0     16      1    99%   97->110
+src/atlasforge/eval/runner.py           171      6     46      2    96%   163-164, 185, 195, 290-291
+src/atlasforge/eval/score.py            131      1     36      2    98%   145->135, 288
+src/atlasforge/eval/validate.py         191      1     78      1    99%   357
+src/atlasforge/finetune/__init__.py       4      0      0      0   100%
+src/atlasforge/finetune/config.py        92      0     20      0   100%
+src/atlasforge/finetune/data.py          59      0     10      0   100%
+src/atlasforge/finetune/qlora.py         91      0     12      1    99%   80->83
+src/atlasforge/html.py                  227      1     66      3    99%   752->756, 756->774, 832
+src/atlasforge/livecheck.py             165      2     34      0    99%   131-132
+src/atlasforge/render.py                 48      1     22      1    97%   65
+src/atlasforge/security.py                9      0      2      0   100%
+src/atlasforge/types.py                  65      0     10      0   100%
+---------------------------------------------------------------------------------
+TOTAL                                  3453     38    898     23    99%
+Required test coverage of 90.0% reached. Total coverage: 98.60%
+1367 passed in 27.42s

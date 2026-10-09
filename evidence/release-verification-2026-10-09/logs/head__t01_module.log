@@ -1,0 +1,7 @@
+$ python -m atlasforge --version
+[exit 0] [0.2s]
+--- stdout ---
+atlasforge 0.1.0a2
+
+--- stderr ---
+

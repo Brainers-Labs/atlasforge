@@ -1,0 +1,19 @@
+$ atlasforge run hi --backend local --device cpu --model sshleifer/tiny-gpt2 --temperature 0
+[exit 2] [18.8s]
+--- stdout ---
+
+--- stderr ---
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/29 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 29/29 [00:00<00:00, 23600.08it/s]
+[transformers] [1mGPT2LMHeadModel LOAD REPORT[0m from: sshleifer/tiny-gpt2
+Key                                   | Status     |  | 
+--------------------------------------+------------+--+-
+transformer.h.{0, 1}.attn.masked_bias | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+error: The tokenizer of sshleifer/tiny-gpt2 has no chat template.
+  -> Record how N-ATLaS expects prompts in planning/21, then add support.
+

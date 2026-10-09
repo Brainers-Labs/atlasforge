@@ -1,0 +1,35 @@
+$ atlasforge dataset validate asr_missing.jsonl --task asr  --json
+[exit 1] [0.2s]
+--- stdout ---
+{
+  "path": "asr_missing.jsonl",
+  "task": "asr",
+  "sha256": "5daca0057d861332edc326cbe0112f4d78cead92d1e102f247c61aac4d27ed2b",
+  "n_lines": 1,
+  "n_examples": 0,
+  "issues": [
+    {
+      "severity": "error",
+      "code": "line-error",
+      "message": "audio file not found: nope.wav",
+      "line": 1,
+      "count": null,
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "code": "no-examples",
+      "message": "No valid examples.",
+      "line": null,
+      "count": null,
+      "hint": null
+    }
+  ],
+  "stats": {
+    "langs": {},
+    "diacritics": {}
+  }
+}
+
+--- stderr ---
+
