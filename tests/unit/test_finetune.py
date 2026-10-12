@@ -610,6 +610,16 @@ class TestTrainGuards:
         assert "Mac" in (info.value.hint or "")
         assert harness.events == []
 
+    def test_the_gpu_refusal_comes_before_the_other_heavy_imports(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        # Without a GPU the user should be told that, not that peft or datasets is missing.
+        harness = Harness(cuda=False)
+        harness.install(monkeypatch)
+        monkeypatch.setitem(sys.modules, "peft", None)  # an import of it now fails
+        with pytest.raises(ResourceError, match="NVIDIA"):
+            train(make_config(tmp_path))
+
     def test_plain_lora_without_a_gpu_is_refused_too(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:

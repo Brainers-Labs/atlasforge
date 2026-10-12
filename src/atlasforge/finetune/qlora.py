@@ -57,11 +57,6 @@ def train(config: QLoRAConfig) -> TrainingRun:
     """Fine-tune ``config.base_model`` on ``config.train_file`` and save the adapter."""
     data = prepare_data(config)  # validates first: fail before touching a GPU
     torch = _import("torch")
-    transformers = _import("transformers")
-    peft = _import("peft")
-    trl = _import("trl")
-    datasets = _import("datasets")
-
     if not torch.cuda.is_available():
         kind = "QLoRA (4-bit)" if config.quantize == "4bit" else "LoRA"
         raise ResourceError(
@@ -70,6 +65,11 @@ def train(config: QLoRAConfig) -> TrainingRun:
             "model on a Mac or CPU is not supported; on Apple Silicon the model load can hang "
             "or crash inside torch instead of failing cleanly.",
         )
+
+    transformers = _import("transformers")
+    peft = _import("peft")
+    trl = _import("trl")
+    datasets = _import("datasets")
 
     started = datetime.now(timezone.utc).isoformat(timespec="seconds")
     try:
