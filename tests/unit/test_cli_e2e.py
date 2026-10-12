@@ -198,6 +198,7 @@ class TestRun:
 
 
 class TestSpeechEval:
+    @needs_ffmpeg
     def test_a_speech_run_records_the_speech_model_that_was_asked_for(
         self, server: FakeModelServer, tmp_path: Path
     ) -> None:
