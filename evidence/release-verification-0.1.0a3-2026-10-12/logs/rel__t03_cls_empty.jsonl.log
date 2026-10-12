@@ -1,0 +1,51 @@
+$ atlasforge dataset validate cls_empty.jsonl --task classification  --json
+[exit 1] [0.2s]
+--- stdout ---
+{
+  "path": "cls_empty.jsonl",
+  "task": "classification",
+  "sha256": "e826bba768899a5fe7b460c6bb100edb945f32e931c259628cefb35ea94af131",
+  "n_lines": 2,
+  "n_examples": 2,
+  "issues": [
+    {
+      "severity": "info",
+      "code": "surrounding-whitespace",
+      "message": "1 example(s) have leading/trailing whitespace: c1",
+      "line": null,
+      "count": 1,
+      "hint": null
+    },
+    {
+      "severity": "error",
+      "code": "empty-reference",
+      "message": "1 example(s) have a reference that is empty after normalisation: c1",
+      "line": null,
+      "count": 1,
+      "hint": "Such examples cannot be scored."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 2
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 1,
+      "median": 1.0,
+      "max": 1
+    },
+    "reference_words": {
+      "min": 0,
+      "median": 0.5,
+      "max": 1
+    },
+    "labels": {
+      "": 1,
+      "x": 1
+    }
+  }
+}
+
+--- stderr ---
+

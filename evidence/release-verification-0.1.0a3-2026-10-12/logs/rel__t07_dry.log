@@ -1,0 +1,14 @@
+$ atlasforge finetune ft.json --dry-run
+[exit 0] [0.2s]
+--- stdout ---
+Base model:        NCAIR1/N-ATLaS
+Training file:     train.jsonl (30 examples, fingerprint 31ed4abc2ed11a7d)
+Held-out file:     test.jsonl
+Median length:     6 words per example
+Method:            QLoRA (4-bit), r=16, alpha=32
+Schedule:          1 epoch(s), effective batch 16, 2 step(s)/epoch, 2 total
+Output:            adapters/a
+Dry run: nothing was trained.
+
+--- stderr ---
+

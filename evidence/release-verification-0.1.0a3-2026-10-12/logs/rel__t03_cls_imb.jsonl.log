@@ -1,0 +1,43 @@
+$ atlasforge dataset validate cls_imb.jsonl --task classification  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "cls_imb.jsonl",
+  "task": "classification",
+  "sha256": "842786dec9eae11c147e654ef6aa8b3d1bf84b04154ba674f9e2649adc333994",
+  "n_lines": 20,
+  "n_examples": 20,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "class-imbalance",
+      "message": "Class 'positive' is 95% of the data.",
+      "line": null,
+      "count": null,
+      "hint": "Prefer macro-F1 over accuracy, or rebalance."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 20
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 2,
+      "median": 2.0,
+      "max": 2
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1.0,
+      "max": 1
+    },
+    "labels": {
+      "positive": 19,
+      "negative": 1
+    }
+  }
+}
+
+--- stderr ---
+

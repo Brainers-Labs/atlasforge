@@ -1,0 +1,24 @@
+[ ok ] 1.01: atlasforge --version prints the installed version
+         atlasforge 0.1.0a3
+[ ok ] 1.02: `python -m atlasforge` is equivalent to the command
+         atlasforge 0.1.0a3
+[ ok ] 1.03: Importing atlasforge and its CLI loads no torch/transformers/librosa/peft/trl
+         HEAVY []
+[ ok ] 1.04: Core install pulls in no ML framework packages
+         none
+[ ok ] 1.05: Top-level help lists every documented command
+         missing=[]
+[ ok ] 1.06: Every command and subcommand has working --help (exit 0)
+         bad=[]
+[ ok ] 1.07: An unknown command fails cleanly (non-zero, no traceback)
+         rc=2
+[ ok ] 1.08: doctor runs on a bare install and exits 0 when nothing hard-fails
+         rc=0; head: ┏━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓ | ┃ Status ┃ Check          ┃ Detail                                                ┃ | ┡━━━━━━━━╇━━━━━━
+[ ok ] 1.09: doctor --json is valid JSON with name/status/detail/hint per check
+         checks=['config', 'disk', 'extra:asr', 'extra:finetune', 'extra:local', 'ffmpeg', 'gpu', 'hf-token', 'model-access', 'python']
+[ ok ] 1.10: doctor masks a Hugging Face token (shows hf_****abcd, never the secret)
+         │ OK     │ hf-token       │ found (hf_****abcd)                                   │
+[ ok ] 1.11: doctor --json also never contains the token
+         token absent from JSON
+[ ok ] 1.12: doctor reports a missing ffmpeg with the install command for the OS
+         ['│ WARN   │ ffmpeg         │ not found (needed for ogg/opus/m4a/mp3 audio)         │', 'ffmpeg: Windows: winget install Gyan.FFmpeg | macOS: brew install ffmpeg | Linux: apt install ffmpeg']

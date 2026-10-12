@@ -1,0 +1,7 @@
+$ atlasforge dataset validate atlasforge-demo/toy_qa.jsonl
+[exit 0] [0.2s]
+--- stdout ---
+OK: 92 valid example(s) from 92 line(s), 0 error(s), 0 warning(s).
+
+--- stderr ---
+

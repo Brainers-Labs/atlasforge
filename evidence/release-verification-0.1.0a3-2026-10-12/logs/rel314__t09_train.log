@@ -1,0 +1,8 @@
+$ atlasforge finetune ft.json
+[exit 2] [1.0s]
+--- stdout ---
+
+--- stderr ---
+error: LoRA training needs an NVIDIA GPU, and none was found.
+  -> Use a GPU machine (Colab, a cloud GPU, a university cluster). Training an 8B model on a Mac or CPU is not supported; on Apple Silicon the model load can hang or crash inside torch instead of failing cleanly.
+

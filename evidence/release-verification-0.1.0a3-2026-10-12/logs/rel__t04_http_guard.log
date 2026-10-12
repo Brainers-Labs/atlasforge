@@ -1,0 +1,8 @@
+$ atlasforge run hi --base-url http://192.0.2.10:8000/v1 --timeout 2 --retries 0
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: Refusing plain http to a non-local host (192.0.2.10).
+  -> Use https, or pass allow_insecure_http=True if you trust the network.
+

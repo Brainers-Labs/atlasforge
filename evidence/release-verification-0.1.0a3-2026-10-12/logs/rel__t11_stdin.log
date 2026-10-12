@@ -1,0 +1,7 @@
+$ echo hello | atlasforge run - --base-url http://127.0.0.1:51379/v1 --model m
+[exit 0] [0.3s]
+--- stdout ---
+ok
+
+--- stderr ---
+

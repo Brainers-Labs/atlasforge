@@ -1,0 +1,19 @@
+$ atlasforge compare train.jsonl --base base --candidate tuned --out cmp --slice set -m exact_match -m chrf
+[exit 0] [0.3s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Metric                ┃ Base ┃ Cand. ┃ Delta    ┃ 95% CI       ┃ Verdict         ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ exact_match (aware)   │ 0.0% │ 0.0%  │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (aware)          │ 13.6 │ 6.4   │ -7.3     │ [-7.7, -6.9] │ regressed       │
+│ exact_match (insens.) │ 0.0% │ 0.0%  │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ chrf (insens.)        │ 13.6 │ 6.4   │ -7.3     │ [-7.7, -6.9] │ regressed       │
+└───────────────────────┴──────┴───────┴──────────┴──────────────┴─────────────────┘
+Regressions
+  - chrf (tone-aware) got worse overall
+  - chrf (tone-insensitive) got worse overall
+2 slice(s) had too few examples to judge (see the report).
+Wrote cmp/comparison.md, cmp/comparison.json and cmp/comparison.html
+
+--- stderr ---
+

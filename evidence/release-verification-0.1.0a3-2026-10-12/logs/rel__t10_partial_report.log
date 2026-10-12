@@ -1,0 +1,14 @@
+$ atlasforge report partial --dataset d40.jsonl -m exact_match
+[exit 0] [0.2s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃  Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 30.0% │      - │ 40 │
+│ exact_match (insens.) │ 30.0% │      - │ 40 │
+└───────────────────────┴───────┴────────┴────┘
+40 examples: 12 ok, 0 failed, 28 missing (failures count as wrong)
+Wrote partial/report.md, partial/report.json and partial/report.html
+
+--- stderr ---
+

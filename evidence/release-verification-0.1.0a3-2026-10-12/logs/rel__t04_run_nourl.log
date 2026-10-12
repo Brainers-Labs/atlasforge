@@ -1,0 +1,8 @@
+$ atlasforge run hi
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: The openai backend needs a server URL.
+  -> Pass --base-url (or set ATLASFORGE_BASE_URL), e.g. http://127.0.0.1:8000/v1
+

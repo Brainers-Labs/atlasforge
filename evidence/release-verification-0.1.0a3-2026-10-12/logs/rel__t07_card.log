@@ -1,0 +1,8 @@
+$ atlasforge card --name 'Hausa Agri Helper' --description 'Answers farming questions.' --training-data @terms.txt --lang ha --domain agriculture --author 'Brainers Labs' --comparison <test-dir>/work/llm_venv-pypi/cmp/comparison.json --out card.md
+[exit 0] [0.2s]
+--- stdout ---
+Wrote card.md
+
+--- stderr ---
+warning: The name does not include "Powered by Awarri", which the base licence asks derivative works to carry. Suggested: "Hausa Agri Helper - Powered by Awarri".
+

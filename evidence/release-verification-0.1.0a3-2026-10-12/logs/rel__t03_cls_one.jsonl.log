@@ -1,0 +1,42 @@
+$ atlasforge dataset validate cls_one.jsonl --task classification  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "cls_one.jsonl",
+  "task": "classification",
+  "sha256": "1eaf07a800287c4d60a960d546ef2ae4fa9f2fe6cfc2ac69ca4b2d2f8eb16adb",
+  "n_lines": 5,
+  "n_examples": 5,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "single-class",
+      "message": "Only one class present: 'positive'.",
+      "line": null,
+      "count": null,
+      "hint": "Accuracy will look perfect for a model that always says that label."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 5
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 1,
+      "median": 1,
+      "max": 1
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1,
+      "max": 1
+    },
+    "labels": {
+      "positive": 5
+    }
+  }
+}
+
+--- stderr ---
+

@@ -1,0 +1,8 @@
+$ atlasforge finetune ft_tiny.json --dry-run
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: Only 5 training example(s); at least 20 are required.
+  -> Fine-tuning on a handful of examples mostly teaches the model to repeat them. Add data, or lower min_examples if you really mean it.
+

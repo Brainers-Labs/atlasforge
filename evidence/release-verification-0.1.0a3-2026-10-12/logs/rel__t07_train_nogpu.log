@@ -1,0 +1,8 @@
+$ atlasforge finetune ft.json
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: Fine-tuning needs 'torch', which is not installed.
+  -> pip install "brainers-atlasforge[finetune]"
+

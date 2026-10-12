@@ -1,0 +1,39 @@
+$ atlasforge dataset validate test.jsonl --task generation --against train.jsonl --json
+[exit 1] [0.2s]
+--- stdout ---
+{
+  "path": "test.jsonl",
+  "task": "generation",
+  "sha256": "205d791ef6e018c1a666ee2befa8739e11056cbff6cc0a7608665336ef67608f",
+  "n_lines": 2,
+  "n_examples": 2,
+  "issues": [
+    {
+      "severity": "error",
+      "code": "train-test-leakage",
+      "message": "1 example(s) also appear in train.jsonl (0 identical, 1 differing only in case, punctuation or tone marks): x1",
+      "line": null,
+      "count": 1,
+      "hint": "Remove them from one side, or your evaluation measures memorisation."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 2
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 2,
+      "median": 2.5,
+      "max": 3
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1.0,
+      "max": 1
+    }
+  }
+}
+
+--- stderr ---
+

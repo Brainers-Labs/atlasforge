@@ -1,0 +1,64 @@
+[ ok ] 4.01: eval runs a dataset through an OpenAI-compatible server and writes run.json, results.jsonl, report.*
+         rc=0 records=40 request_id=stub-1
+[ ok ] 4.02: The API key is sent as a Bearer token (server accepted it) ...
+         40 requests authenticated
+[ ok ] 4.03: ... and the key never appears in stdout, stderr, run.json, results, or any report
+         searched all outputs
+[ ok ] 4.04: run.json records model and settings but no URL, key or token
+         manifest clean
+[ ok ] 4.05: There is no --api-key flag (so a key cannot land in shell history or the process list)
+         flag absent
+[ ok ] 4.06: A server demanding a key, given none: reported as HTTP 401 failures and the breaker stops the run (exit 2), never a traceback
+         error: Stopped after 20 failures in a row. Last error: BackendHTTPError: Endpoint returned HTTP 401. |   -> The server refused the credentials
+[ ok ] 4.07: After kill -9 mid-run, re-running the same command resumes: finished examples are NOT run again, and all end up complete
+         finished before kill=15; resumed message=True; re-requested finished=0; final unique ids=40/40
+[ ok ] 4.08: Re-using a run directory with a different model is refused (never mixes results)
+         error: guard holds a different run (changed: model). |   -> Use a new output directory, or delete this one to start over.
+[ ok ] 4.09: ... or with different generation settings
+         error: guard holds a different run (changed: gen_params). |   -> Use a new output directory, or delete this one to start over.
+[ ok ] 4.10: ... or with an edited dataset
+         error: guard holds a different run (changed: dataset_sha256). |   -> Use a new output directory, or delete this one to start over.
+[ ok ] 4.11: A dead server trips the circuit breaker: stops after 5 failures in a row (exit 2) instead of hammering all 40 examples
+         rc=2 requests sent=5 (of 40); msg=error: Stopped after 5 failures in a row. Last error: BackendHTTPError: Endpoint returned HTTP 500. |   -> Fix t
+[ ok ] 4.12: After fixing the server, the same command resumes and completes everything that failed
+         rc=0 ok=40/40
+[ ok ] 4.13: With the breaker off and everything failing: all 40 are tried, exit code 1, and the report scores them as wrong (0%), not as missing
+         rc=1 requests=40 n_failed=40 mean=0.0
+[ ok ] 4.14: 3 transient failures: exit 0 with a warning; the report counts 3 failed and the score drops by exactly those (37/40)
+         n_failed=3 mean=0.9250; stderr=warning: 3 of 40 example(s) failed; see partial/results.jsonl
+[ ok ] 4.15: --no-retry-errors leaves failed examples as failures on resume
+         n_failed=3
+[ ok ] 4.16: By default a resume retries failed examples and fixes them (40/40)
+         n_failed=0 mean=1.0
+[ ok ] 4.17: --retries masks transient 503s: every example succeeds and the server saw the extra attempts
+         n_failed=0 requests=42 (expected 42)
+[ ok ] 4.18: A timeout is reported ('No response within 1s') and is NOT retried (3 examples = 3 requests)
+         requests=3 error=['BackendTimeout: No response within 1s.']
+[ ok ] 4.19: --concurrency 8 gives exactly the same scores as sequential
+         identical per-example scores for 40 examples
+[ ok ] 4.20: A server error body (which may echo the prompt) never reaches output, results or reports
+         canary absent everywhere
+[ ok ] 4.21: Plain http:// to a non-local host is refused before any request is made
+         error: Refusing plain http to a non-local host (192.0.2.10). |   -> Use https, or pass allow_insecure_http=True if you trust the network.
+[ ok ] 4.22: --allow-insecure-http lets the user opt in knowingly (fails later on connection, not on policy)
+         error: No response within 2s. |   -> Raise timeout=..., or check that the server is not overloaded.
+[ ok ] 4.23: run prints the answer
+         'ans3'
+[ ok ] 4.24: run --json returns text, model, latency, finish_reason, request_id, usage
+         keys=['finish_reason', 'latency_ms', 'model', 'request_id', 'revision', 'text', 'usage']
+[ ok ] 4.25: run forwards --system, --temperature, --max-new-tokens, --seed and the model-card repetition penalty (1.12) to the server
+         {"model": "m", "temperature": 0.0, "max_tokens": 77, "seed": 5, "repetition_penalty": 1.12}
+[ ok ] 4.26: --no-send-repetition-penalty omits the field for servers that reject it
+         field absent
+[ ok ] 4.27: run - reads the prompt from standard input
+         'ans6'
+[ ok ] 4.28: Without a server URL the error says exactly what to do
+         error: The openai backend needs a server URL. |   -> Pass --base-url (or set ATLASFORGE_BASE_URL), e.g. http://127.0.0.1:8000/v1
+[ ok ] 4.29: Precedence works as documented: flag beats environment beats atlasforge.toml
+         file-server hits=1, env-server hits=1, flag-server hits=1
+[ ok ] 4.30: A misspelled setting in atlasforge.toml is an error naming the valid keys (never a silent no-op)
+         error: <test-dir>/work/eval/proj/atlasforge.toml has unknown setting(s): base-url. |   -> Valid keys under [atlasforge]: backend, base_url, device, model, quantize, retries
+[ ok ] 4.31: doctor shows the config file it found
+         ['│ FAIL   │ config         │ <test-dir>/work/eval/proj/atlasforge.toml has unknown setting(s): base-url. │']
+[ ok ] 4.32: A custom metric named module:function runs through eval and is reported under both views
+         mean=1.0; views=['tone_aware', 'tone_insensitive']

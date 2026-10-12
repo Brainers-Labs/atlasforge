@@ -1,0 +1,46 @@
+[ ok ] 2.01: demo writes a dataset and two finished runs with no model, token or network
+         files=['runs/base/results.jsonl', 'runs/base/run.json', 'runs/tuned/results.jsonl', 'runs/tuned/run.json', 'toy_qa.jsonl']
+[ ok ] 2.02: The demo dataset has 92 questions (docs claim)
+         n=92
+[ ok ] 2.03: Demo runs are labelled synthetic in their manifest so they cannot pass for real results
+         model=synthetic-demo/base
+[ ok ] 2.04: dataset validate accepts the demo dataset (exit 0, OK)
+         OK: 92 valid example(s) from 92 line(s), 0 error(s), 0 warning(s).
+[ ok ] 2.05: report writes report.md, report.json and report.html with no model
+         , 0 missing (failures count as wrong) | Wrote atlasforge-demo/runs/base/report.md, atlasforge-demo/runs/base/report.json and atlasforge-demo/runs/base/report.html
+[ ok ] 2.06: Every text metric is reported under both tone-aware and tone-insensitive views
+         views=['tone_aware', 'tone_insensitive']
+[ ok ] 2.07: report states failed examples (they count as wrong, never dropped)
+         ok=90 failed=2 missing=0 total=92
+[ ok ] 2.08: compare writes comparison.md, comparison.json and comparison.html
+         = numeracy (n=40): -20.0 pts | 2 slice(s) had too few examples to judge (see the report). | Wrote cmp1/comparison.md, cmp1/comparison.json and cmp1/comparison.html
+[ ok ] 2.09: Demo behaves as documented: tuned is better overall but REGRESSES on has_number (a regression is surfaced, not hidden)
+         overall=exact_match@tone_aware:improved delta=0.174; has_number=yes status=regressed
+[ ok ] 2.10a: report.html is one self-contained page (no <script>, no external reference)
+         size=7726B scripts=0 external_refs=0
+[ ok ] 2.10b: comparison.html is one self-contained page (no <script>, no external reference)
+         size=17367B scripts=0 external_refs=0
+[ ok ] 2.11: compare is deterministic: the same inputs and seed give byte-identical comparison.json
+         identical
+[ ok ] 2.12: A different --seed changes only the bootstrap interval, never the means or counts
+         low 0.0326 vs 0.0435
+[ ok ] 2.13a: Exact-match means and win/tie/loss counts match an independent recomputation (tone_aware)
+         base=0.6196 cand=0.7935 W/T/L=31/46/15
+[ ok ] 2.13b: Exact-match means and win/tie/loss counts match an independent recomputation (tone_insensitive)
+         base=0.7500 cand=0.8152 W/T/L=21/56/15
+[ ok ] 2.14: Exact McNemar p-value matches an independent exact binomial computation
+         discordant=15/31 p_independent=2.590e-02 p_tool=2.590e-02
+[ ok ] 2.15: The 95% bootstrap interval agrees with an independent 20,000-resample bootstrap (within 0.03)
+         tool=[0.033,0.315] independent=[0.033,0.315] delta=0.174
+[ ok ] 2.16: Slices under 30 examples are reported as insufficient data, larger ones get a verdict
+         numeracy n=40 regressed; agri n=40 improved; greetings n=12 insufficient data
+[ ok ] 2.17: Comparing a run with itself gives delta 0, a zero-width interval and 'no clear change'
+         verdicts=['no clear change']
+[ ok ] 2.18: compare refuses to pair runs made from a different dataset (hash check), with a hint
+         error: atlasforge-demo/runs/base was not produced from this dataset and task. |   -> Re-run it on the same dataset file, or pass the dataset it was run on.
+[ ok ] 2.19: report re-scores with different metrics (chrf++) and never modifies results.jsonl
+         results.jsonl unchanged=True; metrics=['chrf++', 'exact_match']
+[ ok ] 2.20: Asking for a classification-only metric on a generation dataset fails with a clear hint
+         error: accuracy needs a classification dataset. |   -> Use task 'classification', or pick exact_match / chrf / wer / cer.
+[ ok ] 2.21: Pointing report at a non-run directory gives a clean error, not a traceback
+         error: /nonexistent is not a run directory (no run.json). |   -> Produce one with `atlasforge eval`.

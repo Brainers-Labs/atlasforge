@@ -1,0 +1,54 @@
+$ atlasforge dataset validate yo_stripped.jsonl --task generation  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "yo_stripped.jsonl",
+  "task": "generation",
+  "sha256": "5e3b2a7372268e3b2f24296a1a02e63b836dd55c3fc9680c3bf1172505d98129",
+  "n_lines": 25,
+  "n_examples": 25,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "diacritics-missing",
+      "message": "None of 50 'yo' texts contain tone marks. The diacritics may have been stripped.",
+      "line": null,
+      "count": null,
+      "hint": "Stripped diacritics change meaning and hurt training and scoring."
+    },
+    {
+      "severity": "warning",
+      "code": "diacritics-missing",
+      "message": "None of 50 'yo' texts contain underdotted letters (e, o, s). The diacritics may have been stripped.",
+      "line": null,
+      "count": null,
+      "hint": "Stripped diacritics change meaning and hurt training and scoring."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "yo": 25
+    },
+    "diacritics": {
+      "yo": {
+        "texts": 50,
+        "tone_rate": 0.0,
+        "underdot_rate": 0.0,
+        "hooked_rate": 0.0
+      }
+    },
+    "input_words": {
+      "min": 6,
+      "median": 6,
+      "max": 6
+    },
+    "reference_words": {
+      "min": 4,
+      "median": 4,
+      "max": 4
+    }
+  }
+}
+
+--- stderr ---
+

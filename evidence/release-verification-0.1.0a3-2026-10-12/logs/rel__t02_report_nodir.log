@@ -1,0 +1,8 @@
+$ atlasforge report /nonexistent --dataset atlasforge-demo/toy_qa.jsonl
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: /nonexistent is not a run directory (no run.json).
+  -> Produce one with `atlasforge eval`.
+

@@ -1,0 +1,18 @@
+$ gh api 'repos/Brainers-Labs/atlasforge/actions/runs?branch=main&per_page=12' --jq '.workflow_runs[] | [.name, .conclusion, .head_sha[0:7], .created_at] | @tsv'
+[exit 0] [0.9s]
+--- stdout ---
+Publish to PyPI	success	3048dbc	2026-10-12T06:32:36Z
+Docs	success	3048dbc	2026-10-12T06:28:40Z
+CI	success	3048dbc	2026-10-12T06:28:40Z
+Docs	success	58ec387	2026-10-12T06:19:17Z
+CI	failure	58ec387	2026-10-12T06:19:17Z
+Docs	success	15ca9ba	2026-10-12T06:17:05Z
+CI	cancelled	15ca9ba	2026-10-12T06:17:05Z
+Docs	success	d013562	2026-10-09T17:28:37Z
+CI	success	d013562	2026-10-09T17:28:37Z
+Docs	success	28030de	2026-10-09T17:18:40Z
+CI	success	28030de	2026-10-09T17:18:39Z
+Docs	success	bf10ceb	2026-10-08T13:15:45Z
+
+--- stderr ---
+

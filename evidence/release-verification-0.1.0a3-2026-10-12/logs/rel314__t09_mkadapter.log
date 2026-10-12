@@ -1,0 +1,11 @@
+$ <test-dir>/venv-rel314/bin/python mk_adapter.py
+[exit 0] [5.2s]
+--- stdout ---
+ADAPTER_OK
+
+--- stderr ---
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+
+Loading weights:   0%|          | 0/272 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 272/272 [00:00<00:00, 5741.66it/s]
+

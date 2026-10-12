@@ -1,0 +1,14 @@
+$ atlasforge finetune ft.json --dry-run
+[exit 0] [0.2s]
+--- stdout ---
+Base model:        HuggingFaceTB/SmolLM2-135M-Instruct
+Training file:     train.jsonl (40 examples, fingerprint ffaaed1aad367a0a)
+Held-out file:     (none given: leakage was NOT checked)
+Median length:     7 words per example
+Method:            LoRA (no quantisation), r=8, alpha=16
+Schedule:          4 epoch(s), effective batch 4, 10 step(s)/epoch, 40 total
+Output:            adapter
+Dry run: nothing was trained.
+
+--- stderr ---
+

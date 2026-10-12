@@ -1,0 +1,7 @@
+$ atlasforge --version
+[exit 0] [2.1s]
+--- stdout ---
+atlasforge 0.1.0a3
+
+--- stderr ---
+

@@ -1,0 +1,16 @@
+$ gh api repos/Brainers-Labs/atlasforge/actions/runs/38212699692/jobs --jq '.jobs[] | [.name, .conclusion] | @tsv'
+[exit 0] [1.0s]
+--- stdout ---
+build sdist + wheel and install them clean	success
+core install stays light	success
+secrets + dependency audit	success
+test (ubuntu-latest, py3.10)	success
+test (macos-latest, py3.10)	success
+docs build (strict)	success
+test (ubuntu-latest, py3.13)	success
+test (macos-latest, py3.13)	success
+test (windows-latest, py3.10)	success
+test (windows-latest, py3.13)	success
+
+--- stderr ---
+

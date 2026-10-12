@@ -1,0 +1,16 @@
+$ atlasforge report atlasforge-demo/runs/base --dataset atlasforge-demo/toy_qa.jsonl -m exact_match -m chrf++
+[exit 0] [0.2s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━━┳━━━━┓
+┃ Metric                ┃  Mean ┃ Pooled ┃  n ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━━╇━━━━┩
+│ exact_match (aware)   │ 62.0% │      - │ 92 │
+│ chrf++ (aware)        │  66.4 │   48.3 │ 92 │
+│ exact_match (insens.) │ 75.0% │      - │ 92 │
+│ chrf++ (insens.)      │  76.8 │   75.3 │ 92 │
+└───────────────────────┴───────┴────────┴────┘
+92 examples: 90 ok, 2 failed, 0 missing (failures count as wrong)
+Wrote atlasforge-demo/runs/base/report.md, atlasforge-demo/runs/base/report.json and atlasforge-demo/runs/base/report.html
+
+--- stderr ---
+

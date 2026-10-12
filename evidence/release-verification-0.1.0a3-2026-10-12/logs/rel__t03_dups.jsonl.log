@@ -1,0 +1,47 @@
+$ atlasforge dataset validate dups.jsonl --task generation  --json
+[exit 0] [0.2s]
+--- stdout ---
+{
+  "path": "dups.jsonl",
+  "task": "generation",
+  "sha256": "4a110d3d8699cf9085f95623f3934541527a4099d0431a07176661e1f3de2114",
+  "n_lines": 4,
+  "n_examples": 4,
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "duplicate-content",
+      "message": "1 example(s) repeat an earlier example (same input and reference): d2",
+      "line": null,
+      "count": 1,
+      "hint": "Duplicates inflate scores and can leak between splits."
+    },
+    {
+      "severity": "warning",
+      "code": "conflicting-references",
+      "message": "2 example(s) share an input with a different reference: d3, d4",
+      "line": null,
+      "count": 2,
+      "hint": "The same question has more than one 'correct' answer."
+    }
+  ],
+  "stats": {
+    "langs": {
+      "(none)": 4
+    },
+    "diacritics": {},
+    "input_words": {
+      "min": 1,
+      "median": 1.5,
+      "max": 2
+    },
+    "reference_words": {
+      "min": 1,
+      "median": 1.0,
+      "max": 1
+    }
+  }
+}
+
+--- stderr ---
+

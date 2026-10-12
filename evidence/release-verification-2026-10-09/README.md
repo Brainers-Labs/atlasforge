@@ -1,4 +1,6 @@
-# Release verification, 9 October 2026
+# Release verification, 9 October 2026 (0.1.0a2)
+
+> **Superseded.** This tested 0.1.0a2 and found the defects listed in its report. They are fixed in 0.1.0a3; see the [0.1.0a3 verification](../release-verification-0.1.0a3-2026-10-12/REPORT.md). This folder is kept as the record of what was found.
 
 A black-box test of AtlasForge before public release. It installs the **published** package from PyPI in clean virtual environments (and, separately, the unreleased repository build), then drives it as a user would: the command line, and the documented Python API. Real model weights and real audio are used wherever this machine can run them.
 

@@ -1,0 +1,17 @@
+$ atlasforge compare asr_ha.jsonl --task asr --base run_ha --candidate run_ha_cpu --out cmp_asr
+[exit 0] [0.2s]
+--- stdout ---
+┏━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Metric        ┃ Base  ┃ Cand. ┃ Delta    ┃ 95% CI       ┃ Verdict         ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ wer (aware)   │ 29.7% │ 29.7% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ cer (aware)   │ 10.5% │ 10.5% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ wer (insens.) │ 29.7% │ 29.7% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+│ cer (insens.) │ 10.5% │ 10.5% │ +0.0 pts │ [+0.0, +0.0] │ no clear change │
+└───────────────┴───────┴───────┴──────────┴──────────────┴─────────────────┘
+No statistically clear regressions.
+5 slice(s) had too few examples to judge (see the report).
+Wrote cmp_asr/comparison.md, cmp_asr/comparison.json and cmp_asr/comparison.html
+
+--- stderr ---
+

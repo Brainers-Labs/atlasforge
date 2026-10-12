@@ -1,0 +1,8 @@
+$ atlasforge run hi --base-url http://192.0.2.10:8000/v1 --timeout 2 --retries 0 --allow-insecure-http
+[exit 2] [2.3s]
+--- stdout ---
+
+--- stderr ---
+error: No response within 2s.
+  -> Raise timeout=..., or check that the server is not overloaded.
+

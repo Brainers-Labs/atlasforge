@@ -4,6 +4,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 
 ## [Unreleased]
 
+### Added
+- A verification report for 0.1.0a3 under `evidence/release-verification-0.1.0a3-2026-10-12/`: the suite re-run against the published package in fresh environments with no workarounds. 199 of 199 checks that can run pass; each finding from the 0.1.0a2 report is shown fixed.
+
 ## [0.1.0a3] - 2026-10-12
 
 ### Added

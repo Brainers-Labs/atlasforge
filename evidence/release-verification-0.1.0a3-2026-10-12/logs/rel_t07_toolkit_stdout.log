@@ -1,0 +1,40 @@
+[ ok ] 7.01: finetune --dry-run validates data and prints the plan with no GPU, writes nothing, exit 0
+         Base model: NCAIR1/N-ATLaS Training file: train.jsonl (30 examples, fingerprint 31ed4abc2ed11a7d) Held-out file: test.jsonl Median length: 6 words per example Method: QLoRA (4-bit), r=16, alpha=32 Sch
+[ ok ] 7.02: Train/test leakage is refused before any training (even when it differs only in case/punctuation)
+         error: The training data has 1 error(s): 1 example(s) also appear in test_leak.jsonl (0 identical, 1 differing only in case, punctuation or tone marks): t3 |   -> Run `atlasforge dataset validate trai
+[ ok ] 7.03: A tiny training set (5 examples) is refused: 'at least 20 are required'
+         error: Only 5 training example(s); at least 20 are required. |   -> Fine-tuning on a handful of examples mostly teaches the model to repeat them. Add data, or lower min_examples if you really mean it.
+[ ok ] 7.04: Config typos and every invalid value are reported together (unknown key, bad learning_rate, bad quantize)
+         error: Unknown setting(s) in ft_typo.json: lora_rank. -> Known settings: base_model, batch_size, eval_file, grad_accum, learning_rate, logging_steps, lora_alpha, lora_dropout, lora_r, max_seq_len, min
+[ ok ] 7.05: Real training without the needed hardware/extras fails early with a clear message and no partial output (torch missing -> install hint; torch present but no NVIDIA GPU -> says it needs an NVIDIA GPU)
+         torch_installed=False; error: Fine-tuning needs 'torch', which is not installed. |   -> pip install "brainers-atlasforge[finetune]"
+[ n/a] 7.06: An actual QLoRA training run and evaluating the resulting adapter (--adapter)
+         Needs an NVIDIA GPU with CUDA; this Mac has none. The documentation says the same: the training run has never been executed.
+[ ok ] 7.07: card adds the required 'Powered by Awarri' suffix to the model name when missing
+         title line: '# Hausa Agri Helper - Powered by Awarri'
+[ ok ] 7.08: The card carries the licence obligations: attribution to Awarri Technologies, 1,000 user cap, no redistribution of base weights
+         has Awarri=True cap=True
+[ ok ] 7.09: The card includes the evaluation numbers and states regressions from comparison.json (does not hide them)
+         mentions regression=True
+[ ok ] 7.10: The card includes the stated training-data licence from the file given with @
+         found 'CC BY 4.0'
+[ ok ] 7.11: card refuses to run without a stated training-data source and licence (required option)
+         ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+[ ok ] 7.12: bench afrobench without the harness fails with a clear instruction, not a traceback
+         error: lm-evaluation-harness is not installed, so there are no tasks to run. -> Install it with: pip install "brainers-atlasforge[bench]"
+[ n/a] 7.13: Running AfroBench-LITE against N-ATLaS through lm-evaluation-harness
+         Needs the bench extra, a GPU and the gated weights loaded in-process; not possible on this machine. Docs mark it unverified.
+[ ok ] 7.14: Python API: atlasforge.evaluate() with your own Backend object runs, scores and writes run.json/results/report.md/json/html
+         EM 1.0 files ['report.html', 'report.json', 'report.md', 'results.jsonl', 'run.json'] API ['Evaluation', 'compare_runs', 'evaluate', 'score_finished_run', 'write_comparison', 'write_reports'] RESCORED
+[ ok ] 7.15: A Backend object you pass in stays yours: AtlasForge does not close it
+         close() not called
+[ ok ] 7.16: score_finished_run and compare_runs work from the Python API
+         uate', 'score_finished_run', 'write_comparison', 'write_reports'] RESCORED 12 CMP ['no clear change', 'no clear change']
+[ ok ] 7.17: The distribution contains no model weights or audio (licence: nothing is redistributed), and is small
+         52 files, 134 KB; weights/audio=[]; files >500KB=[]
+[ ok ] 7.18: The wheel ships type information (py.typed) and the licence
+         py.typed and LICENSE present
+[ ok ] 7.19: Only the five official NCAIR1 model ids appear in the shipped code (no other foundation model)
+         ids=['NCAIR1/Hausa-ASR', 'NCAIR1/Igbo-ASR', 'NCAIR1/N-ATLaS', 'NCAIR1/NigerianAccentedEnglish', 'NCAIR1/Yoruba-ASR']
+[ ok ] 7.20: No LLM-as-judge and no third-party model API is referenced in the shipped code
+         found=[]

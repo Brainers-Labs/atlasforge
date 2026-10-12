@@ -1,0 +1,8 @@
+$ atlasforge bench afrobench --list
+[exit 2] [0.2s]
+--- stdout ---
+
+--- stderr ---
+error: lm-evaluation-harness is not installed, so there are no tasks to run.
+  -> Install it with: pip install "brainers-atlasforge[bench]"
+
