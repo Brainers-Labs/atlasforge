@@ -34,7 +34,7 @@ if TYPE_CHECKING:
 
     from atlasforge.backends.base import Backend
     from atlasforge.eval.dataset import Dataset, Example
-    from atlasforge.types import Lang
+    from atlasforge.types import BackendInfo, Lang
 
 MANIFEST_NAME: Final = "run.json"
 RESULTS_NAME: Final = "results.jsonl"
@@ -101,7 +101,7 @@ def run(
     out.mkdir(parents=True, exist_ok=True)
     langs = _resolve_langs(dataset, cfg)
 
-    manifest = _manifest(backend, dataset, cfg)
+    manifest = _manifest(backend, dataset, cfg, langs)
     manifest_path = out / MANIFEST_NAME
     if manifest_path.exists():
         _check_resume(manifest_path, manifest)
@@ -129,8 +129,7 @@ def run(
             if limit and streak >= limit:
                 raise RunAborted(
                     f"Stopped after {streak} failures in a row. Last error: {record.error}",
-                    hint="Fix the cause, then re-run with the same --out to resume; "
-                    "everything already finished is kept.",
+                    hint=_abort_hint(record.error),
                 )
 
         if cfg.concurrency == 1:
@@ -264,7 +263,9 @@ def _resolve_langs(dataset: Dataset, cfg: RunConfig) -> dict[str, Lang]:
     return resolved
 
 
-def _manifest(backend: Backend, dataset: Dataset, cfg: RunConfig) -> dict[str, Any]:
+def _manifest(
+    backend: Backend, dataset: Dataset, cfg: RunConfig, langs: dict[str, Lang]
+) -> dict[str, Any]:
     info = backend.info()
     return {
         "schema_version": SCHEMA_VERSION,
@@ -273,7 +274,7 @@ def _manifest(backend: Backend, dataset: Dataset, cfg: RunConfig) -> dict[str, A
         "dataset_sha256": dataset.sha256,
         "n_examples": len(dataset),
         "backend": info.backend,
-        "model": info.model,
+        "model": _model_name(info, dataset, langs),
         "revision": info.revision,
         "device": info.device,
         "dtype": info.dtype,
@@ -282,6 +283,26 @@ def _manifest(backend: Backend, dataset: Dataset, cfg: RunConfig) -> dict[str, A
         "lang": cfg.lang,
         "started_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
+
+
+def _abort_hint(error: str | None) -> str:
+    resume = "re-run with the same --out to resume; everything already finished is kept."
+    if error and ("HTTP 401" in error or "HTTP 403" in error):
+        return f"The server refused the credentials. Set ATLASFORGE_API_KEY to a valid key, then {resume}"
+    return f"Fix the cause, then {resume}"
+
+
+def _model_name(info: BackendInfo, dataset: Dataset, langs: dict[str, Lang]) -> str:
+    """The model that produced the answers.
+
+    For a speech dataset that is the speech model for each language used, not the backend's LLM
+    name: a report that said ``NCAIR1/N-ATLaS`` for a Hausa transcript would misattribute it.
+    """
+    if dataset.task != "asr" or not info.asr_models:
+        return info.model
+    names = {info.asr_models.get(lang) or info.asr_models.get("*") for lang in set(langs.values())}
+    named = sorted(n for n in names if n)
+    return ", ".join(named) if named else info.model
 
 
 def _check_resume(path: Path, new: dict[str, Any]) -> None:

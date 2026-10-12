@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Final, Literal, TypeAlias, TypedDict, get_args
 
 from atlasforge.errors import ConfigError
 
 if TYPE_CHECKING:
     import os
+    from collections.abc import Mapping
 
 Lang: TypeAlias = Literal["ha", "yo", "ig", "en"]
 """Languages covered by N-ATLaS: Hausa, Yoruba, Igbo, Nigerian-accented English."""
@@ -130,3 +131,6 @@ class BackendInfo:
     device: str | None = None
     dtype: str | None = None
     capabilities: frozenset[Capability] = frozenset()
+    asr_models: Mapping[str, str] = field(default_factory=dict)
+    """Speech model per language (``"*"`` = any language). A speech run is produced by these, not by
+    ``model``, so a speech report must name them."""

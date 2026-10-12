@@ -28,8 +28,8 @@ You used `--backend local` without the extra. Run `pip install "brainers-atlasfo
 ### `Could not load NCAIR1/... (ImportError)` on macOS
 Loading a speech model fails with a generic `ImportError`. To see the real cause, import the library directly: `python -c "import transformers; transformers.pipeline('automatic-speech-recognition', model='NCAIR1/Hausa-ASR')"`. If it ends in `dlopen(... scipy/sparse/linalg/_propack/_spropack ...)` and `section '__DATA/__thread_bss' has a zero-fill section type`, the default `scipy` 1.15 wheel cannot load on your macOS release. `transformers` imports it even though speech recognition does not use it. This is a `scipy` packaging problem, not an AtlasForge one. Fix it with `pip install "scipy<1.15"`. The `asr` and `local` extras already pin this on macOS, so a fresh install of them avoids it.
 
-### `doctor` says "no NVIDIA GPU detected" on a Mac
-Expected. `doctor` only looks for NVIDIA GPUs, so on Apple Silicon it always warns. The Apple GPU (MPS) still works for the speech models; see [Choose your setup](../get-started/choose-your-setup.md#apple-silicon-notes).
+### `doctor` says "no NVIDIA GPU detected (Apple Silicon found)" on a Mac
+Expected. `doctor` counts only NVIDIA GPUs toward the LLM, so on Apple Silicon it always warns. The Apple GPU (MPS) still works for the speech models, and the LLM needs a quantised server; see [Choose your setup](../get-started/choose-your-setup.md#apple-silicon-notes).
 
 ### `ModuleNotFoundError: No module named '_lzma'`
 Your Python was built without the `xz` library, which happens with `pyenv`. It only breaks the optional `datasets` package. Install `xz` (`brew install xz`) and reinstall that Python version.

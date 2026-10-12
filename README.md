@@ -2,7 +2,7 @@
 
 Run, evaluate, compare and fine-tune the official **N-ATLaS** models (Hausa, Yoruba, Igbo, Nigerian-accented English).
 
-> **Status: pre-alpha (`0.1.0a2`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. The four official speech models, the local backend for speech, and the LLM (as an int4 copy served by Ollama) have been run for real on a Mac; the LLM at full precision, vLLM, and the fine-tuning training run have **not**, because they need an NVIDIA GPU. The full record, with every check and its evidence, is the [release verification report](https://github.com/Brainers-Labs/atlasforge/blob/main/evidence/release-verification-2026-10-09/REPORT.md). Nothing is claimed to work until it is listed here.
+> **Status: pre-alpha (`0.1.0a3`, published to PyPI as `brainers-atlasforge`).** Built for NAIC 2026, Problem 01 (Developer Infrastructure). Everything under "Works today" is tested. The four official speech models, the local backend for speech, and the LLM (as an int4 copy served by Ollama) have been run for real on a Mac; the LLM at full precision, vLLM, and the fine-tuning training run have **not**, because they need an NVIDIA GPU. The full record, with every check and its evidence, is the [release verification report](https://github.com/Brainers-Labs/atlasforge/blob/main/evidence/release-verification-2026-10-09/REPORT.md). Nothing is claimed to work until it is listed here.
 
 ## Documentation
 

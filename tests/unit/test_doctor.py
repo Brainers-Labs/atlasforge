@@ -152,7 +152,25 @@ class TestExtras:
 
 class TestGpu:
     def test_no_nvidia_smi(self) -> None:
-        assert check_gpu(lambda _: None).status == "warn"
+        assert (
+            check_gpu(lambda _: None, system=lambda: "Linux", machine=lambda: "x86_64").status
+            == "warn"
+        )
+
+    def test_no_nvidia_gpu_on_linux_says_so_plainly(self) -> None:
+        result = check_gpu(lambda _: None, system=lambda: "Linux", machine=lambda: "x86_64")
+        assert result.detail == "no NVIDIA GPU detected"
+
+    def test_apple_silicon_is_recognised_for_speech_but_not_counted_for_the_llm(self) -> None:
+        result = check_gpu(lambda _: None, system=lambda: "Darwin", machine=lambda: "arm64")
+        assert result.status == "warn"
+        assert "Apple Silicon" in result.detail
+        assert "speech" in (result.hint or "")
+        assert "quantised" in (result.hint or "")
+
+    def test_an_intel_mac_gets_no_apple_silicon_message(self) -> None:
+        result = check_gpu(lambda _: None, system=lambda: "Darwin", machine=lambda: "x86_64")
+        assert result.detail == "no NVIDIA GPU detected"
 
     def test_big_gpu_ok(self) -> None:
         result = check_gpu(

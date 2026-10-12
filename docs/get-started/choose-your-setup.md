@@ -36,7 +36,7 @@ What was found running on a 16 GB M1:
 
 - **The LLM at fp16 does not fit.** The weights alone are 16.08 GB, about 93% of the machine's memory, so do not try `--backend local` for the LLM there: it risks heavy swapping or freezing the machine. Serve a quantised copy instead ([Serve N-ATLaS](../guides/serve-n-atlas.md#option-3-ollama-simplest-on-a-laptop)). `--quantize 4bit` is not available on a Mac, because `bitsandbytes` needs an NVIDIA GPU.
 - **Speech uses the Apple GPU.** `--device auto` picks CUDA if there is one, then Apple's MPS, then the CPU. Pass `--device cpu` to force the CPU.
-- **`atlasforge doctor` says "no NVIDIA GPU detected".** That is expected: it only looks for NVIDIA GPUs, and the warning does not mean the Apple GPU is unusable.
+- **`atlasforge doctor` still warns about the GPU.** It looks for NVIDIA GPUs, so on Apple Silicon it says "no NVIDIA GPU detected (Apple Silicon found)" and adds that the speech models can use the Apple GPU. The warning is expected and does not mean the Apple GPU is unusable.
 - **A `scipy` wheel can fail to load on recent macOS.** The `asr` and `local` extras pin `scipy<1.15` on macOS for this reason; see [Troubleshooting](../help/troubleshooting.md#could-not-load-ncair1-importerror-on-macos).
 
 ## What to do next

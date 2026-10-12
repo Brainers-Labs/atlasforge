@@ -28,7 +28,7 @@ See [Run directories](../concepts/run-directories.md) for behaviour.
 | `schema_version` | Format version of this file |
 | `task` | `generation`, `classification` or `asr` |
 | `dataset_sha256`, `n_examples` | Fingerprint and size of the dataset |
-| `backend`, `model`, `revision`, `device`, `dtype` | What ran. `revision` is the model's commit when known. |
+| `backend`, `model`, `revision`, `device`, `dtype` | What ran. `revision` is the model's commit when known. For a speech run, `model` is the speech model for each language used (for example `NCAIR1/Hausa-ASR`, or a comma-separated list), not the LLM. |
 | `gen_params` | Temperature, repetition penalty, token limit, `top_p`, seed |
 | `lang` | Default language (speech) |
 | `capabilities` | What the backend can do |

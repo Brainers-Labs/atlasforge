@@ -2,16 +2,24 @@ import json
 import threading
 from collections.abc import Sequence
 from pathlib import Path
+from typing import ClassVar
 
 import pytest
 
-from atlasforge.errors import BackendTimeout, ConfigError, DatasetError, RunAborted
+from atlasforge.errors import (
+    BackendHTTPError,
+    BackendTimeout,
+    ConfigError,
+    DatasetError,
+    RunAborted,
+)
 from atlasforge.eval.dataset import Dataset, load_dataset
 from atlasforge.eval.runner import (
     MANIFEST_NAME,
     RESULTS_NAME,
     Record,
     RunConfig,
+    read_manifest,
     read_results,
     run,
 )
@@ -30,9 +38,14 @@ class FakeBackend:
     """Deterministic backend. ``fail`` maps prompt text to an exception to raise."""
 
     def __init__(
-        self, *, model: str = "fake/model", fail: dict[str, BaseException] | None = None
+        self,
+        *,
+        model: str = "fake/model",
+        fail: dict[str, BaseException] | None = None,
+        asr_models: dict[str, str] | None = None,
     ) -> None:
         self.model = model
+        self.asr_models = asr_models or {}
         self.fail = fail or {}
         self.calls: list[str] = []
         self._lock = threading.Lock()
@@ -51,7 +64,9 @@ class FakeBackend:
         return Transcript(text=f"heard:{lang}", lang=lang, latency_ms=7.0)
 
     def info(self) -> BackendInfo:
-        return BackendInfo(backend="fake", model=self.model, revision="abc123")
+        return BackendInfo(
+            backend="fake", model=self.model, revision="abc123", asr_models=self.asr_models
+        )
 
     def close(self) -> None:
         return None
@@ -245,6 +260,41 @@ class TestAsr:
         run(backend, ds, tmp_path / "o", config=RunConfig(lang="ha"))
         assert backend.calls == ["a.wav|ha"]
 
+    SPEECH: ClassVar[dict[str, str]] = {"ha": "NCAIR1/Hausa-ASR", "yo": "NCAIR1/Yoruba-ASR"}
+
+    def manifest_model(self, tmp_path: Path, rows: list[dict[str, str]]) -> str:
+        ds = self.make_asr(tmp_path, rows)
+        run(FakeBackend(model="NCAIR1/N-ATLaS", asr_models=self.SPEECH), ds, tmp_path / "o")
+        return str(read_manifest(tmp_path / "o")["model"])
+
+    def test_a_speech_run_names_the_speech_model_not_the_llm(self, tmp_path: Path) -> None:
+        rows = [{"id": "1", "audio": "a.wav", "reference": "x", "lang": "ha"}]
+        assert self.manifest_model(tmp_path, rows) == "NCAIR1/Hausa-ASR"
+
+    def test_a_multilingual_speech_run_names_every_model_used_and_no_others(
+        self, tmp_path: Path
+    ) -> None:
+        rows = [
+            {"id": "1", "audio": "a.wav", "reference": "x", "lang": "yo"},
+            {"id": "2", "audio": "a.wav", "reference": "y", "lang": "ha"},
+            {"id": "3", "audio": "a.wav", "reference": "z", "lang": "ha"},
+        ]
+        assert self.manifest_model(tmp_path, rows) == "NCAIR1/Hausa-ASR, NCAIR1/Yoruba-ASR"
+
+    def test_a_generation_run_still_names_the_backend_model(self, tmp_path: Path) -> None:
+        ds = make_dataset(tmp_path, ["a", "b"])
+        run(FakeBackend(model="NCAIR1/N-ATLaS", asr_models=self.SPEECH), ds, tmp_path / "o")
+        assert read_manifest(tmp_path / "o")["model"] == "NCAIR1/N-ATLaS"
+
+    def test_a_backend_that_reports_no_speech_models_falls_back_to_its_model(
+        self, tmp_path: Path
+    ) -> None:
+        ds = self.make_asr(
+            tmp_path, [{"id": "1", "audio": "a.wav", "reference": "x", "lang": "ha"}]
+        )
+        run(FakeBackend(model="some-server-model"), ds, tmp_path / "o")
+        assert read_manifest(tmp_path / "o")["model"] == "some-server-model"
+
     def test_missing_language_fails_up_front_before_any_work(self, tmp_path: Path) -> None:
         ds = self.make_asr(tmp_path, [{"id": "1", "audio": "a.wav", "reference": "x"}])
         backend = FakeBackend()
@@ -287,6 +337,21 @@ class TestCircuitBreaker:
             )
         assert "BackendTimeout: down" in str(info.value)
         assert "secret" not in info.value.format()
+
+    def test_a_rejected_key_says_so_in_the_hint(self, tmp_path: Path) -> None:
+        denied = BackendHTTPError("Endpoint returned HTTP 401.", status_code=401)
+        prompts = [f"p{i}" for i in range(5)]
+        backend = FakeBackend(fail=dict.fromkeys(prompts, denied))
+        with pytest.raises(RunAborted) as info:
+            run(
+                backend,
+                make_dataset(tmp_path, prompts),
+                tmp_path / "o",
+                config=RunConfig(max_consecutive_failures=3),
+            )
+        hint = info.value.hint or ""
+        assert "ATLASFORGE_API_KEY" in hint
+        assert "resume" in hint
 
     def test_a_success_resets_the_streak(self, tmp_path: Path) -> None:
         prompts = [f"p{i}" for i in range(20)]

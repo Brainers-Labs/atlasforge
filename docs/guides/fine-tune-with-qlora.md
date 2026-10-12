@@ -11,7 +11,7 @@ A small **LoRA adapter**: a few hundred megabytes of extra weights that sit on t
 
 ## Requirements
 
-- An **NVIDIA GPU**. QLoRA uses 4-bit quantisation through bitsandbytes, which needs CUDA. A 24 GB card is a comfortable target for the defaults. It will not work on a Mac or a CPU.
+- An **NVIDIA GPU**. QLoRA uses 4-bit quantisation through bitsandbytes, which needs CUDA. A 24 GB card is a comfortable target for the defaults. It will not work on a Mac or a CPU, and AtlasForge refuses to start without a GPU for every `quantize` setting rather than letting the model load hang.
 - `pip install -e ".[finetune]"` and [access to the model](../get-started/access-and-licences.md).
 - Training data: at least 20 examples (more is better), in the [JSONL format](../concepts/datasets.md) with a `reference` on every example.
 - A **held-out test set** that is not in the training data.

@@ -180,6 +180,15 @@ def _config_values(ctx: typer.Context, names: tuple[str, ...]) -> dict[str, Any]
     }
 
 
+def _stdin_prompt() -> str:
+    """Standard input as a prompt, without the one newline a shell pipe appends (``echo hi | ...``)."""
+    text = sys.stdin.read()
+    for ending in ("\r\n", "\n"):
+        if text.endswith(ending):
+            return text[: -len(ending)]
+    return text
+
+
 def _err(message: str) -> None:
     typer.echo(message, err=True)
 
@@ -256,7 +265,7 @@ def run(
     device = chosen.get("device", device)
     timeout = chosen.get("timeout", timeout)
     retries = chosen.get("retries", retries)
-    text = sys.stdin.read() if prompt == "-" else prompt
+    text = _stdin_prompt() if prompt == "-" else prompt
     messages: list[Message] = []
     if system:
         messages.append({"role": "system", "content": system})

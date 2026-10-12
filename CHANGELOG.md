@@ -4,6 +4,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 
 ## [Unreleased]
 
+## [0.1.0a3] - 2026-10-12
+
 ### Added
 - A release verification report under `evidence/release-verification-2026-10-09/`: 197 checks run black-box against the published 0.1.0a2 and the repository build, with the harness, the results and the logs. Its main findings: the published `[asr]` extra fails on Apple Silicon macOS until the `scipy` pin is released, speech runs record the LLM instead of the speech model in `run.json`, and the PyPI description is out of date.
 - What running the real models on 30 September to 2 October 2026 (Apple M1, 16 GB) showed, written into the documentation: the model repository's `config.json` allows a context of 131072 where the card says 8,092; its `generation_config.json` ships `temperature=0.6` and no repetition penalty where the card recommends 0.1 and 1.12; the tokenizer does ship a chat template; the fp16 weights (16.08 GB) do not fit a 16 GB machine; all four speech models transcribed real FLEURS clips; and `transformers` returns timestamps for them. The speech guide's earlier statement that the models "do not provide word timestamps" is corrected. The project status page now separates what was run on real weights from what was only tested against stand-ins.
@@ -15,6 +17,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/). Versioning: [SemVer](ht
 - The `asr` and `local` extras pin `scipy<1.15` on macOS, where the default `scipy` 1.15 wheel fails to load on recent releases and surfaces as `Could not load NCAIR1/... (ImportError)`.
 - The end-to-end concurrency test no longer fails on macOS: its fake server used `socketserver`'s default listen backlog of 5, which refuses some of the `2 x concurrency` connections the runner opens at once. It is not a scoring bug.
 - The installation instructions said `--pre` was required for a pre-release. It is not: pip falls back to pre-releases when a project has no stable release to prefer, so `pip install brainers-atlasforge` resolves `0.1.0a2` today. This was checked in a clean virtual environment with no `PIP_PRE` set and no pip configuration file anywhere on the machine, and it printed `Would install ... brainers-atlasforge-0.1.0a2` and exited 0. The README, the installation guide, the releasing page, this changelog and the notebook's comment now say what actually happens and note that a stable release is what makes the flag load-bearing. The correction does not reach the PyPI project page until a new version is uploaded, because a release's long description is as immutable as the rest of its metadata — which is the second half of what the releasing page now warns about.
+
+### Changed
+- **A speech run now records the speech model that produced it.** `run.json`, the report header and `compare` named the LLM (`NCAIR1/N-ATLaS`) for a speech evaluation, although a speech model did the transcribing. They now name the model per language (`NCAIR1/Hausa-ASR`, or a comma-separated list for a multilingual dataset). `BackendInfo` gained an `asr_models` field for this. Because the model is part of a run's identity, a speech run directory made by 0.1.0a2 cannot be resumed; re-run it.
+- `atlasforge finetune` now refuses to start without an NVIDIA GPU for **every** `quantize` setting, not only `4bit`. On a Mac, `quantize: none` could hang or crash inside `torch` while loading the model; it now stops with a message instead.
+- `atlasforge doctor` recognises Apple Silicon: it still warns that there is no NVIDIA GPU, but says the speech models can use the Apple GPU and that the LLM needs a quantised server.
+- `atlasforge run -` drops the one trailing newline a shell pipe appends (`echo hi | atlasforge run -`), so the model sees `hi` and not `hi` plus a newline.
+- When a run is aborted because every request was refused with HTTP 401 or 403, the hint now names `ATLASFORGE_API_KEY` instead of the generic advice.
+- The `scipy<1.15` pin on macOS now stops at Python 3.13: scipy 1.14 has no wheels for 3.14, so on a Mac with Python 3.14 the pin made `pip install` try to compile scipy and fail.
 
 ## [0.1.0a2] - 2026-10-08
 

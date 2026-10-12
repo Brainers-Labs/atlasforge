@@ -174,6 +174,7 @@ class LocalBackend:
             device=device,
             dtype=self._dtype if self._quantize == "none" else self._quantize,
             capabilities=frozenset({"generate", "transcribe"}),
+            asr_models=dict(self._asr_repos),
         )
 
     def close(self) -> None:

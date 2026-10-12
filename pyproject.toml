@@ -49,7 +49,7 @@ local = [
   "bitsandbytes>=0.43; sys_platform != 'darwin'",
   # see the matching comment in the `asr` extra: works around a scipy wheel/macOS incompatibility
   # that transformers' package-level import hits regardless of which extra pulled it in.
-  "scipy<1.15; sys_platform == 'darwin'",
+  "scipy<1.15; sys_platform == 'darwin' and python_version < '3.14'",
 ]
 asr = [
   "torch>=2.2",
@@ -59,8 +59,8 @@ asr = [
   "soundfile>=0.12",
   # transformers imports scipy transitively at package-import time (an unrelated object-detection
   # loss module). The default scipy>=1.15 wheel fails to dlopen its _propack extension on recent
-  # macOS/Apple Silicon (Mach-O "zero-fill section" error); this pin works around it there.
-  "scipy<1.15; sys_platform == 'darwin'",
+  # macOS/Apple Silicon (Mach-O "zero-fill section" error); this pin works around it there. scipy 1.14 has no wheels for Python 3.14, so the pin stops at 3.13.
+  "scipy<1.15; sys_platform == 'darwin' and python_version < '3.14'",
 ]
 finetune = [
   "brainers-atlasforge[local]",

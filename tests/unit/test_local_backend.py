@@ -483,6 +483,10 @@ class TestAdapter:
 
     def test_the_adapter_is_part_of_the_model_identity(self, fake: Harness) -> None:
         assert LocalBackend().info().model == "NCAIR1/N-ATLaS"
+        assert LocalBackend().info().asr_models["ha"] == "NCAIR1/Hausa-ASR"
+        custom = LocalBackend(asr_models={"ha": "someone/their-hausa"}).info()
+        assert custom.asr_models["ha"] == "someone/their-hausa"
+        assert custom.asr_models["yo"] == "NCAIR1/Yoruba-ASR"
         assert LocalBackend(adapter="runs/hausa").info().model == "NCAIR1/N-ATLaS+runs/hausa"
 
     def test_a_missing_peft_gives_the_extras_hint(

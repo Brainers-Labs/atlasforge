@@ -1,6 +1,6 @@
 # AtlasForge — what it does, and where it stands
 
-*8 October 2026 · version `0.1.0a2` (pre-alpha, published to PyPI as `brainers-atlasforge`)*
+*12 October 2026 · version `0.1.0a3` (pre-alpha, published to PyPI as `brainers-atlasforge`)*
 
 ## The problem
 
@@ -142,7 +142,7 @@ repositories. No further code closes it.
 - The benchmark-pack licence question is a share-alike decision inside an Apache-2.0 repository,
   deliberately not guessed.
 - The notebook has not been opened in Colab. The documentation is hosted at
-  https://brainers-labs.github.io/atlasforge/. A release tag exists — `v0.1.0a2`, published to PyPI
+  https://brainers-labs.github.io/atlasforge/. A release tag exists — `v0.1.0a3`, published to PyPI
   as `brainers-atlasforge` — but it is a pre-alpha, and it does not close the first item above: a
   release says the code installs, not that it has been run against the real weights.
 

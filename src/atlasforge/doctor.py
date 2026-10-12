@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -234,9 +235,20 @@ def _query_gpus(
 def check_gpu(
     which: Callable[[str], str | None] = shutil.which,
     run: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+    system: Callable[[], str] = platform.system,
+    machine: Callable[[], str] = platform.machine,
 ) -> Check:
-    """Look for an NVIDIA GPU big enough for the 8B LLM."""
+    """Look for an NVIDIA GPU big enough for the 8B LLM (Apple Silicon is noted, not counted)."""
     gpus = _query_gpus(which, run)
+    if not gpus and system() == "Darwin" and machine() == "arm64":
+        return Check(
+            "gpu",
+            "warn",
+            "no NVIDIA GPU detected (Apple Silicon found)",
+            "The speech models run on the Apple GPU (MPS) or the CPU. The 8B LLM does not fit in "
+            "fp16 on a 16 GB Mac: serve a quantised copy (Ollama or llama.cpp) and use the openai "
+            "backend. Fine-tuning needs an NVIDIA GPU.",
+        )
     if not gpus:
         return Check(
             "gpu",

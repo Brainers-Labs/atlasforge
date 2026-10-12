@@ -384,6 +384,8 @@ class TestInfoAndLifecycle:
 
     def test_info_reflects_asr_flag(self) -> None:
         assert make(ok, asr=False)[0].info().capabilities == {"generate"}
+        assert make(ok, asr=False)[0].info().asr_models == {}
+        assert make(ok)[0].info().asr_models == {"*": make(ok)[0].model}
 
     def test_satisfies_the_backend_protocol(self) -> None:
         assert isinstance(make(ok)[0], Backend)

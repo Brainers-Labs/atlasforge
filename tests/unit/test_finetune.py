@@ -610,6 +610,18 @@ class TestTrainGuards:
         assert "Mac" in (info.value.hint or "")
         assert harness.events == []
 
+    def test_plain_lora_without_a_gpu_is_refused_too(
+        self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+    ) -> None:
+        # On Apple Silicon the model load can hang or crash inside torch, so a clear refusal beats
+        # letting `quantize: none` through to it.
+        harness = Harness(cuda=False)
+        harness.install(monkeypatch)
+        with pytest.raises(ResourceError, match="LoRA training needs an NVIDIA GPU") as info:
+            train(make_config(tmp_path, quantize="none"))
+        assert "hang or crash" in (info.value.hint or "")
+        assert harness.events == []
+
     def test_bad_data_fails_before_any_heavy_import(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:

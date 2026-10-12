@@ -62,11 +62,13 @@ def train(config: QLoRAConfig) -> TrainingRun:
     trl = _import("trl")
     datasets = _import("datasets")
 
-    if config.quantize == "4bit" and not torch.cuda.is_available():
+    if not torch.cuda.is_available():
+        kind = "QLoRA (4-bit)" if config.quantize == "4bit" else "LoRA"
         raise ResourceError(
-            "QLoRA (4-bit) training needs an NVIDIA GPU, and none was found.",
+            f"{kind} training needs an NVIDIA GPU, and none was found.",
             hint="Use a GPU machine (Colab, a cloud GPU, a university cluster). Training an 8B "
-            "model on a Mac or CPU is not supported.",
+            "model on a Mac or CPU is not supported; on Apple Silicon the model load can hang "
+            "or crash inside torch instead of failing cleanly.",
         )
 
     started = datetime.now(timezone.utc).isoformat(timespec="seconds")

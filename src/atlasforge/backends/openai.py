@@ -182,6 +182,7 @@ class OpenAIBackend:
             backend="openai",
             model=self.model,
             capabilities=frozenset({"generate", "transcribe"} if self._asr else {"generate"}),
+            asr_models={"*": self._asr_model} if self._asr else {},
         )
 
     def close(self) -> None:

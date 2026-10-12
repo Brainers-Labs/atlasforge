@@ -132,6 +132,27 @@ class TestRun:
         assert result.exit_code == 0
         assert result.output.strip() == "Lafiya lau"
 
+    def test_a_piped_prompt_loses_the_one_trailing_newline_the_shell_added(
+        self, server: FakeModelServer
+    ) -> None:
+        server.answers["m"] = {"Ina kwana?": "Lafiya lau"}
+        result = runner.invoke(
+            app,
+            ["run", "-", "--base-url", server.base_url, "--model", "m"],
+            input="Ina kwana?\n",
+        )
+        assert result.exit_code == 0
+        assert result.output.strip() == "Lafiya lau"
+        assert server.requests[-1]["messages"][-1]["content"] == "Ina kwana?"
+
+    def test_a_multiline_piped_prompt_keeps_its_inner_newlines(
+        self, server: FakeModelServer
+    ) -> None:
+        runner.invoke(
+            app, ["run", "-", "--base-url", server.base_url, "--model", "m"], input="a\nb\n\n"
+        )
+        assert server.requests[-1]["messages"][-1]["content"] == "a\nb\n"
+
     def test_json_output_and_system_prompt(self, server: FakeModelServer) -> None:
         server.answers["m"] = {"hi": "ok"}
         result = runner.invoke(
@@ -174,6 +195,28 @@ class TestRun:
             app, ["run", prompt, "--base-url", server.base_url, "--model", "m", "--json"]
         )
         assert json.loads(result.output)["text"] == answer
+
+
+class TestSpeechEval:
+    def test_a_speech_run_records_the_speech_model_that_was_asked_for(
+        self, server: FakeModelServer, tmp_path: Path
+    ) -> None:
+        audio = sine_wav(tmp_path / "a.wav")
+        row = {"id": "s1", "audio": audio.name, "reference": "ina kwana", "lang": "ha"}
+        data = tmp_path / "speech.jsonl"
+        data.write_text(json.dumps(row) + "\n", encoding="utf-8")
+        out = tmp_path / "run"
+        result = runner.invoke(
+            app,
+            [
+                *["eval", str(data), "--task", "asr", "--out", str(out)],
+                *["--model", "NCAIR1/Hausa-ASR", "--base-url", server.base_url, "--retries", "0"],
+            ],
+        )
+        assert result.exit_code == 0, result.output
+        manifest = json.loads((out / "run.json").read_text(encoding="utf-8"))
+        assert manifest["model"] == "NCAIR1/Hausa-ASR"
+        assert "NCAIR1/Hausa-ASR" in (out / "report.md").read_text(encoding="utf-8")
 
 
 class TestEval:
